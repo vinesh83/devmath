@@ -1,0 +1,182 @@
+{
+ "updated": "2026-10-03",
+ "coach": {
+  "message": "HQ here! Your homework shows you are strong at big subtraction. Your only slips were in the thousands, left of the comma. Check It (add it back!) catches those. Checking earns double coins.",
+  "focus": [
+   "sub",
+   "word",
+   "area"
+  ],
+  "bugFocus": [
+   "sub",
+   "word",
+   "sub"
+  ],
+  "factFocus": "6,7,8,9",
+  "startR": {
+   "sub": 3,
+   "add": 3,
+   "word": 2.5,
+   "area": 1.5,
+   "dec_add": 2.5,
+   "dec_sub": 2
+  }
+ },
+ "packs": [
+  {
+   "title": "Homework Remix: Lesson 13 + Unit 15",
+   "source": "Eureka Math TEKS G4 Lesson 13 (pp. 63-65), ThinkUp Math Unit 15 (4.4A), Area Models 2x2 worksheet",
+   "createdAt": "2026-10-01T12:00:00Z",
+   "active": true,
+   "items": [
+    {
+     "type": "sub",
+     "a": "522431",
+     "b": "92420",
+     "stacked": true
+    },
+    {
+     "type": "word",
+     "text": [
+      "A video game store sold [$465382] worth of games and gear.",
+      "It sold [$52610] worth of gear.",
+      "How much did it sell in games?"
+     ],
+     "steps": [
+      {
+       "a": 465382,
+       "b": 52610,
+       "op": "-"
+      }
+     ],
+     "unit": "dollars",
+     "statement": "The store sold $___ in games."
+    },
+    {
+     "type": "sub",
+     "a": "422531",
+     "b": "382420",
+     "stacked": false
+    },
+    {
+     "type": "word",
+     "text": [
+      "A school collected [2806] cans for recycling.",
+      "A second school also collected cans.",
+      "Together they collected [5413] cans.",
+      "How many cans did the second school collect?"
+     ],
+     "steps": [
+      {
+       "a": 5413,
+       "b": 2806,
+       "op": "-"
+      }
+     ],
+     "unit": "cans",
+     "statement": "The second school collected ___ cans.",
+     "strip": {
+      "type": "ppw",
+      "whole": 5413,
+      "parts": [
+       2806
+      ],
+      "unknownPart": true
+     }
+    },
+    {
+     "type": "bug",
+     "base": "sub"
+    },
+    {
+     "type": "word",
+     "text": [
+      "Pixel County has [90000] people in three towns.",
+      "Rivertown has [38624] people and Lakeside has [27915] people.",
+      "The county has [~14] parks.",
+      "How many people live in Hilltop?"
+     ],
+     "steps": [
+      {
+       "a": 38624,
+       "b": 27915,
+       "op": "+"
+      },
+      {
+       "a": 90000,
+       "b": "$1",
+       "op": "-"
+      }
+     ],
+     "unit": "people",
+     "statement": "___ people live in Hilltop.",
+     "strip": {
+      "type": "ppw",
+      "whole": 90000,
+      "parts": [
+       38624,
+       27915
+      ],
+      "unknownPart": true
+     }
+    },
+    {
+     "type": "dec",
+     "nums": [
+      "2.35",
+      "0.8"
+     ],
+     "op": "+",
+     "stacked": false
+    },
+    {
+     "type": "word",
+     "text": [
+      "A town has [438275] people.",
+      "[126140] of them are children, and the rest are adults.",
+      "[151062] of the adults are men.",
+      "How many adults are women?"
+     ],
+     "steps": [
+      {
+       "a": 438275,
+       "b": 126140,
+       "op": "-"
+      },
+      {
+       "a": "$1",
+       "b": 151062,
+       "op": "-"
+      }
+     ],
+     "unit": "women",
+     "statement": "___ adults in the town are women."
+    },
+    {
+     "type": "dec",
+     "nums": [
+      "5.3",
+      "2.7"
+     ],
+     "op": "-",
+     "stacked": false
+    },
+    {
+     "type": "mult",
+     "a": 26,
+     "b": 43
+    },
+    {
+     "type": "bug",
+     "base": "word"
+    },
+    {
+     "type": "mult",
+     "a": 38,
+     "b": 24
+    }
+   ],
+   "id": "hw-2026-10-01"
+  }
+ ]
+}
