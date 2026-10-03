@@ -1110,8 +1110,9 @@ function complete(p,res){const a=ATT;a.solved=!!res.solved;a.firstTry=!!res.firs
   Data.logAttempt(Object.assign({},a));saveState();updateTop();
   const praise=res.selfCatch?`Self-catch! You found your own mistake. +${c} coins`:res.firstTry&&a.checkUsed?`Checked and correct! +${c} coins`:res.firstTry?`Correct! +${c} coins${p.kind!=='fact'?' (Check It next time for double)':''}`:res.solved?`You got it. +${c} coins`:`Now you know how. One more like it is coming.`;
   say(praise,res.solved?'good':'info');
-  if(p.kind==='fact'&&res.firstTry){setActions([]);setTimeout(()=>{if(run&&run.queue[run.idx]===p){run.idx++;nextProblem();}},650);return;}
-  setActions([{label:run.idx+1>=run.queue.length?'Finish ▸':'Next ▸',cls:'btn-green',primary:true,onClick:()=>{run.idx++;nextProblem();}}]);}
+  const advance=()=>{if(run&&run.queue[run.idx]===p){run.idx++;nextProblem();}};
+  if(p.kind==='fact'&&res.firstTry){setActions([{label:'Next ▸',cls:'btn-green',primary:true,onClick:advance}]);setTimeout(advance,650);return;}
+  setActions([{label:run.idx+1>=run.queue.length?'Finish ▸':'Next ▸',cls:'btn-green',primary:true,onClick:advance}]);}
 function twinOf(p){try{if(p.kind==='arith')return GEN[p.skill](p.L);if(p.kind==='fact')return{kind:'fact',skill:'fact',a:p.b,b:p.a,key:p.key,answer:p.answer,L:1};
   if(p.kind==='area')return genArea(p.L,p.mode==='1x'?'1':p.mode==='bigx1'?'5':null);if(p.kind==='word')return genWord(p.L);if(p.kind==='bug')return genBug(p.base.skill);}catch(e){}return null;}
 
