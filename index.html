@@ -2167,12 +2167,17 @@ function reportPayload(){const L=Local.log;
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
     npcMet:state.npc&&state.npc.met,sessions:Local.sess.slice(-60),log:L.slice(-300)};}
 const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null),err:null,lastTry:0,sent:lsGet('nk-sync-h',{}),
-  init(){const m=location.hash.match(/sync=([^&]+)(?:&repo=([^&]+))?/);
-    if(m){this.connect(decodeURIComponent(m[1]),m[2]?decodeURIComponent(m[2]):null);try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
-      setTimeout(()=>{if(state.hero)Talk.say([['knight','Coach sync is connected! Your training reports now go straight to your coach.']]);},1800);}
+  pair(){const src=decodeURIComponent(location.hash+'&'+location.search);if(!/sync=/.test(src))return;
+    const tok=(src.match(/(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/)||[])[1],rp=(src.match(/repo=([\w.-]+\/[\w.-]+)/)||[])[1];
+    try{history.replaceState(null,'',location.pathname);}catch(e){}
+    if(!tok){setTimeout(()=>Talk.say([['knight','Hmm, that sync link has no token in it. Ask a grown-up to paste the token in Report → Coach sync.']]),1500);return;}
+    this.connect(tok,rp||null);this.lastTry=0;
+    this.push().then(()=>setTimeout(()=>Talk.say([['knight','Coach sync is connected! Your training reports now go straight to your coach.']]),1200))
+      .catch(e=>setTimeout(()=>Talk.say([['knight','Coach sync could not connect: '+e.message]]),1200));},
+  init(){this.pair();window.addEventListener('hashchange',()=>this.pair());
     document.addEventListener('visibilitychange',()=>{if(document.hidden)this.kick(true);});
     setInterval(()=>this.kick(),4*60*1000);setTimeout(()=>this.kick(true),4000);},
-  connect(token,repo){this.cfg={token:token.trim(),repo:(repo||'vinesh83/devmath-data').trim()};lsSet('nk-sync',this.cfg);this.sent={};lsSet('nk-sync-h',{});this.kick(true);},
+  connect(token,repo){const m=String(token).match(/(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/);if(m)token=m[1];this.cfg={token:token.trim(),repo:(repo||'vinesh83/devmath-data').trim()};lsSet('nk-sync',this.cfg);this.sent={};lsSet('nk-sync-h',{});this.kick(true);},
   disconnect(){this.cfg=null;lsSet('nk-sync',null);},
   on(){return !!(this.cfg&&this.cfg.token&&this.cfg.repo);},
   kick(force){if(!this.on()||this.busy||!navigator.onLine)return;const now=Date.now();if(!force&&now-this.lastTry<45000)return;this.lastTry=now;
