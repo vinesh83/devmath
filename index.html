@@ -608,6 +608,7 @@ table.spd td.x{background:transparent;border-color:transparent}
 .st-sel{font:600 15px var(--f-body);padding:8px;border-radius:10px;background:#0e1130;color:#fff;border:2px solid #3a4180}
 .ellie-modal{text-align:center;justify-items:center}
 .ellie-big{width:160px;height:160px;image-rendering:pixelated}
+.dj-bugs{font-weight:700;color:#3fdc6b;margin:.3em 0}
 </style>
 
 <div id="app">
@@ -1795,27 +1796,78 @@ const Grip={init(){const g=$('#scGrip');if(!g)return;let drag=null;
 const MINION=["..a....a..","...a..a...","..gGGGGg..",".gGWWGWWGg",".gGWKGWKGg","gGGGGGGGGg","gGGMMMMGGg",".gGGGGGGg."];
 const MINION_LEGS=[[".g.g..g.g."],["g.g....g.g"]];
 const BUG_COLS=[['#ff4d6d','#7a1f3d'],['#3fdc6b','#1d6b35'],['#b26bff','#4a1f7a'],['#ffb627','#8a5a00'],['#5ef2ff','#1d5a6b']];
-const BUG_TALK=['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oops!'];
+const BUG_TALK={bug:['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oops!'],zip:['zoom!','zippy!','catch me!','wheee!'],
+  armor:['clank!','tough shell!','hmph','can’t zap me!'],king:['BOW TO ME!','I am KING!','attack, bugs!','my crown!']};
+const BUG_PANIC=['EEK!','RUN!','uh oh!','nooo!','yikes!'],BUG_LAUGH=['hehe!','haha!','nyah!','wheee!'];
+const BUG_HP={bug:1,zip:1,armor:2,king:3},BUG_SC={bug:1,zip:0.8,armor:1,king:1.5};
 (()=>{const B=Battle,_setup=B.setup.bind(B),_event=B.event.bind(B),_update=B.update.bind(B);
   B.setup=function(o){_setup(o);const s=this.s;Object.assign(s,{hits:0,hp:1,hpShow:1,hpFlash:0,atk:null,minions:[],wave:0,waveT:o.drill?0.6:1.8,drill:!!o.drill,
-    foeAtk:null,foeAtkT:o.drill?5:7+Math.random()*3,heroJump:0,heroJV:0,foeLift:0,foeLiftV:0,rings:[],slashes:[],bigUntil:0});this.big(false);};
+    foeAtk:null,foeAtkT:o.drill?5:7+Math.random()*3,heroJump:0,heroJV:0,foeLift:0,foeLiftV:0,rings:[],slashes:[],bigUntil:0,squashed:0,antT:4,spits:[],tower:null,sweep:0});this.big(false);};
   B.big=function(on){const w=$('.scene-wrap');if(!w)return;w.classList.toggle('big',!!on&&!RM);};
   B.bigMoment=function(ms){if(RM||!this.s)return;this.big(true);clearTimeout(this.bigTm);this.bigTm=setTimeout(()=>this.big(false),ms||1500);};
   B.event=function(kind,info){const s=this.s;if(!s)return;
     const good=kind==='hit'||kind==='crit'||kind==='selfcatch'||kind==='quick'||kind==='small';
     if(good){s.hits+=kind==='small'?0.5:1;s.hpFlash=0.35;const crit=kind!=='hit'&&kind!=='small';
-      const alive=s.minions.filter(m=>!m.doomed);
-      if(alive.length)this.zapMinions(alive,crit?2:1);else this.startCombo(crit);}
+      const alive=this.bugTargets(),streak=kind!=='small'&&(s.combo+1)%5===0;
+      if(alive.length&&streak)this.bugBlast();else if(alive.length)this.zapMinions(alive,crit?2:1);else this.startCombo(crit);
+      this.bugsReact('panic');}
     if(kind==='hurt'&&!s.atk)s.foeAtk={k:'lunge',t:0};
+    if(kind==='hurt')this.bugsReact('laugh');
     _event(kind,info);
     if(s.drill&&kind==='hurt'){s.taunt=pick(['Ha! Got one!','My bugs ate that fact!','Too tricky for you?','Beep! Not that one!']);s.tauntT=2;}};
   B.startCombo=function(crit){const s=this.s;if(s.drill){s.atk={t:0,dur:0.5,crit,quick:true,hit:0};return;}s.atk={t:0,dur:crit?1.25:1.05,crit,hit:0};Snd.whoosh();};
-  B.zapMinions=function(list,n){const s=this.s;list.sort((a,b)=>a.x-b.x).slice(0,n).forEach((m,i)=>{m.doomed=true;
-      s.proj.push({k:'zap',x:this.heroX()+20,y:this.beamY()-10,tx:m,life:1.2,vx:0,vy:0,dl:i*0.08});});Snd.zap(s.combo+2);};
-  B.spawnWave=function(){const s=this.s,n=s.drill?3+(s.wave%3):2+(s.wave%3);s.wave++;s.bugCol=BUG_COLS[(s.wave-1)%BUG_COLS.length];
-    for(let i=0;i<n;i++)s.minions.push({x:this.foeX()-10+i*30,y:0,ph:Math.random()*6,stop:this.W*(0.44+i*0.075+Math.random()*0.03),doomed:false,dead:false,born:s.t,say:null,sayT:0});
-    this.text('BUG ATTACK!','#ff4d6d',true,this.W*0.55,this.H*0.3);
-    if(!state.bugTip&&typeof Talk!=='undefined'){state.bugTip=1;saveState();setTimeout(()=>Talk.pop('byte','BEEP! Those are Glitch’s BUGS. Every right answer zaps one. Zap a whole wave for bonus coins!'),400);}};
+  // bugs that can still take a zap (not flying away, not already covered by bolts in the air)
+  B.bugTargets=function(){return this.s.minions.filter(m=>!m.dead&&!m.fly&&m.hp-m.pend>0);};
+  // a fast answer fires two bolts: two bugs (CHAIN ZAP) or a double hit on a tough one
+  B.zapMinions=function(list,n){const s=this.s;list.sort((a,b)=>a.x-b.x);const hit=[];
+    for(let i=0;i<n;i++){const m=list.find(q=>q.hp-q.pend>0);if(!m)break;m.pend++;if(!hit.includes(m))hit.push(m);
+      s.proj.push({k:'zap',x:this.heroX()+20,y:this.beamY()-10,tx:m,life:1.2,vx:0,vy:0,dl:i*0.08});}
+    if(hit.length>1)this.text('CHAIN ZAP!','#5ef2ff',false,this.W*0.5,this.H*0.22);Snd.zap(s.combo+2);};
+  // 5 in a row: one big sweep launches every bug on screen
+  B.bugBlast=function(){const s=this.s,W=this.W,H=this.H;
+    s.minions.filter(m=>!m.dead&&!m.fly).forEach((m,i)=>{m.fly={t:-i*0.07,vx:W*(0.05+Math.random()*0.25),vy:-H*(2.6+Math.random()*1.4)};m.pend=m.hp;});
+    s.sweep=0.45;s.heroJV=-H*2.4;s.flash=0.3;s.flashCol='#ffe066';s.shake=RM?0:0.4;Snd.boom();s.rings.push({x:W*0.55,life:1,boom:1});
+    this.text('BUG BLAST!','#ffe066',true,W*0.5,H*0.42);s.blasts=(s.blasts||0)+1;};
+  // right answer: bugs panic. Miss: bugs giggle and dance. Neither costs anything.
+  B.bugsReact=function(k){const s=this.s;if(!s)return;const W=this.W,H=this.H,live=s.minions.filter(m=>!m.dead&&!m.fly&&m.hp-m.pend>0);if(!live.length)return;
+    if(s.tower)s.tower.t=Math.max(s.tower.t,2.3);
+    live.forEach(m=>{if(k==='panic'){m.panic=0.9;if(m.y>=0)m.vy=-H*(0.8+Math.random()*0.5);m.x=Math.min(this.foeX()-20,m.x+W*0.015);}else m.dance=1.5;});
+    const t=pick(live);t.say=pick(k==='panic'?BUG_PANIC:BUG_LAUGH);t.sayT=1.1;};
+  // a dojo miss: the streak resets and the bugs have a laugh
+  B.miss=function(){const s=this.s;if(!s)return;s.combo=0;Music.intensity=0;this.bugsReact('laugh');};
+  B.spawnWave=function(){const s=this.s;s.wave++;const w=s.wave;s.bugCol=BUG_COLS[(w-1)%BUG_COLS.length];
+    let types;if(w===1)types=s.drill?['bug','bug','bug']:['bug','bug'];
+    else if(w%3===0)types=[...Array(s.drill?2:1)].map(()=>pick(['bug','zip'])).concat(['king']);
+    else types=[...Array(s.drill?3+(w%2):2+(w%2))].map(()=>pick(['bug','bug','zip','armor']));
+    types.forEach((ty,i)=>{const king=ty==='king';s.minions.push({type:ty,hp:BUG_HP[ty],max:BUG_HP[ty],pend:0,x:this.foeX()-10+i*30,y:0,vy:0,rot:0,ph:Math.random()*6,
+      stop:this.W*(king?0.7:0.44+i*0.075+Math.random()*0.03),dead:false,born:s.t,say:king?'BOW TO ME!':null,sayT:king?1.8:0,panic:0,dance:0,hurtT:0,spin:0,fly:null,tw:null});});
+    const king=types.includes('king');this.text(king?'KING BUG!':'BUG ATTACK!',king?'#ffd23f':'#ff4d6d',true,this.W*0.55,this.H*0.3);
+    if(typeof Talk==='undefined')return;
+    if(!state.bugTip){state.bugTip=1;saveState();setTimeout(()=>Talk.pop('byte','BEEP! Those are Glitch’s BUGS. Every right answer zaps one. Zap a whole wave for bonus coins!'),400);}
+    else if(types.includes('armor')&&!state.bugTipArmor){state.bugTipArmor=1;saveState();setTimeout(()=>Talk.pop('byte','Armored bugs need TWO zaps. Answer lightning-fast and you zap twice!'),400);}
+    else if(king&&!state.bugTipKing){state.bugTipKing=1;saveState();setTimeout(()=>Talk.pop('byte','KING BUG! It takes 3 zaps. Get 5 right in a row for a BUG BLAST that wipes out the whole wave!'),400);}};
+  // where a bug is drawn (towers, hovering zippers, hops); bolts home onto the same spot
+  B.bugXY=function(m){const s=this.s,H=this.H,ms=Math.max(2,Math.min(H,200)/22),bs=ms*(BUG_SC[m.type]||1);let x=m.x,y=H*0.9-9*bs-Math.abs(Math.sin(m.ph))*bs*1.5+m.y;
+    if(m.type==='zip')y-=ms*3+Math.sin(s.t*5+m.ph)*ms;
+    if(s.tower&&m.tw!=null){const t=s.tower.t,k=clamp(Math.min(t/0.3,(2.6-t)/0.3),0,1);x+=(s.tower.x-x)*k+Math.sin(s.t*6)*m.tw*2*k;y-=m.tw*7*ms*k;}
+    return {x,y,s:bs};};
+  B.bugHurt=function(m,tx,ty){const s=this.s,H=this.H;m.hurtT=0.4;m.vy=-H*0.8;m.x=Math.min(this.foeX()-20,m.x+this.W*0.02);
+    for(let i=0;i<3;i++)this.sparks(6,['#c9cfdc','#ffffff','#ffe066'][i],tx,ty,200);this.text(m.type==='king'?'BONK!':'CRACK!','#e8eefc',false,tx,H*0.45);Snd.block();
+    m.say=m.type==='king'?pick(['OW! My crown!','you dare?!']):pick(['my shell!','ow ow!']);m.sayT=1;};
+  B.squash=function(m){const s=this.s,W=this.W,H=this.H;if(m.dead)return;m.dead=true;const P=this.bugXY(m),tx=clamp(P.x+5*P.s,40,W-40),ty=clamp(P.y+4*P.s,20,H-20),val=m.type==='king'?5:m.max;
+    s.squashed=(s.squashed||0)+1;const bc=s.bugCol||BUG_COLS[0];[bc[0],'#ffe066','#ffffff'].forEach(cl=>this.sparks(8,cl,tx,ty,240));
+    this.text((m.type==='king'?'KING SQUASHED!':pick(['SQUASH!','ZAP!','POP!','SPLAT!']))+' +'+val,'#ffe066',m.type==='king',tx,H*0.5);
+    Snd.coin();state.coins+=val;const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);
+    if(!s.minions.some(q=>!q.dead)){this.text('WAVE CLEAR! +3','#ffe066',true,W*0.5,H*0.45);state.coins+=3;saveState();const lc2=$('#lv-coins');if(lc2)lc2.textContent=String(state.coins);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
+      for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2,v=120+Math.random()*300;s.fx.push({x:tx,y:ty,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,life:0.6+Math.random()*0.6,col:pick(['#ffe066','#ff7b1c','#ffffff']),sz:3+Math.random()*3,grav:260});}
+      setTimeout(()=>{if(this.s===s)s.minions=s.minions.filter(q=>!q.dead);},300);}};
+  // small antics while he thinks: one at a time, every few seconds, never while the pen is moving
+  B.bugAntic=function(){const s=this.s,H=this.H;const live=s.minions.filter(m=>!m.dead&&!m.fly&&m.x<=m.stop+2&&!(m.panic>0)&&!(m.dance>0)&&m.hp-m.pend>0);if(!live.length||s.tower)return;
+    const opts=['hop','spin','spit','spit'];const small=live.filter(m=>m.type!=='king');if(small.length>=3)opts.push('tower','tower');const k=pick(opts),m=pick(live);
+    if(k==='hop'){m.vy=-H*1.6;m.say='boing!';m.sayT=0.9;}
+    else if(k==='spin'){m.spin=0.7;m.say=pick(['wheee!','spin!']);m.sayT=0.9;}
+    else if(k==='spit'){const P=this.bugXY(m),x0=P.x,y0=P.y+3*P.s,tx=this.heroX()+H*0.25;s.spits.push({x:x0,y:y0,vx:-(x0-tx)/0.9,vy:-H*1.17,t:0});m.say=pick(['ptoo!','take that!','spitball!']);m.sayT=0.9;}
+    else{const L=small.sort((a,b)=>a.x-b.x).slice(0,3);s.tower={t:0,x:L[0].x,list:L};L.forEach((q,i)=>q.tw=i);L[2].say='BUG TOWER!';L[2].sayT=1.6;}};
   B.foeAttack=function(){const s=this.s;const k=pick(s.mech?['missile','laser','slam']:['missile','laser','slam','missile']);s.foeAtk={k,t:0};
     if(k==='laser')Snd.charge(0.5);else if(k==='missile')Snd.whoosh();};
   B.update=function(dt){const s=this.s;if(!s)return;_update(dt);if(s.freeze>0)return;const H=this.H,W=this.W;
@@ -1832,7 +1884,20 @@ const BUG_TALK=['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oo
     if(s.heroJump<0||s.heroJV<0){s.heroJV+=H*8*dt;s.heroJump+=s.heroJV*dt;if(s.heroJump>0){s.heroJump=0;s.heroJV=0;}}
     // bug waves
     if(!s.gone&&!s.ko){if(!s.minions.some(m=>!m.dead)){s.waveT-=dt;if(s.waveT<=0){this.spawnWave();s.waveT=s.drill?1.2:2.5;}}}
-    for(const m of s.minions){if(m.dead)continue;if(m.x>m.stop)m.x-=W*0.05*dt;m.ph+=dt*8;m.sayT=Math.max(0,m.sayT-dt);if(!m.sayT&&Math.random()<dt*0.25){m.say=pick(BUG_TALK);m.sayT=1.4;}}
+    for(const m of s.minions){if(m.dead)continue;m.sayT=Math.max(0,m.sayT-dt);m.hurtT=Math.max(0,m.hurtT-dt);
+      if(m.fly){m.fly.t+=dt;if(m.fly.t<0)continue;m.x+=m.fly.vx*dt;m.y+=m.fly.vy*dt;m.fly.vy+=H*5*dt;m.rot+=dt*14;if(m.fly.t>0.7)this.squash(m);continue;}
+      const moving=m.x>m.stop+1;if(moving)m.x-=W*(m.type==='zip'?0.16:m.type==='king'?0.03:0.05)*dt;
+      m.ph+=dt*(moving?8:m.dance>0?12:3);
+      if(m.y<0||m.vy<0){m.vy+=H*7*dt;m.y+=m.vy*dt;if(m.y>0){m.y=0;m.vy=0;}}
+      if(m.panic>0)m.panic-=dt;
+      if(m.dance>0){m.dance-=dt;if(m.y>=0&&m.vy>=0)m.vy=-H*0.9;}
+      if(m.spin>0){m.spin=Math.max(0,m.spin-dt);m.rot=m.spin?(1-m.spin/0.7)*Math.PI*2:0;}else m.rot=m.dance>0?Math.sin(s.t*14)*0.3:0;
+      if(!m.sayT&&Math.random()<dt*0.15){m.say=pick(BUG_TALK[m.type]||BUG_TALK.bug);m.sayT=1.4;}}
+    if(s.tower){s.tower.t+=dt;if(s.tower.t>2.6||s.tower.list.some(q=>q.dead||q.fly)){s.tower.list.forEach(q=>q.tw=null);s.tower=null;}}
+    if(!s.gone&&!s.ko){s.antT-=dt;if(s.antT<=0){s.antT=4+Math.random()*4;const busy=typeof InkBox!=='undefined'&&(InkBox.drawing||Date.now()-(InkBox.lastUp||0)<1500);if(!busy)this.bugAntic();}}
+    s.spits=s.spits.filter(b=>{b.t+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=H*2.6*dt;
+      if(b.t>=0.9){const hx=this.heroX()+H*0.25;s.shieldT=Math.max(s.shieldT||0,0.45);this.sparks(10,'#7dff9a',hx,b.y,160);this.text('PLINK!','#7dff9a',false,hx+H*0.1,H*0.35);return false;}return true;});
+    s.sweep=Math.max(0,s.sweep-dt);
     // Glitch fights back between problems (looks only, never costs power)
     if(!s.drill&&!s.gone&&!s.ko&&!s.atk&&!s.foeAtk&&$('#cine').hidden){s.foeAtkT-=dt;if(s.foeAtkT<=0){this.foeAttack();s.foeAtkT=(s.drill?5:8)+Math.random()*4;}}
     if(s.foeAtk){const f=s.foeAtk;f.t+=dt;const hx=this.heroX(),gy=H*0.9;
@@ -1845,11 +1910,8 @@ const BUG_TALK=['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oo
     s.rings=s.rings.filter(r=>{r.life-=dt*0.9;r.x-=W*0.75*dt;return r.life>0&&r.x>0;});
     s.slashes=s.slashes.filter(x=>(x.life-=dt)>0);
     // zap bolts that home onto bugs
-    for(const p of s.proj){if(p.k!=='zap'||p.dl>0)continue;const m=p.tx;const tx=m.x+10,ty=H*0.9-14;const dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy);
-      if(d<16||p.life<0.05){p.life=0;if(!m.dead){m.dead=true;this.sparks(22,[s.bugCol?s.bugCol[0]:'#ff4d6d','#ffe066','#ffffff'],tx,ty,240);this.text(pick(['SQUASH!','ZAP!','POP!','SPLAT!'])+' +1','#ffe066',false,tx,H*0.5);Snd.coin();state.coins+=1;const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);
-        if(!s.minions.some(q=>!q.dead)){this.text('WAVE CLEAR! +3','#ffe066',true,W*0.5,H*0.45);state.coins+=3;saveState();const lc2=$('#lv-coins');if(lc2)lc2.textContent=String(state.coins);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
-          for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2,v=120+Math.random()*300;s.fx.push({x:tx,y:ty,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,life:0.6+Math.random()*0.6,col:pick(['#ffe066','#ff7b1c','#ffffff']),sz:3+Math.random()*3,grav:260});}
-          setTimeout(()=>{if(this.s===s)s.minions=s.minions.filter(q=>!q.dead);},300);}}}
+    for(const p of s.proj){if(p.k!=='zap'||p.dl>0)continue;const m=p.tx,P=this.bugXY(m);const tx=P.x+5*P.s,ty=P.y+4*P.s;const dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy);
+      if(d<16||p.life<0.05){p.life=0;if(!m.dead&&!m.fly){m.pend=Math.max(0,m.pend-1);m.hp--;if(m.hp>0)this.bugHurt(m,tx,ty);else this.squash(m);}}
       else{p.x+=dx/d*Math.max(500,W*1.4)*dt;p.y+=dy/d*Math.max(500,W*1.4)*dt;}}};
   B.draw=function(){const c=this.ctx,s=this.s,W=this.W,H=this.H;if(!c||!W||!H||!s)return;
     c.save();if(s.shake>0){const m=s.shake*12;c.translate((Math.random()-0.5)*m,(Math.random()-0.5)*m);}
@@ -1892,12 +1954,29 @@ const BUG_TALK=['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oo
       if(x.up)c.arc(x.x,x.y+x.r*0.4,x.r,-2.6,-0.5);else c.arc(x.x,x.y,x.r,x.a0,x.a0+1.6);c.stroke();}c.globalAlpha=1;
     // bugs
     const ms=Math.max(2,Math.min(H,200)/22),bc=s.bugCol||BUG_COLS[0];
-    for(const m of s.minions){if(m.dead)continue;const by=ground-9*ms-Math.abs(Math.sin(m.ph))*ms*1.5;
-      drawSprite(c,MINION,m.x,by,ms,{a:bc[1],g:bc[1],G:bc[0],W:'#ffffff',K:'#1d1f33',M:'#1d1f33'});drawSprite(c,MINION_LEGS[(m.ph|0)%2],m.x,by+8*ms,ms,{g:bc[1]});
-      if(m.sayT>0&&H>80){const fs=Math.max(10,Math.round(Math.min(H,200)*0.075));c.font=`700 ${fs}px Lexend,sans-serif`;const tw=c.measureText(m.say).width+10;c.globalAlpha=Math.min(1,m.sayT*3);
-        c.fillStyle='#ffffff';c.fillRect(m.x-2,by-fs-10,tw,fs+6);c.fillStyle='#1d1f33';c.textAlign='left';c.fillText(m.say,m.x+3,by-8);c.globalAlpha=1;}}
-    {const left=s.minions.filter(m=>!m.dead).length;if(left){const fs=Math.max(11,Math.round(Math.min(H,200)*0.09)),tx=W*0.5,ty=H-Math.max(4,H*0.02);c.font=`800 ${fs}px "Pixelify Sans",monospace`;c.textAlign='center';
-      const label=`BUGS LEFT: ${left}`;const tw=c.measureText(label).width+18;c.fillStyle='#000a';c.fillRect(tx-tw/2,ty-fs,tw,fs+8);c.fillStyle=bc[0];c.fillText(label,tx,ty);}}
+    if(s.sweep>0){c.globalAlpha=Math.min(1,s.sweep*3);c.fillStyle='#ffe066';c.fillRect(this.heroX(),ground-H*0.16,W,H*0.12);c.fillStyle='#ffffff';c.fillRect(this.heroX(),ground-H*0.11,W,H*0.03);c.globalAlpha=1;}
+    for(const m of s.minions){if(m.dead)continue;const P=this.bugXY(m),bs=P.s,bx=P.x,by=P.y,fl=m.hurtT>0&&((s.t*20|0)%2===0);
+      const pal=fl?{a:'#fff',g:'#fff',G:'#fff',W:'#fff',K:'#fff',M:'#fff'}:{a:bc[1],g:bc[1],G:bc[0],W:'#ffffff',K:'#1d1f33',M:'#1d1f33'};
+      c.save();if(m.rot){const ox=bx+5*bs,oy=by+4.5*bs;c.translate(ox,oy);c.rotate(m.rot);c.translate(-ox,-oy);}
+      if(m.type==='zip'){const f=Math.abs(Math.sin(s.t*30+m.ph));c.globalAlpha=0.6;c.fillStyle='#e0f7ff';
+        [[3,-0.4],[7,0.4]].forEach(([wx,an])=>{c.beginPath();c.ellipse(bx+wx*bs,by+1.2*bs,2.6*bs,(0.5+f*1.4)*bs,an,0,Math.PI*2);c.fill();});c.globalAlpha=1;
+        if(m.x>m.stop+2){c.fillStyle='#ffffff66';for(let i=0;i<3;i++)c.fillRect(bx+(10.5+i)*bs,by+(3+i*1.6)*bs,3*bs,0.4*bs);}}
+      drawSprite(c,MINION,bx,by,bs,pal);drawSprite(c,MINION_LEGS[(m.ph|0)%2],bx,by+8*bs,bs,{g:pal.g});
+      if(m.type==='armor'){c.fillStyle=fl?'#fff':'#c9cfdc';c.fillRect(bx+2*bs,by+1.6*bs,6*bs,1.4*bs);c.fillRect(bx+0.6*bs,by+3*bs,1*bs,2.4*bs);c.fillRect(bx+8.4*bs,by+3*bs,1*bs,2.4*bs);
+        c.fillStyle='#5d6385';for(let i=0;i<3;i++)c.fillRect(bx+(2.8+i*2)*bs,by+2*bs,0.6*bs,0.6*bs);
+        if(m.hp<m.max){c.strokeStyle='#1d1f33';c.lineWidth=Math.max(1.5,bs*0.35);c.beginPath();c.moveTo(bx+3.6*bs,by+1.6*bs);c.lineTo(bx+4.6*bs,by+2.3*bs);c.lineTo(bx+4*bs,by+3*bs);c.moveTo(bx+6.2*bs,by+1.6*bs);c.lineTo(bx+5.6*bs,by+2.6*bs);c.stroke();}}
+      if(m.type==='king'){const cy=by-0.4*bs;c.fillStyle='#ffd23f';c.fillRect(bx+2.5*bs,cy+0.9*bs,5*bs,1.3*bs);
+        [2.5,4.5,6.5].forEach(px=>{c.beginPath();c.moveTo(bx+px*bs,cy+1*bs);c.lineTo(bx+(px+0.5)*bs,cy-0.8*bs);c.lineTo(bx+(px+1)*bs,cy+1*bs);c.fill();});
+        c.fillStyle='#ff4d6d';c.fillRect(bx+4.7*bs,cy+1.2*bs,0.7*bs,0.7*bs);c.fillStyle='#5ef2ff';c.fillRect(bx+3*bs,cy+1.3*bs,0.5*bs,0.5*bs);c.fillRect(bx+6.5*bs,cy+1.3*bs,0.5*bs,0.5*bs);}
+      if(m.panic>0){c.fillStyle='#5ef2ff';c.fillRect(bx+9.4*bs,by+(2+(0.9-m.panic)*3)*bs,0.7*bs,1*bs);c.fillRect(bx-0.8*bs,by+(2.5+(0.9-m.panic)*3)*bs,0.7*bs,1*bs);}
+      c.restore();
+      if(m.max>1&&!m.fly){const pw=Math.max(5,bs*1.2),gap=3,tw=m.max*pw+(m.max-1)*gap,px0=bx+5*bs-tw/2,py=by-(m.type==='king'?2.4:1.4)*bs-6;
+        for(let i=0;i<m.max;i++){c.fillStyle='#000a';c.fillRect(px0+i*(pw+gap)-1,py-1,pw+2,6);c.fillStyle=i<m.hp?'#3fdc6b':'#ffffff33';c.fillRect(px0+i*(pw+gap),py,pw,4);}}
+      if(m.sayT>0&&H>80&&!m.fly){const fs=Math.max(10,Math.round(Math.min(H,200)*0.075));c.font=`700 ${fs}px Lexend,sans-serif`;const tw=c.measureText(m.say).width+10,sx=clamp(bx-2,2,W-tw-2),sy=by-(m.max>1?14:0);c.globalAlpha=Math.min(1,m.sayT*3);
+        c.fillStyle='#ffffff';c.fillRect(sx,sy-fs-10,tw,fs+6);c.fillStyle='#1d1f33';c.textAlign='left';c.fillText(m.say,sx+5,sy-8);c.globalAlpha=1;}}
+    for(const b of s.spits){c.fillStyle='#3fdc6b';c.beginPath();c.arc(b.x,b.y,Math.max(4,H*0.025),0,Math.PI*2);c.fill();c.fillStyle='#c8ffd4';c.fillRect(b.x-2,b.y-3,3,3);}
+    {const left=s.minions.filter(m=>!m.dead).length,sq=s.squashed||0;if(left||sq){const fs=Math.max(11,Math.round(Math.min(H,200)*0.08)),tx=W*0.36,ty=fs+6;c.font=`800 ${fs}px "Pixelify Sans",monospace`;c.textAlign='center';
+      const label=W<700?`BUGS ${left} · SQUASHED ${sq}`:left?`BUGS LEFT: ${left} · SQUASHED: ${sq}`:`SQUASHED: ${sq}`;const tw=c.measureText(label).width+18;c.fillStyle='#000a';c.fillRect(tx-tw/2,ty-fs-1,tw,fs+7);c.fillStyle=bc[0];c.fillText(label,tx,ty);}}
     if(s.shieldT>0){const al=Math.min(1,s.shieldT*1.5),sx=this.heroX()+(s.mech?H*0.36:H*0.2)+hdx,r=H*0.3;c.strokeStyle=`rgba(94,242,255,${al})`;c.lineWidth=4;c.fillStyle=`rgba(94,242,255,${al*0.18})`;
       c.beginPath();for(let i=0;i<6;i++){const an=Math.PI/3*i+Math.PI/6;c.lineTo(sx+Math.cos(an)*r*0.6,y-6+Math.sin(an)*r);}c.closePath();c.fill();c.stroke();}
     if(f&&f.k==='missile'&&f.p&&!f.done){c.fillStyle='#ff4d6d';c.fillRect(f.p.x-7,f.p.y-3,14,6);c.fillStyle='#ffe066';c.fillRect(f.p.x+7,f.p.y-2,6,4);s.fx.push({x:f.p.x+12,y:f.p.y,vx:30,vy:rint(-15,15),life:0.3,col:'#ffb627',sz:3});}
@@ -2303,7 +2382,7 @@ const Dojo={
         else if(p.k==='again')this.reask(p,[]);
         setTimeout(()=>this.advance(p),fast?360:600);return;}
       // a miss: nothing is lost. Build the fact with the trick, copy it, and it comes back soon.
-      Pad.set(fld,f.ans);Pad.lock(fld);fld.el.classList.add('shown');dj.bolt=0;dj.miss.push(f);
+      Pad.set(fld,f.ans);Pad.lock(fld);fld.el.classList.add('shown');dj.bolt=0;dj.miss.push(f);if(Battle.miss)Battle.miss();
       if(sp.kind==='sprint'){setTimeout(()=>this.advance(p),700);return;}
       if(teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;}
       this.reask(p,[2,5]);
@@ -2323,6 +2402,7 @@ const Dojo={
   finish(){const sp=run.spec,dj=run.dj,did=sp.dojo,d=this.st(),t=d.today[did];if(dj.finished)return;dj.finished=true;
     const rs=run.results.filter(Boolean),N=rs.length,C=rs.filter(r=>r.firstTry).length,F=rs.filter(r=>r.fast).length;
     d.bestBolt=Math.max(d.bestBolt||0,dj.boltBest);
+    const sq=(Battle.s&&Battle.s.squashed)||0,prevSq=d.bestSquash||0;d.bestSquash=Math.max(prevSq,sq);
     // adapt how many new facts tomorrow
     if(sp.kind!=='sprint'){t.rounds++;if(t.tk>=3){const acc=t.tok/t.tk;d.k[did]=clamp((d.k[did]||DJ.K0)+(acc>=0.9?1:acc<0.8?-1:0),DJ.KMIN,DJ.KMAX);}}
     // owned facts reviewed today move to a longer gap
@@ -2336,7 +2416,7 @@ const Dojo={
     const newSupers=newBelts.map(()=>unlockNextSuper()).filter(Boolean);
     let coins=sp.kind==='sprint'?5+C:10+F+dj.newOwned.length*3+(diamond?40:0)+newBelts.length*100;state.coins+=coins;run.coins+=coins;
     if(diamond)d.medals.diamond=(d.medals.diamond||0)+1;
-    const summary={title:sp.title,mode:'dojo',dojo:did,kind:sp.kind,n:N,firstTry:C,fast:F,newOwned:dj.newOwned,taught:dj.taught,beltsEarned:newBelts,coins,ms:Date.now()-run.start,miss:[...new Set(dj.miss.map(f=>f.key))]};
+    const summary={title:sp.title,mode:'dojo',dojo:did,kind:sp.kind,n:N,firstTry:C,fast:F,newOwned:dj.newOwned,taught:dj.taught,beltsEarned:newBelts,coins,squashed:sq,ms:Date.now()-run.start,miss:[...new Set(dj.miss.map(f=>f.key))]};
     SESSION.runs.push(summary);saveState();Data.saveSession();Local.addSession(SESSION);if(typeof Sync!=='undefined')Sync.kick();
     const fl=k=>{const f=this.facts(did).find(x=>x.key===k);return f?factFull(f):k;};
     const after=()=>{overlay(null);$('#scr-level').classList.remove('dojo');this.render();show('scr-dojo');
@@ -2349,6 +2429,7 @@ const Dojo={
       dj.newOwned.length?el('p',{class:'dj-stripe'},`★ Facts owned forever: ${dj.newOwned.map(fl).join(' · ')}`):null,
       newBelts.length?el('p',{class:'dj-stripe'},newBelts.map(i=>BELTS[i][0]+' Belt earned!').join(' ')):null,
       newSupers.length?el('p',{class:'dj-stripe'},'New super move unlocked: '+newSupers.map(x=>x[1]).join(', ')+'! It joins your SUPER attacks.'):null);}
+    if(sq)m.append(el('p',{class:'dj-bugs'},`🐞 Bugs squashed: ${sq}`+(sq>prevSq&&prevSq?' · NEW BEST!':` (best ${Math.max(prevSq,sq)})`)));
     m.append(el('p',{class:'tiny-ok'},`+${coins} coins`));
     const nextDid=!this.doneToday('pm')?'pm':!this.doneToday('tm')?'tm':((t.secs||0)>((d.today[did==='pm'?'tm':'pm'].secs)||0)?(did==='pm'?'tm':'pm'):did);
     if(this.strict()&&!this.gateOk()){m.append(el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
@@ -2475,7 +2556,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004185708';
+const BUILD='20261004191325';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
