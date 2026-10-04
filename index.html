@@ -660,6 +660,14 @@ table.spd td.x{background:transparent;border-color:transparent}
 .modal.bigpad{padding:12px 16px 14px;gap:6px}
 .bigpad .bp-tip{margin:0 0 4px}.bigpad .bp-tip b{color:#ffe066}
 .bigpad .bp-said{font-size:22px;min-height:26px;margin:2px 0}
+/* box breathing */
+.bbreath{display:flex;flex-direction:column;align-items:center;gap:6px;margin:6px 0}
+.bb-cv{display:block;border-radius:18px;background:#0d1030;box-shadow:inset 0 0 0 2px #ffffff14}
+.bb-label{font-weight:700;color:#cfd5ff;min-height:22px}
+.bb-meter{width:min(300px,70vw);height:10px;border-radius:6px;background:#ffffff1a;overflow:hidden}.bb-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5ef2ff,#3fdc6b);transition:width .3s}
+.bb-round{color:#9aa3c7}
+/* digit boxes on the ink pads */
+.ink.boxed .ink-hint{display:none}
 </style>
 
 <div id="app">
@@ -2555,14 +2563,15 @@ const Dojo={
       el('span',{class:'dj-bolt'},'⚡ '+dj.fast)));
     if(teach){const v=factVisual(f);card.append(el('div',{class:'dj-teach'},el('b',null,'Here’s the trick'),v,el('p',null,factTip(f))));}
     card.append(el('div',{class:'dj-expr'},el('span',null,(f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f,flip)+' =')),fld.el));
-    const ink=el('div',{class:'dj-ink'});card.append(ink);if(typeof InkBox!=='undefined')InkBox.mount(ink,{big:true,allowDot:false});else ink.remove();
+    const ink=el('div',{class:'dj-ink'});card.append(ink);if(typeof InkBox!=='undefined')InkBox.mount(ink,{big:true,allowDot:false,boxes:f.ans>=100?3:2});else ink.remove();
     Pad.focus(fld);say(teach?'No rush on new facts. Use the trick.':sp.kind==='sprint'?'Go go go!':'Type it or write it.','');
     const t0=Date.now(),R=run;p.t0=t0;p.ts=t0;let done=false,tm=null,asking=false;
     const go=()=>{if(done||asking||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
       if(src==='ink'){ // still writing? (e.g. the second loop of an 8). A short last "0" may be the top half of an 8, so wait longer.
         const it=(InkBox.lastR&&InkBox.lastR.items)||[],last=it[it.length-1],tall=Math.max(1,...it.map(i=>i.box.y1-i.box.y0));
         const maybe8=last&&last.ch==='0'&&(it.length===1||(last.box.y1-last.box.y0)<0.75*tall);
-        if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
+        const nb=(InkBox.active&&InkBox.active.boxes)||0;
+        if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:nb&&it.length<nb?1500:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
       const lat=p.lat0!=null?p.lat0:(ANS.firstInput||Date.now())-(p.ts||t0),ok=v===f.ans;
       // wrong in handwriting? Ask first: "I read 17. Is that what you wrote?" A rewrite keeps his first speed.
       if(!ok&&src==='ink'&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
@@ -2580,6 +2589,8 @@ const Dojo={
       // brain getting tired? (3 misses in the last 6, or answers slowing to more than double his early pace) End the round early and recharge.
       if(sp.kind!=='sprint'&&!dj.tired&&run.idx>=5){const rs=run.results.filter(Boolean),miss=rs.slice(-6).filter(r=>!r.firstTry).length,L=rs.map(r=>r.ms).filter(x=>x&&x<20000);
         if(miss>=3||(L.length>=12&&med(L.slice(-5))>Math.max(6000,med(L.slice(0,8))*2.2))){dj.tired=true;run.queue.length=run.idx+1;Battle.setTotal(run.queue.length);}}
+      // learn his handwriting from answers he got right (the reading matched what he meant)
+      if(ok&&src==='ink'&&InkBox.lastR&&InkBox.lastR.imgs&&InkBox.lastR.text===String(v))InkBox.lastR.imgs.forEach(x=>InkBox.mine.add(x.ch,x.img));
       if(ok){Pad.right(fld);Pad.lock(fld);dj.ok++;if(fast){dj.fast++;dj.bolt++;this.st().bolts++;dj.boltBest=Math.max(dj.boltBest,dj.bolt);}else dj.bolt=0;
         Battle.event(fast?'quick':'hit');stamp(fast?'quick':'right',null,{small:true,ms:fast?550:650});
         if(!before&&rec.owned&&sp.kind!=='sprint'){Snd.gem();Battle.text('FACT OWNED!','#ffe066',true,null,Battle.H*0.22);if(typeof DogPower!=='undefined'&&DogPower.has('ellie'))DogPower.pop('ellie','Woof! That fact is yours forever!',{force:true});}
@@ -2595,7 +2606,7 @@ const Dojo={
       const v2=teach?null:factVisual(f);
       const fix=el('div',{class:'dj-miss'},el('div',{class:'dj-build'},'Let’s build it'),v2,teach?null:el('div',{class:'dj-tip'},factTip(f)));card.querySelector('.dj-expr').after(fix);
       const cp=Pad.make({allowDot:false,max:4,ph:'?'});fix.append(el('div',{class:'dj-copy'},'Now you: ',el('span',null,factExpr(f,flip)+' ='),cp.el));
-      ink.parentNode&&ink.remove();const ink2=el('div',{class:'dj-ink'});fix.after(ink2);if(typeof InkBox!=='undefined')InkBox.mount(ink2,{big:true,allowDot:false});else ink2.remove();
+      ink.parentNode&&ink.remove();const ink2=el('div',{class:'dj-ink'});fix.after(ink2);if(typeof InkBox!=='undefined')InkBox.mount(ink2,{big:true,allowDot:false,boxes:f.ans>=100?3:2});else ink2.remove();
       Pad.focus(cp);say('Copy it to lock it in. It will come back in a moment.','info');
       cp.onChange=()=>{if(Pad.val(cp)===f.ans){Pad.right(cp);Pad.lock(cp);Snd.coin();setTimeout(()=>this.advance(p),450);}
         else if(cp.val.length>=len){Pad.wrong(cp);setTimeout(()=>{Pad.set(cp,'');if(typeof InkBox!=='undefined')InkBox.clear();},350);}};
@@ -2789,9 +2800,9 @@ const Pause={on:false,at:0,last:Date.now(),
     setInterval(()=>{if(!this.on&&this.active()&&Date.now()-this.last>60000)this.pause('idle');},4000);},
   active(){return typeof run!=='undefined'&&!!run&&!$('#scr-level').hidden&&$('#overlay').hidden&&$('#cine').hidden&&$('#talk').hidden;},
   pause(why){if(this.on||!this.active())return;this.on=true;this.at=Date.now();Battle.stop();Music.stop();if(typeof Talk!=='undefined')Talk.unpop();
-    overlay(el('div',{class:'modal pause-modal'},el('h2',null,'⏸ Paused'),
+    const m=this.modal=el('div',{class:'modal pause-modal'},el('h2',null,'⏸ Paused'),
       el('p',null,why==='idle'?'Taking a break? The clock stopped so it won’t count against your speed.':'The clock is stopped. Take your time!'),
-      el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>this.resume()},'Resume ▸'))));},
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>BoxBreath.open(()=>overlay(m))},'🧘 Box breathing'),el('button',{class:'btn btn-green',type:'button',onclick:()=>this.resume()},'Resume ▸')));overlay(m);},
   // hold/release: stop the clock without the pause screen (used by recharge breaks)
   hold(){if(this.on)return false;this.on=true;this.at=Date.now();this.held=true;return true;},
   release(){if(!this.held)return;this.held=false;const d=Date.now()-this.at;this.on=false;this.shift(d);this.last=Date.now();},
@@ -2803,7 +2814,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004220851';
+const BUILD='20261004221908';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -2971,12 +2982,15 @@ const ScreenTime={warned:null,
   brk(o){o=o||{};const secs=o.secs||60,{D}=this.st();D.breaks=(D.breaks||0)+1;D.since=0;if(o.tired)D.tired=(D.tired||0)+1;saveState();
     this.onBreak=true;const held=typeof Pause!=='undefined'&&Pause.hold();
     const moves=['Stand up and do 10 jumping jacks.','Touch your toes 5 times.','Get a sip of water.','Stretch up high like a giant, then curl up small.','Do 5 wall push-ups.','Shake out your hands and wiggle your whole body.'];
-    return new Promise(res=>{let left=secs;const t=el('b',{class:'rc-time'},''),go=el('button',{class:'btn btn-green',type:'button',disabled:true},'Wait…');
+    const cyc=secs>=110?5:3;
+    return new Promise(res=>{let left=Math.max(secs,cyc*16+6);const t=el('b',{class:'rc-time'},''),go=el('button',{class:'btn btn-green',type:'button',disabled:true},'Wait…');
+      const mv=el('p',{class:'rc-move',hidden:true},'Now: '+pick(moves));
+      const B=BoxBreath.make({cycles:cyc,onDone:sc=>{mv.hidden=false;if(sc>=0.6){state.coins+=3;saveState();Snd.gem();mv.textContent='Calm master! +3 coins. Now: '+pick(moves);}}});
       const paint=()=>{t.textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;};paint();
       const iv=setInterval(()=>{if(document.hidden)return;left--;paint();if(left<=0){clearInterval(iv);go.disabled=false;go.textContent='I’m back! ▸';Snd.gem();}},1000);
-      tapify(go,()=>{if(go.disabled)return;clearInterval(iv);overlay(null);this.onBreak=false;if(held)Pause.release();res();});
+      tapify(go,()=>{if(go.disabled)return;clearInterval(iv);B.stop();overlay(null);this.onBreak=false;if(held)Pause.release();res();});
       overlay(el('div',{class:'modal recharge'},el('h2',null,o.title||'Recharge time! 🔋'),el('p',null,o.msg||'Your brain worked hard. Breaks make it stronger.'),
-        el('div',{class:'rc-breath'},el('i'),el('span',null,'Breathe in… and out…')),el('p',{class:'rc-move'},pick(moves)),t,el('div',{class:'btns'},go)));});},
+        B.el,mv,t,el('div',{class:'btns'},go)));});},
   report(){const {s,D}=this.st();const days=Object.keys(s.days).sort().slice(-7);
     const sel=(vals,cur,key,unit)=>el('select',{class:'st-sel',onchange:e=>{const v=+e.target.value;Parent.guard(()=>{s[key]=v;saveState();this.paint();showReport();});}},vals.map(v=>{const o=el('option',{value:String(v)},v?`${v} ${unit}`:'No limit');if(v===cur)o.selected=true;return o;}));
     return el('div',{class:'rep-st'},el('p',null,el('b',null,'Screen time today: '),`${this.fmt(D.total)} · training ${this.fmt(D.learn)} · shop ${this.fmt(D.shop)} · other ${this.fmt(D.other)}`),
@@ -2997,7 +3011,8 @@ const BigPad={
   ans(){if(typeof run==='undefined'||!run||!run.spec||run.spec.mode==='dojo')return null;const p=run.queue[run.idx];if(!p)return null;const a=p.answer!=null?p.answer:(p.base&&p.base.answer);return a==null||isNaN(a)?null:+a;},
   digits(){const a=this.ans();return a==null?0:String(Math.abs(a)).replace('.','').length;},
   wants(f){return !!f&&!f.locked&&this.digits()>=4;},
-  hint(){const h=document.querySelector('#inkPad .ink-hint');if(h)h.textContent=this.wants(Pad.active)?'✏️ Tap to write it big':'✏️ Write your answer';
+  hint(){if(InkBox.pad){const a=this.ans(),d=this.digits();InkBox.pad.setBoxes(this.wants(Pad.active)?0:(d>=3||String(a).includes('.')?3:2));}
+    const h=document.querySelector('#inkPad .ink-hint');if(h)h.textContent=this.wants(Pad.active)?'✏️ Tap to write it big':'✏️ Write your answer';
     const host=$('#inkPad');if(host)host.classList.toggle('to-big',this.wants(Pad.active));},
   init(){const host=$('#inkPad');if(!host)return;
     host.addEventListener('pointerdown',e=>{if(e.target.closest('.ink-clr'))return;const f=Pad.active;if(!this.wants(f))return;e.preventDefault();e.stopPropagation();this.open(f);},true);
@@ -3015,12 +3030,9 @@ const BigPad={
       for(const s of strokes.concat(cur?[cur]:[])){ctx.beginPath();s.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));if(s.length===1)ctx.lineTo(s[0].x+0.1,s[0].y);ctx.stroke();}};
     // read each box on its own
     let result={text:'',minP:1,bad:false};
-    const read=()=>{const per=Array.from({length:n},()=>[]);strokes.forEach(s=>per[box(s)].push(s));let text='',minP=1,bad=false;
-      per.forEach((ss,i)=>{let ch='',cp=1;if(ss.length){const pts=ss.flat(),xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys);
-          if(dot&&w<bw*0.2&&h<bh*0.2)ch='.';
-          else{try{const pr=HW.classify28(HW.render(ss));let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;ch=String(k);cp=pr[k];minP=Math.min(minP,cp);}catch(e){ch='?';bad=true;}}}
-        cells[i].textContent=ch;cells[i].className=ch===''?'':cp<0.6?'meh':'';text+=ch;});
-      result={text,minP,bad};said.textContent=text?'I read: '+(dot?text:Number(text).toLocaleString('en-US')):' ';done.disabled=!text||bad;};
+    const read=()=>{let r={text:'',items:[],minP:1};try{r=InkBox.readBoxes(strokes,n,W,H,{allowDot:dot});}catch(e){}cells.forEach(c=>{c.textContent='';c.className='';});
+      r.items.forEach(x=>{if(cells[x.i]){cells[x.i].textContent+=x.ch;if(x.p<0.6)cells[x.i].className='meh';}});const text=r.text,bad=false;
+      result={text,minP:r.minP,bad,imgs:r.imgs};said.textContent=text?'I read: '+(dot?text:Number(text).toLocaleString('en-US')):' ';done.disabled=!text||bad;};
     const pt=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};};
     cv.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&penSeen)return;if(e.pointerType==='pen')penSeen=true;e.preventDefault();Snd.init();
       if(!ANS.firstInput)ANS.firstInput=Date.now();cur=[pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}draw();});
@@ -3139,6 +3151,54 @@ const Inter={bag:[],last:null,
   if(sp&&dj&&sp.kind!=='sprint'&&ev>0&&!dj.finished&&run.idx<run.queue.length&&dj.ok>0&&dj.ok%ev===0&&dj.interAt!==dj.ok){dj.interAt=dj.ok;const R=run;
     Inter.play().then(()=>{if(run===R&&!$('#scr-level').hidden)_next();});return;}
   return _next();};}
+
+/* =========================================================
+   Box breathing: a star travels around a square. Breathe in (up), hold (across), breathe out (down), hold (back).
+   He keeps a finger on the star to fill the calm meter. Used in every recharge break, and from the pause screen.
+   ========================================================= */
+const BoxBreath={
+  PH:[['Breathe in','#5ef2ff'],['Hold','#c084fc'],['Breathe out','#3fdc6b'],['Hold','#ffe066']],
+  make(o){o=o||{};const sec=o.sec||4,cycles=o.cycles||3,total=sec*4*cycles,size=Math.min(300,Math.round(Math.min(window.innerWidth,window.innerHeight)*0.42));
+    const cv=el('canvas',{class:'bb-cv',style:`width:${size}px;height:${size}px`}),ctx=cv.getContext('2d'),d=Math.min(2,window.devicePixelRatio||1);cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);
+    const label=el('div',{class:'bb-label'},'Put your finger on the star and follow it'),meter=el('i'),round=el('small',{class:'bb-round'},'');
+    const wrap=el('div',{class:'bbreath'},label,cv,el('div',{class:'bb-meter'},meter),round);
+    const created=performance.now();let t0=null,raf=0,on=false,px=-99,py=-99,calm=0,ticks=0,lastPh=-1,done=false,stopped=false;
+    const m=size*0.16,L=size-2*m;
+    const pos=k=>{const ph=Math.floor(k)%4,f=k-Math.floor(k);return ph===0?[m,m+L*(1-f)]:ph===1?[m+L*f,m]:ph===2?[m+L,m+L*f]:[m+L*(1-f),m+L];};
+    const P=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)*size/r.width,(e.clientY-r.top)*size/r.height];};
+    cv.addEventListener('pointerdown',e=>{e.preventDefault();on=true;[px,py]=P(e);try{cv.setPointerCapture(e.pointerId);}catch(_){}if(t0==null)t0=performance.now();});
+    cv.addEventListener('pointermove',e=>{if(on)[px,py]=P(e);});['pointerup','pointercancel'].forEach(k=>cv.addEventListener(k,()=>{on=false;}));
+    cv.style.touchAction='none';
+    const frame=now=>{if(stopped)return;if(t0==null&&!o.wait&&now-created>3000){t0=now;}
+      const el2=t0==null?0:(now-t0)/1000,k=Math.min(cycles*4,el2/sec),ph=Math.floor(k)%4,cyc=Math.min(cycles,Math.floor(k/4)+1),cnt=Math.min(sec,Math.floor((k-Math.floor(k))*sec)+1);
+      const [x,y]=pos(k),near=on&&Math.hypot(px-x,py-y)<size*0.13;if(t0!=null&&k<cycles*4){ticks++;if(near)calm++;}
+      if(ph!==lastPh&&t0!=null&&k<cycles*4){lastPh=ph;try{Snd.tone([392,523,330,440][ph],0.35,'sine',0.035);}catch(e){}}
+      ctx.clearRect(0,0,size,size);
+      // breathing square in the middle grows on the in-breath and shrinks on the out-breath
+      const f=k-Math.floor(k),grow=ph===0?f:ph===1?1:ph===2?1-f:0,s2=L*(0.25+0.45*grow);
+      ctx.fillStyle=this.PH[ph][1]+'33';ctx.fillRect(size/2-s2/2,size/2-s2/2,s2,s2);
+      ctx.lineWidth=4;ctx.strokeStyle='#ffffff22';ctx.strokeRect(m,m,L,L);
+      // sides: the current one lit up
+      const sides=[[m,m+L,m,m],[m,m,m+L,m],[m+L,m,m+L,m+L],[m+L,m+L,m,m+L]];
+      sides.forEach((sd,i)=>{ctx.strokeStyle=i===ph?this.PH[i][1]:this.PH[i][1]+'55';ctx.lineWidth=i===ph?7:4;ctx.beginPath();ctx.moveTo(sd[0],sd[1]);ctx.lineTo(sd[2],sd[3]);ctx.stroke();});
+      // star
+      const r=size*0.06*(near?1.25:1);ctx.save();ctx.translate(x,y);ctx.rotate(now/900);ctx.fillStyle=near?'#ffffff':'#ffe066';ctx.shadowColor=near?'#ffe066':'transparent';ctx.shadowBlur=near?18:0;
+      ctx.beginPath();for(let i=0;i<10;i++){const a=i*Math.PI/5,rr=i%2?r*0.45:r;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();ctx.fill();ctx.restore();
+      // words
+      ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font=`800 ${Math.round(size*0.085)}px "Pixelify Sans",monospace`;ctx.fillText(t0==null?'Ready?':this.PH[ph][0],size/2,size/2-size*0.02);
+      if(t0!=null){ctx.font=`800 ${Math.round(size*0.12)}px "Pixelify Sans",monospace`;ctx.fillStyle=this.PH[ph][1];ctx.fillText(String(cnt),size/2,size/2+size*0.12);}
+      meter.style.width=Math.round(100*(ticks?calm/ticks:0))+'%';round.textContent=t0==null?'':`Round ${cyc} of ${cycles}`;
+      label.textContent=t0==null?'Put your finger on the star to start':near?'Nice! Keep following the star':'Keep your finger on the star';
+      if(k>=cycles*4&&!done){done=true;const score=ticks?calm/ticks:0;label.textContent=score>=0.6?'Calm master! 🌟':'All done. Great breathing!';round.textContent='';
+        if(o.onDone)o.onDone(score);return;}
+      raf=requestAnimationFrame(frame);};
+    raf=requestAnimationFrame(frame);
+    return {el:wrap,stop(){stopped=true;cancelAnimationFrame(raf);},total};},
+  // a calm-down any time (from the pause screen): no timer, just breathing
+  open(back){const B=this.make({cycles:3,wait:true,onDone:sc=>{if(sc>=0.6){state.coins+=3;saveState();Snd.gem();}btn.textContent=sc>=0.6?'Done (+3 coins) ▸':'Done ▸';}});
+    const btn=el('button',{class:'btn btn-green',type:'button'},'Done ▸');tapify(btn,()=>{B.stop();if(back)back();else overlay(null);});
+    overlay(el('div',{class:'modal recharge'},el('h2',null,'Box breathing 🧘'),el('p',null,'Breathe in for 4, hold for 4, out for 4, hold for 4.'),B.el,el('div',{class:'btns'},btn)));}
+};
 
 /* hw.js - tiny handwritten-number recognizer (digits + optional decimal point).
  * Classic script, defines one global: HW.
@@ -3652,11 +3712,14 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
     const cv=el('canvas',{class:'ink-cv','aria-label':'Write your answer here with your Pencil'}),hint=el('div',{class:'ink-hint'},o.big?'✏️ Write the answer here':'✏️ Write your answer'),
       read=el('div',{class:'ink-read'}),clr=el('button',{class:'ink-clr',type:'button'},'Erase');
     host.append(cv,hint,read,clr);
-    const I={host,cv,ctx:cv.getContext('2d'),strokes:[],cur:null,tm:null,target:null,o,lastAt:0,W:0,H:0,
+    const I={host,cv,ctx:cv.getContext('2d'),strokes:[],cur:null,tm:null,target:null,o,lastAt:0,W:0,H:0,boxes:o.boxes||0,
+      setBoxes(n){if(this.boxes===n)return;this.boxes=n;host.classList.toggle('boxed',!!n);this.draw();},
       size(){const r=cv.getBoundingClientRect();if(!r.width)return;const d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);this.W=r.width;this.H=r.height;this.ctx.setTransform(d,0,0,d,0,0);this.draw();},
-      draw(){const c=this.ctx;c.clearRect(0,0,this.W,this.H);c.strokeStyle='#1d1f33';c.lineWidth=o.big?6:4.5;c.lineCap='round';c.lineJoin='round';
+      draw(){const c=this.ctx;c.clearRect(0,0,this.W,this.H);
+        if(this.boxes){const n=this.boxes,bw=this.W/n,pad=Math.min(8,bw*0.06);c.strokeStyle='#c9b98f';c.lineWidth=2;c.setLineDash([7,6]);for(let i=0;i<n;i++)c.strokeRect(i*bw+pad,pad,bw-2*pad,this.H-2*pad);c.setLineDash([]);}
+        c.strokeStyle='#1d1f33';c.lineWidth=o.big?6:4.5;c.lineCap='round';c.lineJoin='round';
         for(const s of this.strokes.concat(this.cur?[this.cur]:[])){c.beginPath();s.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));if(s.length===1)c.lineTo(s[0].x+0.1,s[0].y);c.stroke();}
-        hint.hidden=this.strokes.length>0||!!this.cur;},
+        hint.hidden=this.strokes.length>0||!!this.cur||!!this.boxes;},
       clear(){this.strokes=[];this.cur=null;clearTimeout(this.tm);read.textContent='';read.className='ink-read';this.draw();},
       pt(e){const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};},
       down(e){if(e.pointerType==='touch'&&InkBox.penSeen)return;if(e.pointerType==='pen')InkBox.penSeen=true;e.preventDefault();Snd.init();
@@ -3665,7 +3728,7 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
       move(e){if(!this.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const v of evs)this.cur.push(this.pt(v));this.draw();},
       up(){InkBox.drawing=false;InkBox.lastUp=Date.now();if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?380:520);},
       read(){const f=this.target;if(!f||f.locked||f!==Pad.active||typeof HW==='undefined'||!this.strokes.length)return;let r;
-        try{r=HW.recognize(this.strokes,{allowDot:f.allowDot,maxLen:f.max+1});}catch(e){return;}
+        try{r=this.boxes?InkBox.readBoxes(this.strokes,this.boxes,this.W,this.H,{allowDot:f.allowDot}):HW.recognize(this.strokes,{allowDot:f.allowDot,maxLen:f.max+1});}catch(e){return;}
         if(!r||!r.text){read.textContent='Hmm, write it a bit bigger?';read.className='ink-read meh';return;}
         InkBox.lastR=r;read.textContent='I read: '+r.text;read.className='ink-read'+(r.minP<0.8?' meh':'');Pad.input(f,r.text,'ink',r.minP,this.lastAt);}};
     cv.addEventListener('pointerdown',e=>I.down(e));cv.addEventListener('pointermove',e=>I.move(e));
@@ -3678,6 +3741,37 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
   usePad(){if(this.pad){this.active=this.pad;this.pad.clear();}},
   clear(){if(this.active)this.active.clear();},
   fit(){const pc=$('.padcol');if(!pc||$('#scr-level').hidden)return;pc.classList.remove('tight');if(pc.scrollHeight>pc.clientHeight+2&&getComputedStyle(pc).flexDirection==='column')pc.classList.add('tight');},
+  // ---- one digit per box: each box is read on its own, so digits can't be split or merged
+  readBoxes(strokes,n,W,H,o){o=o||{};const bw=W/n;
+    // group strokes that overlap side to side (a 4 drawn in two strokes stays one digit), then drop each group in a box by its center
+    const info=strokes.map(s=>{const xs=s.map(p=>p.x),ys=s.map(p=>p.y);return {s,x0:Math.min(...xs),x1:Math.max(...xs),y0:Math.min(...ys),y1:Math.max(...ys)};}).sort((a,b)=>a.x0-b.x0);
+    const groups=[];for(const it of info){const g=groups[groups.length-1];const ov=g?Math.min(g.x1,it.x1)-Math.max(g.x0,it.x0):-1;
+      if(g&&ov>0.3*Math.min(g.x1-g.x0||1,it.x1-it.x0||1)){g.list.push(it.s);g.x0=Math.min(g.x0,it.x0);g.x1=Math.max(g.x1,it.x1);g.y0=Math.min(g.y0,it.y0);g.y1=Math.max(g.y1,it.y1);}
+      else groups.push({list:[it.s],x0:it.x0,x1:it.x1,y0:it.y0,y1:it.y1});}
+    const per=Array.from({length:n},()=>null);groups.forEach(g=>{const i=clamp(Math.floor(((g.x0+g.x1)/2)/bw),0,n-1);const b=per[i];
+      if(b){b.list=b.list.concat(g.list);b.x0=Math.min(b.x0,g.x0);b.x1=Math.max(b.x1,g.x1);b.y0=Math.min(b.y0,g.y0);b.y1=Math.max(b.y1,g.y1);}else per[i]=Object.assign({},g);});
+    let text='',minP=1;const items=[],imgs=[];
+    per.forEach((b,i)=>{if(!b)return;const w=b.x1-b.x0,h=b.y1-b.y0;
+      if(o.allowDot&&w<bw*0.2&&h<H*0.2){text+='.';items.push({ch:'.',p:1,box:b,i});return;}
+      // two digits squeezed into one box: fall back to the splitter for that box only
+      if(w>h*1.15&&w>bw*0.6){const r=HW.recognize(b.list,{allowDot:!!o.allowDot,maxLen:3});if(r&&r.text){text+=r.text;minP=Math.min(minP,r.minP);r.items.forEach(x=>items.push(Object.assign({},x,{i})));}return;}
+      const img=HW.render(b.list);let pr=HW.classify28(img);pr=InkBox.mine.adjust(img,pr);let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;
+      text+=String(k);minP=Math.min(minP,pr[k]);items.push({ch:String(k),p:pr[k],box:b,i});imgs.push({ch:String(k),img});});
+    return {text,items,minP,imgs};},
+  // ---- learns Dev's own handwriting: every correct written answer saves his digits as examples
+  mine:{data:null,
+    load(){if(!this.data){this.data=lsGet('nk-ink-mine',{});}return this.data;},
+    small(img){const o=new Uint8Array(196);for(let y=0;y<14;y++)for(let x=0;x<14;x++){const i=y*2*28+x*2;o[y*14+x]=Math.min(255,Math.round(63.75*(img[i]+img[i+1]+img[i+28]+img[i+29])));}return o;},
+    enc(a){let s='';for(let i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s);},dec(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;},
+    add(ch,img){if(!/^\d$/.test(ch))return;const D=this.load();const L=D[ch]=D[ch]||[];L.push(this.enc(this.small(img)));if(L.length>30)L.splice(0,L.length-30);this.cache=null;lsSet('nk-ink-mine',D);},
+    count(){const D=this.load();return Object.values(D).reduce((a,L)=>a+L.length,0);},
+    // only steps in when the reader is unsure; then his own closest examples get a vote
+    adjust(img,pr){try{let top=0;for(let j=1;j<10;j++)if(pr[j]>pr[top])top=j;if(pr[top]>=0.85||this.count()<25)return pr;
+      if(!this.cache){this.cache={};const D=this.load();for(const d in D)this.cache[d]=D[d].map(s=>this.dec(s));}
+      const q=this.small(img),best=new Array(10).fill(Infinity);for(const d in this.cache){if(this.cache[d].length<3)continue;for(const v of this.cache[d]){let s=0;for(let i=0;i<196;i++){const e=q[i]-v[i];s+=e*e;}if(s<best[d])best[d]=s;}}
+      const fin=best.filter(isFinite);if(fin.length<4)return pr;const ref=fin.slice().sort((a,b)=>a-b)[Math.floor(fin.length/2)]||1;
+      const kn=best.map(b=>isFinite(b)?Math.exp(-3*b/ref):null),ks=kn.reduce((a,v)=>a+(v||0),0);if(!ks)return pr;
+      const out=new Float32Array(10);let z=0;for(let j=0;j<10;j++){const k=kn[j]==null?0.1/10:kn[j]/ks;out[j]=Math.pow(pr[j]+1e-6,0.55)*Math.pow(k+1e-6,0.45);z+=out[j];}for(let j=0;j<10;j++)out[j]/=z;return out;}catch(e){return pr;}}},
   init(){window.addEventListener('resize',()=>this.fit());const h=$('#inkPad');if(!h||typeof HW==='undefined')return;this.pad=this.make(h,{});this.active=this.pad;document.body.classList.add('has-ink');}
 };
 
@@ -4032,6 +4126,7 @@ function answerFlow(o){const st={tries:0,wrongAtCheck:false,checkedSince:false};
   async function submit(){const v=Pad.val(o.field);if(v==null){say('Type your answer on the keypad first.','info');return;}
     if(!eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&!st.inkAsked&&typeof InkCheck!=='undefined'&&InkCheck.left(run)){st.inkAsked=true;
       if(!(await InkCheck.ask(v,run))){st.inkClaim=v;Pad.set(o.field,'');o.field.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(o.field);say('Write it again, nice and clear. Or tap the keys.','info');return;}}
+    if(eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&typeof InkBox!=='undefined'&&InkBox.lastR&&InkBox.lastR.imgs&&InkBox.lastR.text===String(v))InkBox.lastR.imgs.forEach(x=>InkBox.mine.add(x.ch,x.img));
     if(st.inkClaim!=null&&typeof InkCheck!=='undefined'){InkCheck.after(st.inkClaim,v,eqNum(v,o.correct));a.inkClaim=st.inkClaim;st.inkClaim=null;}
     if(st.tries===0&&a.confidence==null&&o.check&&Math.random()<0.25){a.confidence=await askConfidence();}
     st.tries++;a.tries.push({a:v,ms:Date.now()-a.t0,chk:st.checkedSince});st.checkedSince=false;
@@ -4361,7 +4456,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
