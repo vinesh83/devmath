@@ -596,6 +596,16 @@ table.spd td.x{background:transparent;border-color:transparent}
 .dog-pick.on{border-color:#3fdc6b;box-shadow:0 0 0 3px #3fdc6b55}
 .dog-pick canvas{width:72px;height:72px;image-rendering:pixelated}
 .dog-modal{width:min(640px,100%)}
+/* screen time */
+.st-chip{font-variant-numeric:tabular-nums;white-space:nowrap}
+.st-chip.warn{background:#7a4a00!important;color:#ffe066!important}
+.st-chip.over{background:#7a1f2d!important;color:#fff!important}
+.pin-in{font:800 32px var(--f-math);letter-spacing:12px;text-align:center;max-width:220px;justify-self:center}
+.pin-modal{text-align:center;justify-items:center}
+.timeup{text-align:center;justify-items:center}
+.rep-st{display:grid;gap:6px}
+.st-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.st-sel{font:600 15px var(--f-body);padding:8px;border-radius:10px;background:#0e1130;color:#fff;border:2px solid #3a4180}
 </style>
 
 <div id="app">
@@ -610,6 +620,7 @@ table.spd td.x{background:transparent;border-color:transparent}
       <h2 id="lv-title">Level</h2>
       <div class="prog" id="lv-prog"></div>
       <button class="icon-btn" id="lv-pause" type="button" aria-label="Pause">⏸ Pause</button>
+      <span class="chip st-chip">⏱</span>
       <span class="chip"><span class="coin-ico"></span><span id="lv-coins">0</span></span>
     </header>
     <div class="scene-wrap"><canvas id="scene" aria-hidden="true"></canvas><button id="superBtn" class="superbtn" type="button" hidden>SUPER!</button></div>
@@ -2218,7 +2229,7 @@ const Dojo={
       pend.length===1?`One more round! Finish the ${DOJOS[pend[0]].short} Dojo to open the kingdoms.`:'Training done for today! The kingdoms are open. Come back tomorrow to own more facts.';
     const sv=el('canvas',{width:72,height:72});Talk.paint(sv,'sensei',{});
     S.append(el('header',{class:'lv-top'},el('button',{class:'icon-btn',type:'button',onclick:()=>{renderMap();show('scr-map');}},'◂ Map'),el('h2',null,'Fact Dojo'),
-        el('span',{class:'chip',title:'Lightning answers'},'⚡ '+d.bolts),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins))),
+        el('span',{class:'chip st-chip'},'⏱'),el('span',{class:'chip',title:'Lightning answers'},'⚡ '+d.bolts),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins))),
       el('div',{class:'dj-sensei'},sv,el('div',null,el('p',null,msg),strict?el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
         el('small',null,`${sm} of ${gm} minutes today`+(this.gateOk()?' · done!':'')+' · until you own your key belts')):null)),
       el('div',{class:'dj-panels'},['pm','tm'].map(did=>this.panel(did))));},
@@ -2372,8 +2383,8 @@ function dojoReport(){if(!state.dojo)return null;const d=Dojo.st();const nice=k=
   const moods=Object.entries(d.mood||{}).slice(-7).map(([k,v])=>k.slice(5)+' '+v);
   return el('div',{class:'rep-dojo'},el('p',null,el('b',null,'Fact Dojo')),lines,speedMap(),weak.length?el('div',null,'Shakiest facts: '+weak.join(', ')):null,moods.length?el('div',null,'How training felt: '+moods.join(' · ')):null,
     el('div',null,el('b',null,'Daily rule: '),Dojo.strict()?`${Dojo.goalSecs()/60} minutes of facts first (until the key belts are owned) · today ${Math.floor(Dojo.secsToday()/60)} min`:(Dojo.keyDone()?'key belts owned · 1 round per dojo':'1 round per dojo (strict mode off)')),
-    Dojo.keyDone()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{const s=Dojo.st();s.strictOff=!s.strictOff;saveState();showReport();}},Dojo.st().strictOff?`Grown-up: turn the ${Dojo.goalSecs()/60}-minute rule back on`:`Grown-up: turn off the ${Dojo.goalSecs()/60}-minute rule`),
-    Dojo.gateOk()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{Dojo.st().unlockDay=dayStr();saveState();overlay(null);renderMap();}},'Grown-up: unlock everything for today'));}
+    Dojo.keyDone()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{const s=Dojo.st();s.strictOff=!s.strictOff;saveState();showReport();})},Dojo.st().strictOff?`Grown-up: turn the ${Dojo.goalSecs()/60}-minute rule back on`:`Grown-up: turn off the ${Dojo.goalSecs()/60}-minute rule`),
+    Dojo.gateOk()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{Dojo.st().unlockDay=dayStr();saveState();overlay(null);renderMap();})},'Grown-up: unlock everything for today'));}
 
 const SPEED_LBL={auto:['⚡ Automatic','#3fdc6b'],fluent:['✓ Fluent','#b8e986'],slow:['🐢 Counting','#ffb627'],shaky:['✗ Shaky','#ff4d6d'],seen:['• Seen once','#6b7bb8'],new:['Not yet','#2b2f55']};
 function speedMap(){const F=Dojo.st().facts,cnt={auto:0,fluent:0,slow:0,shaky:0,seen:0,new:0};
@@ -2398,7 +2409,7 @@ function reportPayload(){const L=Local.log;
   return {app:'number-knight',v:2,generated:new Date().toISOString(),hero:state.hero&&state.hero.name,coins:state.coins,streak:state.streak,totals:state.totals,
     skills:state.skills,methods:state.methods,facts:state.facts,prog:state.prog,packsDone:state.packsDone,
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
-    npcMet:state.npc&&state.npc.met,sessions:Local.sess.slice(-60),log:L.slice(-300)};}
+    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,sessions:Local.sess.slice(-60),log:L.slice(-300)};}
 const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null),err:null,lastTry:0,sent:lsGet('nk-sync-h',{}),
   pair(){const src=decodeURIComponent(location.hash+'&'+location.search);if(!/sync=/.test(src))return;
     const tok=(src.match(/(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/)||[])[1],rp=(src.match(/repo=([\w.-]+\/[\w.-]+)/)||[])[1];
@@ -2434,7 +2445,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
   block(){const st=el('p',{class:'tiny-ok'},this.on()?(this.err?'Sync problem: '+this.err:this.last?'Last sync: '+new Date(this.last).toLocaleString():'Connected. First sync coming up.'):'Not connected.');
     if(this.on())return el('div',{class:'syncbox'},el('p',null,el('b',null,'Coach sync: '),'on → '+this.cfg.repo),st,
       el('div',{class:'btns'},el('button',{class:'btn btn-blue',type:'button',onclick:async()=>{st.textContent='Syncing…';this.lastTry=0;try{await this.push();st.textContent='Synced just now.';}catch(e){st.textContent='Sync problem: '+e.message;}}},'Sync now'),
-        el('button',{class:'btn btn-dark',type:'button',onclick:()=>{this.disconnect();showReport();}},'Disconnect')));
+        el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{this.disconnect();showReport();})},'Disconnect')));
     const tok=el('input',{type:'password',placeholder:'Paste the GitHub token (github_pat_…)',autocomplete:'off',class:'syncin'}),
       repo=el('input',{type:'text',value:'vinesh83/devmath-data',autocomplete:'off',class:'syncin'});
     return el('div',{class:'syncbox'},el('p',null,el('b',null,'Coach sync (for grown-ups): '),'send results to Claude automatically.'),tok,repo,
@@ -2462,7 +2473,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004183102';
+const BUILD='20261004184549';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -2504,6 +2515,60 @@ const DogPick={maybe(){if(!state.hero||state.dogPicked)return;if(!$('#overlay').
     let pickId='puppy';const go=()=>{state.dogPicked=1;if(!state.owned.includes('pet:'+pickId))state.owned.push('pet:'+pickId);state.hero.pet=pickId;saveState();overlay(null);Snd.fanfare();renderMap();};
     overlay(el('div',{class:'modal dog-modal'},el('h2',null,'Pick your dog!'),el('p',null,'Every hero needs a sidekick. Choose a free dog. You can buy more breeds in the Shop.'),
       dogGrid(pickId,id=>{pickId=id;}),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:go},'This one! ▸'))));}};
+
+/* =========================================================
+   Screen time: a visible clock, a daily limit, and a short daily allowance for the Shop/Mech Bay.
+   Grown-up controls sit behind a 4-digit PIN.
+   ========================================================= */
+const Parent={until:0,
+  active(){return Date.now()<this.until;},
+  guard(fn){if(state.parentPin&&this.active()){this.until=Date.now()+5*60000;fn();return;}const pin=state.parentPin;const box=el('input',{type:'password',inputmode:'numeric',pattern:'[0-9]*',maxlength:'4',class:'syncin pin-in',autocomplete:'off',placeholder:'••••'});
+    const msg=el('p',{class:'tiny-ok'},'');let first=null;
+    const ok=()=>{const v=box.value.trim();if(!/^\d{4}$/.test(v)){msg.textContent='Four digits, please.';return;}
+      if(!pin){if(first==null){first=v;box.value='';msg.textContent='Type it again to confirm.';return;}if(v!==first){first=null;box.value='';msg.textContent='Those didn’t match. Start again.';return;}
+        state.parentPin=v;saveState();Parent.until=Date.now()+5*60000;overlay(null);fn();return;}
+      if(v===pin){Parent.until=Date.now()+5*60000;overlay(null);fn();}else{box.value='';msg.textContent='Wrong PIN.';Snd.hurt();}};
+    box.addEventListener('keydown',e=>{if(e.key==='Enter')ok();});
+    overlay(el('div',{class:'modal pin-modal'},el('h2',null,pin?'Grown-up PIN':'Create a grown-up PIN'),
+      el('p',null,pin?'Enter your 4-digit PIN.':'Pick 4 digits that Dev doesn’t know. You’ll need it to change limits, unlock, approve prizes or start over.'),box,msg,
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-green',type:'button',onclick:ok},'OK'))));
+    setTimeout(()=>box.focus(),50);}
+};
+const ScreenTime={warned:null,
+  st(){const s=state.st=state.st||{days:{},shopMin:5,totalMin:45,extra:{}};const d=dayStr();const D=s.days[d]=s.days[d]||{total:0,learn:0,shop:0,other:0};return {s,D,d};},
+  cat(){const S=[...document.querySelectorAll('.screen')].find(x=>!x.hidden);const id=S?S.id:'';
+    if(id==='scr-level'||id==='scr-dojo'||(id==='scr-mech'&&typeof bayLaunch!=='undefined'&&bayLaunch))return 'learn';if(id==='scr-shop'||id==='scr-mech')return 'shop';return 'other';},
+  limit(){const {s,d}=this.st();return s.totalMin>0?s.totalMin*60+((s.extra||{})[d]||0)*60:0;},
+  shopLeft(){const {s,D}=this.st();return s.shopMin>0?Math.max(0,s.shopMin*60-D.shop):1e9;},
+  shopOk(){return this.shopLeft()>0;},
+  fmt(sec){const m=Math.floor(sec/60);return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`;},
+  init(){setInterval(()=>this.tick(5),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.enforce();});setTimeout(()=>this.enforce(),1500);this.paint();},
+  tick(sec){if(typeof cfg!=='undefined'&&cfg&&cfg.resetPin&&state.pinReset!==cfg.resetPin){delete state.parentPin;state.pinReset=cfg.resetPin;saveState();}
+    if(document.hidden||(typeof Pause!=='undefined'&&(Pause.on||Date.now()-Pause.last>60000))||!state.hero)return;
+    const {D}=this.st(),c=this.cat();D.total+=sec;D[c]=(D[c]||0)+sec;if(D.total%60<sec)saveState();this.paint();this.enforce();},
+  paint(){const {D}=this.st(),L=this.limit(),left=L?L-D.total:null;
+    document.querySelectorAll('.st-chip').forEach(ch=>{ch.textContent='⏱ '+this.fmt(D.total)+(L?` / ${Math.round(L/60)}`:'');ch.classList.toggle('warn',left!=null&&left<=300);ch.classList.toggle('over',left!=null&&left<=0);});},
+  enforce(){if(!state.hero)return;const {D,d}=this.st(),L=this.limit(),c=this.cat();
+    // shop allowance
+    if(c==='shop'&&!this.shopOk()){renderMap();show('scr-map');Talk.say([['pip','Shop’s closed for today, {name}! Come back tomorrow for more shopping.']]);}
+    // 5-minute warning
+    if(L&&L-D.total<=300&&L-D.total>0&&this.warned!==d){this.warned=d;Talk.pop('knight',`Five minutes left today, {name}! Finish strong.`);}
+    // time's up: let a run finish first
+    if(L&&D.total>=L){if(Parent.active()||document.querySelector('#overlay .pin-modal'))return;const inRun=!$('#scr-level').hidden||!$('#cine').hidden||!$('#talk').hidden;if(inRun)return;
+      if(!document.querySelector('#overlay .timeup'))this.timeUp();}},
+  timeUp(){const {D}=this.st();
+    overlay(el('div',{class:'modal timeup'},el('h2',null,'Time’s up for today! 🎉'),
+      el('p',null,`You played ${this.fmt(D.total)} today, with ${this.fmt(D.learn)} of training. Great work, ${(state.hero&&state.hero.name)||'hero'}!`),
+      el('p',null,'Glitch will be waiting tomorrow. Go rest those hero brains.'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>showReport())},'Grown-up settings'),el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{const {s,d}=this.st();s.extra=s.extra||{};s.extra[d]=(s.extra[d]||0)+15;saveState();this.paint();})},'Grown-up: +15 minutes'))));},
+  report(){const {s,D}=this.st();const days=Object.keys(s.days).sort().slice(-7);
+    const sel=(vals,cur,key,unit)=>el('select',{class:'st-sel',onchange:e=>{const v=+e.target.value;Parent.guard(()=>{s[key]=v;saveState();this.paint();showReport();});}},vals.map(v=>{const o=el('option',{value:String(v)},v?`${v} ${unit}`:'No limit');if(v===cur)o.selected=true;return o;}));
+    return el('div',{class:'rep-st'},el('p',null,el('b',null,'Screen time today: '),`${this.fmt(D.total)} · training ${this.fmt(D.learn)} · shop ${this.fmt(D.shop)} · other ${this.fmt(D.other)}`),
+      days.length>1?el('table',{class:'rep'},el('tr',null,el('th',null,'Day'),el('th',null,'Total'),el('th',null,'Training'),el('th',null,'Shop')),
+        days.map(k=>{const x=s.days[k];return el('tr',null,el('td',null,k.slice(5)),el('td',{class:'n'},this.fmt(x.total)),el('td',{class:'n'},this.fmt(x.learn)),el('td',{class:'n'},this.fmt(x.shop)));})):null,
+      el('div',{class:'st-row'},el('span',null,'Daily limit:'),sel([0,30,45,60,75,90],s.totalMin,'totalMin','min'),el('span',null,'Shop + Mech Bay:'),sel([0,3,5,10,15],s.shopMin,'shopMin','min/day')),
+      el('p',{class:'tiny-ok'},'Changing limits asks for the grown-up PIN. Time stops counting while paused or after a minute without touches.'));}
+};
 
 /* hw.js - tiny handwritten-number recognizer (digits + optional decimal point).
  * Classic script, defines one global: HW.
@@ -3082,7 +3147,7 @@ function padOn(on){$('#keypad').classList.toggle('off',!on);$('.padcol').classLi
 /* =========================================================
    Screens
    ========================================================= */
-function show(id){if(typeof Talk!=='undefined'&&Talk.popEl)Talk.unpop();document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);if(id!=='scr-level'){Battle.stop();$('#superBtn').hidden=true;}
+function show(id){if(typeof Talk!=='undefined'&&Talk.popEl)Talk.unpop();setTimeout(()=>{if(typeof ScreenTime!=='undefined'){ScreenTime.paint();ScreenTime.enforce();}},50);document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);if(id!=='scr-level'){Battle.stop();$('#superBtn').hidden=true;}
   if(id==='scr-map'||id==='scr-mech'||id==='scr-shop'||id==='scr-dojo')Music.play('map');if(id==='scr-map'&&typeof Updater!=='undefined')setTimeout(()=>Updater.apply(),800);if(id!=='scr-level')$('#scr-level').classList.remove('dojo');}
 function overlay(node){const o=$('#overlay');o.innerHTML='';if(!node){o.hidden=true;return;}o.append(node);o.hidden=false;}
 
@@ -3169,9 +3234,9 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
   ow.append(inner);
   const av=el('canvas',{width:72,height:72,class:'ow-av'}),pend=(state.prizes||[]).filter(p=>p.status==='pending').length;
   const hud=el('div',{class:'ow-hud'},av,el('div',{class:'ow-name'},el('b',null,(state.hero&&state.hero.name)||'Hero'),el('span',null,`Mech power ${mechPower()} · ${glitchForm().name} is out there`)),
-    el('span',{class:'chip',title:'Days in a row'},el('span',{class:'flame'}),String(state.streak.n||0)),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins)),
-    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}openMechBay(null);}},'Mech Bay'),
-    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}renderShop();show('scr-shop');Talk.meet('pip');}},'Shop'),
+    el('span',{class:'chip',title:'Days in a row'},el('span',{class:'flame'}),String(state.streak.n||0)),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins)),el('span',{class:'chip st-chip'},'⏱'),
+    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}if(!ScreenTime.shopOk()){Talk.say([['pip','The Mech Bay is closed for today! Come back tomorrow.']]);return;}openMechBay(null);}},'Mech Bay'),
+    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}if(!ScreenTime.shopOk()){Talk.say([['pip','Shop’s closed for today, {name}! Come back tomorrow.']]);return;}renderShop();show('scr-shop');Talk.meet('pip');}},'Shop'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>Talk.book()},'Allies'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>showReport()},'Report'),
     el('button',{class:'icon-btn'+(state.mute?' off':''),type:'button','aria-label':'Sound effects',onclick:e=>{state.mute=!state.mute;Snd.levels();saveState();e.currentTarget.classList.toggle('off',state.mute);}},'Sound'),
@@ -3667,7 +3732,7 @@ function renderBug(p,a){const card=$('#card');const b=p.base;if(b.kind!=='arith'
 function prizeBlock(){const pz=state.prizes||[];if(!pz.length)return null;const pend=pz.filter(p=>p.status==='pending');
   return el('div',{class:'prizes'},el('p',null,el('b',null,'Real-world prizes: '),`${pz.length-pend.length} approved so far.`),
     pend.map(p=>el('div',{class:'prz'},el('span',null,`${p.name} (won ${String(p.at).slice(0,10)})`),
-      el('button',{class:'btn btn-green',type:'button',onclick:()=>{p.status='approved';p.approvedAt=new Date().toISOString();saveState();Snd.good();showReport();}},'Approve'))));}
+      el('button',{class:'btn btn-green',type:'button',onclick:()=>Parent.guard(()=>{p.status='approved';p.approvedAt=new Date().toISOString();saveState();Snd.good();showReport();})},'Approve'))));}
 function showReport(){const L=Local.log;const days=[...new Set(L.map(x=>x.day))];const n=L.length;
   const pct=(a,b)=>b?Math.round(100*a/b)+'%':'–';const ft=L.filter(x=>x.firstTry).length,ck=L.filter(x=>x.checkUsed).length,sc=L.filter(x=>x.selfCatch).length;
   const bySkill={};L.forEach(x=>{const k=x.skill;bySkill[k]=bySkill[k]||{n:0,ok:0};bySkill[k].n++;if(x.firstTry)bySkill[k].ok++;});
@@ -3691,11 +3756,12 @@ function showReport(){const L=Local.log;const days=[...new Set(L.map(x=>x.day))]
     n?el('table',{class:'rep'},el('tr',null,el('th',null,'Skill'),el('th',null,'Problems'),el('th',null,'First try'),el('th',null,'Level')),rows):null,
     topTags.length?el('p',null,'Most common slips: '+topTags.map(([t,c])=>`${TAGN[t]||t} (${c})`).join(' · ')):null,
     weakFacts.length?el('p',null,'Facts to practice: '+weakFacts.join(', ')):null,
+    ScreenTime.report(),
     dojoReport(),
     prizeBlock(),
     Sync.block(),
-    el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(el('div',{class:'modal'},el('h2',null,'Start over?'),el('p',null,'This erases all progress on this iPad: hero, coins, belts, facts and history. Coach sync stays connected, and reports already sent to your coach are kept.'),
-      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-red',type:'button',onclick:()=>{['nk-state','nk-log','nk-sessions','nk-pending','nk-sync-h'].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});state=defaultState();location.reload();}},'Yes, erase everything'))))},'Grown-up: start over from scratch'),
+    el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>overlay(el('div',{class:'modal'},el('h2',null,'Start over?'),el('p',null,'This erases all progress on this iPad: hero, coins, belts, facts and history. Coach sync stays connected, and reports already sent to your coach are kept.'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-red',type:'button',onclick:()=>{['nk-state','nk-log','nk-sessions','nk-pending','nk-sync-h'].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});state=defaultState();location.reload();}},'Yes, erase everything')))))},'Grown-up: start over from scratch'),
     el('p',null,'To get a full report from Claude: tap the button below, then paste into Claude. Or just send a screenshot of this screen.'),
     el('div',{class:'btns'},copyBtn,el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(null)},'Close')),status));}
 /* =========================================================
@@ -3709,7 +3775,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   new MutationObserver(ms=>{if(CARD_QUIET)return;let last=null;for(const m of ms){if(m.target.closest&&m.target.closest('.field'))continue;
       for(const n of m.addedNodes)if(n.nodeType===1&&!n.classList.contains('field'))last=n;}
     if(last)requestAnimationFrame(()=>revealInCard(last));}).observe($('#card'),{childList:true,subtree:true});
-  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();Pause.init();Updater.init();giftSupers();InkBox.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
+  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();Pause.init();Updater.init();ScreenTime.init();giftSupers();InkBox.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
   document.addEventListener('keydown',e=>{if($('#scr-level').hidden||e.target.tagName==='INPUT')return;if(/^[0-9]$/.test(e.key))Pad.key(e.key);else if(e.key==='.')Pad.key('.');
     else if(e.key==='Backspace')Pad.key('del');else if(e.key==='Enter'){if(Pad.active&&Pad.active.onEnter)Pad.active.onEnter();else if(primaryAction)primaryAction.click();}});
   document.addEventListener('pointerdown',()=>Snd.init(),{once:true});
@@ -3718,7 +3784,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
