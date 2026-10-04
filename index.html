@@ -641,6 +641,25 @@ table.spd td.x{background:transparent;border-color:transparent}
 .bb-btn.hit,.bb-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0008;filter:brightness(1.2)}
 @keyframes supready{to{box-shadow:0 5px 0 #0008,0 0 18px #ffe066}}
 @media (max-width:700px){.bb-btn{min-width:64px;height:58px;font-size:14px}.bb-btn.mv{min-width:60px}.bb-btn.atk{min-width:80px}}
+/* big answer pad */
+.modal.bigpad{max-width:min(1010px,96vw);width:auto}
+.bigpad .bp-tip{margin:2px 0 8px;color:#cfd5ff}
+.bp-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.bp-cv{display:block;border-radius:14px;touch-action:none;box-shadow:0 4px 0 #0006}
+.bp-reads{display:flex}.bp-reads span{flex:1;text-align:center;font:800 22px var(--f-display);color:#ffe066;min-height:26px}.bp-reads span.meh{color:#ffb627;opacity:.7}
+.bp-said{font:800 26px var(--f-display);color:#fff;margin:6px 0 4px;min-height:32px;text-align:center}
+#inkPad.to-big{cursor:pointer;border-color:#7a5af8}#inkPad.to-big .ink-hint{color:#7a5af8;font-weight:800}
+/* recharge break */
+.modal.recharge{text-align:center}
+.rc-breath{display:flex;flex-direction:column;align-items:center;gap:8px;margin:10px 0}
+.rc-breath i{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,#7dd8ff,#3a7bd5);animation:breathe 8s ease-in-out infinite;box-shadow:0 0 30px #5ef2ff66}
+@keyframes breathe{0%,100%{transform:scale(.6)}50%{transform:scale(1.15)}}
+.rc-move{font-weight:700;color:#ffe066;font-size:18px}
+.rc-time{display:block;font:800 40px var(--f-display);color:#fff;margin:4px 0 10px}
+#overlay:has(.bigpad){place-items:end center;background:#0b0d1f40}
+.modal.bigpad{padding:12px 16px 14px;gap:6px}
+.bigpad .bp-tip{margin:0 0 4px}.bigpad .bp-tip b{color:#ffe066}
+.bigpad .bp-said{font-size:22px;min-height:26px;margin:2px 0}
 </style>
 
 <div id="app">
@@ -1738,6 +1757,7 @@ const Talk={el:null,popEl:null,open:false,lastPop:0,runPops:0,probPop:null,check
     const ar=anchor.getBoundingClientRect(),app=$('#app').getBoundingClientRect();
     P.style.left=(ar.left-app.left+8)+'px';P.style.top=(o.below?ar.bottom-app.top+8:ar.top-app.top+6)+'px';P.style.maxWidth=Math.min(620,ar.width-16)+'px';
     P.style.setProperty('--nc',N.col);P.querySelector('b').textContent=N.name;const sp=P.querySelector('span'),full=this.fill(text);sp.textContent='';
+    if(!$('#scr-level').hidden&&$('#scr-level').classList.contains('calm')&&!o.anchor){P.style.top='auto';P.style.bottom='14px';P.style.left='14px';P.style.maxWidth=Math.min(560,app.width-28)+'px';}else P.style.bottom='';
     P.hidden=false;P.classList.remove('in');void P.offsetWidth;P.classList.add('in');this.paint(cv,who,{});
     let k=0;clearInterval(this.ptm);clearTimeout(this.phide);this.ptm=setInterval(()=>{k+=1;sp.textContent=full.slice(0,k);if(k%2)this.blip(who,full[k-1]);this.paint(cv,who,{bob:k<full.length&&(k>>1)%2?-2:0});
       if(k>=full.length){clearInterval(this.ptm);this.paint(cv,who,{});}},RM?1:22);
@@ -1839,7 +1859,8 @@ const BUG_HP={bug:1,zip:1,armor:2,king:3},BUG_SC={bug:1,zip:0.8,armor:1,king:1.5
     // calm mode: Glitch makes an entrance, then the strip folds away so only the problem shows. Right answers charge Battle Power.
     s.calm=!o.noCalm;s.power=0;s.calmAt=2.4;this.paintPower();
     if(s.calm){this.text('GLITCH APPEARS!','#ff4d6d',true,this.W*0.55,this.H*0.32);setTimeout(()=>{if(this.s===s)this.text('Charge your power!','#ffe066',false,this.W*0.4,this.H*0.6);},900);}};  B.big=function(on){const w=$('.scene-wrap');if(!w)return;w.classList.toggle('big',!!on&&!RM&&!(this.s&&this.s.calm));};
-  B.collapse=function(){const s=this.s;if(!s||s.collapsed)return;s.collapsed=true;$('#scr-level').classList.add('calm');$('#superBtn').hidden=true;this.paintPower();};
+  B.collapse=function(){const s=this.s;if(!s||s.collapsed)return;s.collapsed=true;$('#scr-level').classList.add('calm');
+    if(typeof Talk!=='undefined'&&Talk.popEl&&!Talk.popEl.hidden){const P=Talk.popEl;P.style.top='auto';P.style.bottom='14px';P.style.left='14px';}$('#superBtn').hidden=true;this.paintPower();};
   B.reveal=function(){const s=this.s;$('#scr-level').classList.remove('calm');if(s){s.collapsed=false;s.ending=true;}this.paintPower();};
   B.paintPower=function(){const c=$('#lv-power');if(!c)return;const s=this.s;c.hidden=!(s&&s.calm&&s.collapsed);if(s)c.querySelector('b').textContent=String(s.power);};
   B.addPower=function(v){const s=this.s;if(!s)return;s.power+=v;const c=$('#lv-power');this.paintPower();if(c){c.classList.remove('up');void c.offsetWidth;c.classList.add('up');}};
@@ -2556,6 +2577,9 @@ const Dojo={
       Data.logAttempt({ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),skill:'dojo:'+sp.dojo,kind:'dojo',mode:p.k,diff:f.belt,variant:src,q:factExpr(f,flip),correct:f.ans,
         firstTry:ok,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast,inkClaim:p.inkClaim!=null?p.inkClaim:undefined,inkKept:p.inkKept||undefined,hint:p.hinted||undefined,id:uid()});
       run.results[run.idx]={skill:'dojo',firstTry:ok,solved:ok,fast,ms:lat};
+      // brain getting tired? (3 misses in the last 6, or answers slowing to more than double his early pace) End the round early and recharge.
+      if(sp.kind!=='sprint'&&!dj.tired&&run.idx>=5){const rs=run.results.filter(Boolean),miss=rs.slice(-6).filter(r=>!r.firstTry).length,L=rs.map(r=>r.ms).filter(x=>x&&x<20000);
+        if(miss>=3||(L.length>=12&&med(L.slice(-5))>Math.max(6000,med(L.slice(0,8))*2.2))){dj.tired=true;run.queue.length=run.idx+1;Battle.setTotal(run.queue.length);}}
       if(ok){Pad.right(fld);Pad.lock(fld);dj.ok++;if(fast){dj.fast++;dj.bolt++;this.st().bolts++;dj.boltBest=Math.max(dj.boltBest,dj.bolt);}else dj.bolt=0;
         Battle.event(fast?'quick':'hit');stamp(fast?'quick':'right',null,{small:true,ms:fast?550:650});
         if(!before&&rec.owned&&sp.kind!=='sprint'){Snd.gem();Battle.text('FACT OWNED!','#ffe066',true,null,Battle.H*0.22);if(typeof DogPower!=='undefined'&&DogPower.has('ellie'))DogPower.pop('ellie','Woof! That fact is yours forever!',{force:true});}
@@ -2622,11 +2646,14 @@ const Dojo={
     m.append(el('p',{class:'tiny-ok'},`+${coins} coins`+(ellie?' (🐾 Ellie’s Best Buddy bonus +5)':'')));
     const nextDid=!this.doneToday('pm')?'pm':!this.doneToday('tm')?'tm':((t.secs||0)>((d.today[did==='pm'?'tm':'pm'].secs)||0)?(did==='pm'?'tm':'pm'):did);
     if(this.strict()&&!this.gateOk()){m.append(el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
-        el('small',null,`Today: ${Math.floor(this.secsToday()/60)} of ${this.goalSecs()/60} minutes · about ${this.minsLeft()} to go`)),
-      el('p',{class:'dj-break'},pick(['Power break! Stand up and do 10 jumping jacks.','Power break! Shake out your hands and take 3 big breaths.','Power break! Touch your toes 5 times.','Power break! Get a sip of water.'])));
+        el('small',null,`Today: ${Math.floor(this.secsToday()/60)} of ${this.goalSecs()/60} minutes · about ${this.minsLeft()} to go`)));
       m.append(el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:after},'Dojo'),el('button',{class:'btn btn-green',type:'button',onclick:()=>{overlay(null);this.start(nextDid,'round');}},`Next round: ${DOJOS[nextDid].short} ▸`)));}
     else m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
-    (async()=>{await Battle.ko({toBrawl:sp.kind!=='sprint'});if(sp.kind!=='sprint')await Brawl.play({power:pw});for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
+    (async()=>{await Battle.ko({toBrawl:sp.kind!=='sprint'});if(sp.kind!=='sprint')await Brawl.play({power:pw});for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}
+      if(dj.tired){const T=d.tiredDays=d.tiredDays||{};T[dayStr()]=(T[dayStr()]||0)+1;const full=T[dayStr()]>=2;if(full)d.unlockDay=dayStr();saveState();
+        await Talk.say([['sensei',full?'Two tough rounds means your brain is full for today, {name}. Training counts as done. Go have fun!':'Your brain did a LOT of work, {name}. Even black belts rest. Let’s recharge.']]);
+        await ScreenTime.brk({secs:full?60:120,tired:true,title:'Recharge time! 🔋',msg:'Breaks help your brain lock in what you learned.'});}
+      else if(ScreenTime.breakDue())await ScreenTime.brk({secs:60});if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
   mood(){const d=this.st();if(d.mood[dayStr()])return;const pickM=k=>{d.mood[dayStr()]=k;SESSION.dojoMood=k;saveState();Data.saveSession();overlay(null);Snd.tap();};
     overlay(el('div',{class:'modal'},el('h2',null,'How did training feel today?'),el('p',null,'Just for your coach. There’s no wrong answer.'),
       el('div',{class:'faces'},[['great','Awesome'],['ok','Okay'],['meh','Meh'],['hard','Stressful']].map(([k,t])=>el('button',{class:'btn btn-dark',type:'button',onclick:()=>pickM(k)},t)))));},
@@ -2739,13 +2766,18 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(el('div',{class:'modal pause-modal'},el('h2',null,'⏸ Paused'),
       el('p',null,why==='idle'?'Taking a break? The clock stopped so it won’t count against your speed.':'The clock is stopped. Take your time!'),
       el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>this.resume()},'Resume ▸'))));},
+  // hold/release: stop the clock without the pause screen (used by recharge breaks)
+  hold(){if(this.on)return false;this.on=true;this.at=Date.now();this.held=true;return true;},
+  release(){if(!this.held)return;this.held=false;const d=Date.now()-this.at;this.on=false;this.shift(d);this.last=Date.now();},
+  shift(d){if(typeof run!=='undefined'&&run){const p=run.queue[run.idx];if(p){if(p.ts)p.ts+=d;if(p.t0)p.t0+=d;}if(run.dj&&run.dj.end)run.dj.end+=d;if(run.start)run.start+=d;}
+    if(ANS.firstInput)ANS.firstInput+=d;if(typeof ATT!=='undefined'&&ATT&&ATT.t0)ATT.t0+=d;},
   resume(){if(!this.on)return;const d=Date.now()-this.at;this.on=false;
     if(run){const p=run.queue[run.idx];if(p){if(p.ts)p.ts+=d;if(p.t0)p.t0+=d;}if(run.dj&&run.dj.end)run.dj.end+=d;if(run.start)run.start+=d;}
     if(ANS.firstInput)ANS.firstInput+=d;if(typeof ATT!=='undefined'&&ATT&&ATT.t0)ATT.t0+=d;
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004212634';
+const BUILD='20261004213755';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -2880,7 +2912,8 @@ const Parent={until:0,
     setTimeout(()=>box.focus(),50);}
 };
 const ScreenTime={warned:null,
-  st(){const s=state.st=state.st||{days:{},shopMin:5,totalMin:45,extra:{}};const d=dayStr();const D=s.days[d]=s.days[d]||{total:0,learn:0,shop:0,other:0};return {s,D,d};},
+  st(){const s=state.st=state.st||{days:{},shopMin:5,totalMin:25,extra:{},v2:1};if(!s.v2){s.v2=1;if(s.totalMin===45)s.totalMin=25;}
+    const d=dayStr();const D=s.days[d]=s.days[d]||{total:0,learn:0,shop:0,other:0};return {s,D,d};},
   cat(){const S=[...document.querySelectorAll('.screen')].find(x=>!x.hidden);const id=S?S.id:'';
     if(id==='scr-level'||id==='scr-dojo'||(id==='scr-mech'&&typeof bayLaunch!=='undefined'&&bayLaunch))return 'learn';if(id==='scr-shop'||id==='scr-mech')return 'shop';return 'other';},
   limit(){const {s,d}=this.st();return s.totalMin>0?s.totalMin*60+((s.extra||{})[d]||0)*60:0;},
@@ -2889,8 +2922,8 @@ const ScreenTime={warned:null,
   fmt(sec){const m=Math.floor(sec/60);return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`;},
   init(){setInterval(()=>this.tick(5),5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.enforce();});setTimeout(()=>this.enforce(),1500);this.paint();},
   tick(sec){if(typeof cfg!=='undefined'&&cfg&&cfg.resetPin&&state.pinReset!==cfg.resetPin){delete state.parentPin;state.pinReset=cfg.resetPin;saveState();}
-    if(document.hidden||(typeof Pause!=='undefined'&&(Pause.on||Date.now()-Pause.last>60000))||!state.hero)return;
-    const {D}=this.st(),c=this.cat();D.total+=sec;D[c]=(D[c]||0)+sec;if(D.total%60<sec)saveState();this.paint();this.enforce();},
+    if(this.onBreak||document.hidden||(typeof Pause!=='undefined'&&(Pause.on||Date.now()-Pause.last>60000))||!state.hero)return;
+    const {D}=this.st(),c=this.cat();D.total+=sec;D[c]=(D[c]||0)+sec;if(c==='learn')D.since=(D.since||0)+sec;if(D.total%60<sec)saveState();this.paint();this.enforce();},
   paint(){const {D}=this.st(),L=this.limit(),left=L?L-D.total:null;
     document.querySelectorAll('.st-chip').forEach(ch=>{ch.textContent='⏱ '+this.fmt(D.total)+(L?` / ${Math.round(L/60)}`:'');ch.classList.toggle('warn',left!=null&&left<=300);ch.classList.toggle('over',left!=null&&left<=0);});},
   enforce(){if(!state.hero)return;const {D,d}=this.st(),L=this.limit(),c=this.cat();
@@ -2906,13 +2939,74 @@ const ScreenTime={warned:null,
       el('p',null,`You played ${this.fmt(D.total)} today, with ${this.fmt(D.learn)} of training. Great work, ${(state.hero&&state.hero.name)||'hero'}!`),
       el('p',null,'Glitch will be waiting tomorrow. Go rest those hero brains.'),
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>showReport())},'Grown-up settings'),el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{const {s,d}=this.st();s.extra=s.extra||{};s.extra[d]=(s.extra[d]||0)+15;saveState();this.paint();})},'Grown-up: +15 minutes'))));},
+  // a movement break is due after 8 minutes of training
+  breakDue(){const {D}=this.st();return (D.since||0)>=((typeof cfg!=='undefined'&&cfg&&cfg.breakEvery)||8)*60;},
+  // Recharge: a short break that stops every clock. The button unlocks when the countdown ends.
+  brk(o){o=o||{};const secs=o.secs||60,{D}=this.st();D.breaks=(D.breaks||0)+1;D.since=0;if(o.tired)D.tired=(D.tired||0)+1;saveState();
+    this.onBreak=true;const held=typeof Pause!=='undefined'&&Pause.hold();
+    const moves=['Stand up and do 10 jumping jacks.','Touch your toes 5 times.','Get a sip of water.','Stretch up high like a giant, then curl up small.','Do 5 wall push-ups.','Shake out your hands and wiggle your whole body.'];
+    return new Promise(res=>{let left=secs;const t=el('b',{class:'rc-time'},''),go=el('button',{class:'btn btn-green',type:'button',disabled:true},'Wait…');
+      const paint=()=>{t.textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;};paint();
+      const iv=setInterval(()=>{if(document.hidden)return;left--;paint();if(left<=0){clearInterval(iv);go.disabled=false;go.textContent='I’m back! ▸';Snd.gem();}},1000);
+      tapify(go,()=>{if(go.disabled)return;clearInterval(iv);overlay(null);this.onBreak=false;if(held)Pause.release();res();});
+      overlay(el('div',{class:'modal recharge'},el('h2',null,o.title||'Recharge time! 🔋'),el('p',null,o.msg||'Your brain worked hard. Breaks make it stronger.'),
+        el('div',{class:'rc-breath'},el('i'),el('span',null,'Breathe in… and out…')),el('p',{class:'rc-move'},pick(moves)),t,el('div',{class:'btns'},go)));});},
   report(){const {s,D}=this.st();const days=Object.keys(s.days).sort().slice(-7);
     const sel=(vals,cur,key,unit)=>el('select',{class:'st-sel',onchange:e=>{const v=+e.target.value;Parent.guard(()=>{s[key]=v;saveState();this.paint();showReport();});}},vals.map(v=>{const o=el('option',{value:String(v)},v?`${v} ${unit}`:'No limit');if(v===cur)o.selected=true;return o;}));
     return el('div',{class:'rep-st'},el('p',null,el('b',null,'Screen time today: '),`${this.fmt(D.total)} · training ${this.fmt(D.learn)} · shop ${this.fmt(D.shop)} · other ${this.fmt(D.other)}`),
       days.length>1?el('table',{class:'rep'},el('tr',null,el('th',null,'Day'),el('th',null,'Total'),el('th',null,'Training'),el('th',null,'Shop')),
         days.map(k=>{const x=s.days[k];return el('tr',null,el('td',null,k.slice(5)),el('td',{class:'n'},this.fmt(x.total)),el('td',{class:'n'},this.fmt(x.learn)),el('td',{class:'n'},this.fmt(x.shop)));})):null,
-      el('div',{class:'st-row'},el('span',null,'Daily limit:'),sel([0,30,45,60,75,90],s.totalMin,'totalMin','min'),el('span',null,'Shop + Mech Bay:'),sel([0,3,5,10,15],s.shopMin,'shopMin','min/day')),
+      el('p',{class:'tiny-ok'},`Recharge breaks today: ${D.breaks||0}`+(D.tired?` · times his brain got tired: ${D.tired}`:'')),
+      el('div',{class:'st-row'},el('span',null,'Daily limit:'),sel([0,20,25,30,45,60],s.totalMin,'totalMin','min'),el('span',null,'Shop + Mech Bay:'),sel([0,3,5,10,15],s.shopMin,'shopMin','min/day')),
       el('p',{class:'tiny-ok'},'Changing limits asks for the grown-up PIN. Time stops counting while paused or after a minute without touches.'));}
+};
+
+/* =========================================================
+   Big answer pad: for long answers (4+ digits) the small ink box is too cramped to read.
+   Tapping it opens a big pad with one box per digit. Each box is read on its own, which is far more reliable.
+   ========================================================= */
+const BigPad={
+  ans(){if(typeof run==='undefined'||!run||!run.spec||run.spec.mode==='dojo')return null;const p=run.queue[run.idx];if(!p)return null;const a=p.answer!=null?p.answer:(p.base&&p.base.answer);return a==null||isNaN(a)?null:+a;},
+  digits(){const a=this.ans();return a==null?0:String(Math.abs(a)).replace('.','').length;},
+  wants(f){return !!f&&!f.locked&&this.digits()>=4;},
+  hint(){const h=document.querySelector('#inkPad .ink-hint');if(h)h.textContent=this.wants(Pad.active)?'✏️ Tap to write it big':'✏️ Write your answer';
+    const host=$('#inkPad');if(host)host.classList.toggle('to-big',this.wants(Pad.active));},
+  init(){const host=$('#inkPad');if(!host)return;
+    host.addEventListener('pointerdown',e=>{if(e.target.closest('.ink-clr'))return;const f=Pad.active;if(!this.wants(f))return;e.preventDefault();e.stopPropagation();this.open(f);},true);
+    const _f=Pad.focus.bind(Pad);Pad.focus=f=>{_f(f);setTimeout(()=>this.hint(),0);};},
+  open(f){const n=Math.max(4,Math.min(9,this.digits()+1)),dot=!!f.allowDot&&String(this.ans()).includes('.');
+    const app=$('#app').getBoundingClientRect(),bw=Math.floor(Math.min(104,(Math.min(app.width,980)-64)/n)),bh=Math.round(bw*1.3),W=bw*n,H=bh;
+    const cv=el('canvas',{class:'bp-cv',style:`width:${W}px;height:${H}px`}),reads=el('div',{class:'bp-reads',style:`width:${W}px`}),said=el('div',{class:'bp-said'},' ');
+    const ctx=cv.getContext('2d'),d=Math.min(2,window.devicePixelRatio||1);cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+    let strokes=[],cur=null,penSeen=false;const cells=Array.from({length:n},()=>el('span',null,''));reads.append(...cells);
+    const box=s=>{const xs=s.map(p=>p.x);return clamp(Math.floor(((Math.min(...xs)+Math.max(...xs))/2)/bw),0,n-1);};
+    const draw=()=>{ctx.clearRect(0,0,W,H);ctx.fillStyle='#fffaf0';ctx.fillRect(0,0,W,H);
+      for(let i=0;i<n;i++){ctx.strokeStyle='#c9b98f';ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.strokeRect(i*bw+5,6,bw-10,H-12);ctx.setLineDash([]);
+        const fromRight=n-i;if(!dot&&fromRight%3===0&&i>0){ctx.fillStyle='#8a7a55';ctx.beginPath();ctx.arc(i*bw,H-12,3.5,0,6.28);ctx.fill();}}
+      ctx.strokeStyle='#1d1f33';ctx.lineWidth=Math.max(5,bw/18);ctx.lineCap='round';ctx.lineJoin='round';
+      for(const s of strokes.concat(cur?[cur]:[])){ctx.beginPath();s.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));if(s.length===1)ctx.lineTo(s[0].x+0.1,s[0].y);ctx.stroke();}};
+    // read each box on its own
+    let result={text:'',minP:1,bad:false};
+    const read=()=>{const per=Array.from({length:n},()=>[]);strokes.forEach(s=>per[box(s)].push(s));let text='',minP=1,bad=false;
+      per.forEach((ss,i)=>{let ch='',cp=1;if(ss.length){const pts=ss.flat(),xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys);
+          if(dot&&w<bw*0.2&&h<bh*0.2)ch='.';
+          else{try{const pr=HW.classify28(HW.render(ss));let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;ch=String(k);cp=pr[k];minP=Math.min(minP,cp);}catch(e){ch='?';bad=true;}}}
+        cells[i].textContent=ch;cells[i].className=ch===''?'':cp<0.6?'meh':'';text+=ch;});
+      result={text,minP,bad};said.textContent=text?'I read: '+(dot?text:Number(text).toLocaleString('en-US')):' ';done.disabled=!text||bad;};
+    const pt=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};};
+    cv.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&penSeen)return;if(e.pointerType==='pen')penSeen=true;e.preventDefault();Snd.init();
+      if(!ANS.firstInput)ANS.firstInput=Date.now();cur=[pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}draw();});
+    cv.addEventListener('pointermove',e=>{if(!cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const v of evs)cur.push(pt(v));draw();});
+    const up=()=>{if(!cur)return;strokes.push(cur);cur=null;draw();read();};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+    cv.addEventListener('touchstart',e=>{if(penSeen)e.preventDefault();},{passive:false});
+    const done=el('button',{class:'btn btn-green',type:'button',disabled:true},'Done ✓'),undo=el('button',{class:'btn btn-dark',type:'button'},'Undo'),
+      clr=el('button',{class:'btn btn-dark',type:'button'},'Erase all'),cancel=el('button',{class:'btn btn-dark',type:'button'},'Cancel');
+    tapify(undo,()=>{strokes.pop();draw();read();});tapify(clr,()=>{strokes=[];draw();read();});tapify(cancel,()=>overlay(null));
+    tapify(done,()=>{if(!result.text||result.bad)return;overlay(null);Pad.input(f,result.text,'ink',result.minP,Date.now());Pad.focus(f);Snd.tap();
+      say('Got it. Tap Check It or Submit.','');});
+    overlay(el('div',{class:'modal bigpad'},el('p',{class:'bp-tip'},el('b',null,'Write your answer: '),dot?'one digit per box. The decimal point gets its own box.':'one digit per box. No commas needed.'),
+      el('div',{class:'bp-wrap'},cv,reads),said,el('div',{class:'btns'},cancel,clr,undo,done)));
+    draw();}
 };
 
 /* hw.js - tiny handwritten-number recognizer (digits + optional decimal point).
@@ -3711,7 +3805,9 @@ function chooseVariant(skill){const vs=VARIANTS[skill];if(!vs)return null;const 
     const x=betaS(1+((st[v]&&st[v].s)||0),1+((st[v]&&st[v].f)||0))*w;if(x>bv){bv=x;best=v;}}return best||vs[0];}
 
 let ATT=null;
-function nextProblem(){if(run.idx>=run.queue.length)return finishRun();const p=run.queue[run.idx];updateTop();
+function nextProblem(){if(run.idx>=run.queue.length)return finishRun();
+  if(typeof ScreenTime!=='undefined'&&run.spec.mode!=='dojo'&&run.breakIdx!==run.idx&&run.idx>0){const rs=run.results.filter(Boolean),last=run.results[run.idx-1],rev=rs.slice(-3).filter(r=>!r.solved).length,tough=!!last&&(last.ms>180000||rev>=2);
+    if(tough||ScreenTime.breakDue()){run.breakIdx=run.idx;const R0=run;ScreenTime.brk(tough?{secs:90,tired:true,title:'Tough one! Recharge time 🔋',msg:'That was hard work. A quick break, then the next one.'}:{secs:60}).then(()=>{if(run===R0&&!$('#scr-level').hidden)nextProblem();});return;}}const p=run.queue[run.idx];updateTop();
   Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card';card.scrollTop=0;requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
   const sk=getSkill(p.skill);sk.cnt=(sk.cnt||0)+1;
   const probe=(p.skill==='word'||p.skill==='area')&&lvl(sk.r)>=2&&sk.cnt%4===0&&!run.spec.packId;
@@ -3787,7 +3883,7 @@ function finishRun(){const rs=run.results.filter(Boolean);const ft=rs.filter(r=>
       el('div',{class:'faces'},[['great','Awesome'],['good','Good'],['meh','Meh'],['tough','Tough']].map(([k,t])=>el('button',{class:'btn btn-dark',type:'button',onclick:()=>{summary.mood=k;SESSION.mood=k;Data.saveSession();w.replaceWith(btns());}},t))));return w;};
     m.append(el('p',null,'How was that?'),feel);}else m.append(btns());
   const chestCtx=sp.mode==='boss'?'boss':sp.mode==='quest'?'quest':stars===3?'great':'level';
-  (async()=>{const pw=Battle.s?Battle.s.power:0;await Battle.ko({toBrawl:true});await Brawl.play({power:pw,boss:sp.mode==='boss'});await openChest(chestCtx);await Talk.afterRun(sp);Snd.fanfare();overlay(m);})();}
+  (async()=>{const pw=Battle.s?Battle.s.power:0;await Battle.ko({toBrawl:true});await Brawl.play({power:pw,boss:sp.mode==='boss'});await openChest(chestCtx);await Talk.afterRun(sp);if(typeof ScreenTime!=='undefined'&&ScreenTime.breakDue())await ScreenTime.brk({secs:60});Snd.fanfare();overlay(m);})();}
 function nextLevelFor(sp){if(!sp.world||sp.level==null)return null;const w=WORLDS.find(x=>x.id===sp.world);if(!w||sp.level>=5)return null;return{w,li:sp.level+1};}
 
 /* =========================================================
@@ -4124,7 +4220,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   new MutationObserver(ms=>{if(CARD_QUIET)return;let last=null;for(const m of ms){if(m.target.closest&&m.target.closest('.field'))continue;
       for(const n of m.addedNodes)if(n.nodeType===1&&!n.classList.contains('field'))last=n;}
     if(last)requestAnimationFrame(()=>revealInCard(last));}).observe($('#card'),{childList:true,subtree:true});
-  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();Pause.init();Updater.init();ScreenTime.init();giftSupers();InkBox.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
+  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();Pause.init();Updater.init();ScreenTime.init();giftSupers();InkBox.init();BigPad.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
   document.addEventListener('keydown',e=>{if($('#scr-level').hidden||e.target.tagName==='INPUT')return;if(/^[0-9]$/.test(e.key))Pad.key(e.key);else if(e.key==='.')Pad.key('.');
     else if(e.key==='Backspace')Pad.key('del');else if(e.key==='Enter'){if(Pad.active&&Pad.active.onEnter)Pad.active.onEnter();else if(primaryAction)primaryAction.click();}});
   document.addEventListener('pointerdown',()=>Snd.init(),{once:true});
@@ -4133,7 +4229,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
