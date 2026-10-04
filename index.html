@@ -609,6 +609,19 @@ table.spd td.x{background:transparent;border-color:transparent}
 .ellie-modal{text-align:center;justify-items:center}
 .ellie-big{width:160px;height:160px;image-rendering:pixelated}
 .dj-bugs{font-weight:700;color:#3fdc6b;margin:.3em 0}
+/* dog powers */
+.dog-pop{position:absolute;left:50%;top:76px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:10px;background:#1d2250;color:#fff;border:3px solid #ffe066;border-radius:14px;padding:6px 14px 6px 8px;box-shadow:0 6px 18px #0008;pointer-events:none;animation:dogpop .35s cubic-bezier(.2,1.6,.4,1);max-width:min(92vw,460px)}
+.dog-pop.out{opacity:0;transform:translateX(-50%) translateY(-12px);transition:.35s}
+.dog-pop canvas{width:44px;height:44px;flex:none;image-rendering:pixelated;background:#ffffff14;border-radius:10px}
+.dog-pop b{display:block;font:800 15px var(--f-display);color:#ffe066}.dog-pop span{font-size:14px}
+@keyframes dogpop{from{transform:translateX(-50%) scale(.6);opacity:0}}
+.item .dpw{display:block;font-size:11.5px;line-height:1.25;color:#d9ccff;margin-top:3px;font-weight:600}
+.dog-pick .dpw{display:block;font-size:11px;color:#8a6a00;font-weight:700;margin-top:2px}
+.dpw-line{font-weight:700;color:#ffe066}
+.gwork .sniffed{background:#ffe06655;outline:2px dashed #b47a2a;border-radius:6px;padding:0 4px}
+/* handwriting check */
+.ink-check .ink-snap{display:block;max-width:100%;max-height:150px;margin:6px auto;background:#fffaf0;border-radius:12px;border:2px solid #ffffff33}
+.ink-check .ink-q{font-size:20px}.ink-check .ink-q b{font:800 34px var(--f-display);color:#ffe066;padding:0 4px}
 </style>
 
 <div id="app">
@@ -1802,18 +1815,24 @@ const BUG_PANIC=['EEK!','RUN!','uh oh!','nooo!','yikes!'],BUG_LAUGH=['hehe!','ha
 const BUG_HP={bug:1,zip:1,armor:2,king:3},BUG_SC={bug:1,zip:0.8,armor:1,king:1.5};
 (()=>{const B=Battle,_setup=B.setup.bind(B),_event=B.event.bind(B),_update=B.update.bind(B);
   B.setup=function(o){_setup(o);const s=this.s;Object.assign(s,{hits:0,hp:1,hpShow:1,hpFlash:0,atk:null,minions:[],wave:0,waveT:o.drill?0.6:1.8,drill:!!o.drill,
-    foeAtk:null,foeAtkT:o.drill?5:7+Math.random()*3,heroJump:0,heroJV:0,foeLift:0,foeLiftV:0,rings:[],slashes:[],bigUntil:0,squashed:0,antT:4,spits:[],tower:null,sweep:0});this.big(false);};
+    foeAtk:null,foeAtkT:o.drill?5:7+Math.random()*3,heroJump:0,heroJV:0,foeLift:0,foeLiftV:0,rings:[],slashes:[],bigUntil:0,squashed:0,antT:4,spits:[],tower:null,sweep:0});this.big(false);
+    if(typeof DogPower!=='undefined'&&DogPower.has('robodog')){s.pips=Math.min(s.max,Math.max(s.pips||0,1));setTimeout(()=>{if(this.s===s){this.updSuper();DogPower.pop('robodog','One SUPER pip charged!');}},700);}};
   B.big=function(on){const w=$('.scene-wrap');if(!w)return;w.classList.toggle('big',!!on&&!RM);};
   B.bigMoment=function(ms){if(RM||!this.s)return;this.big(true);clearTimeout(this.bigTm);this.bigTm=setTimeout(()=>this.big(false),ms||1500);};
-  B.event=function(kind,info){const s=this.s;if(!s)return;
+  B.event=function(kind,info){const s=this.s;if(!s)return;const D=typeof DogPower!=='undefined'?DogPower:null;
+    if(D&&kind==='hurt'&&!s.guardUsed&&D.has('lab')){s.guardUsed=1;kind='block';D.pop('lab','Blocked that miss!',{force:true});}
     const good=kind==='hit'||kind==='crit'||kind==='selfcatch'||kind==='quick'||kind==='small';
     if(good){s.hits+=kind==='small'?0.5:1;s.hpFlash=0.35;const crit=kind!=='hit'&&kind!=='small';
       const alive=this.bugTargets(),streak=kind!=='small'&&(s.combo+1)%5===0;
       if(alive.length&&streak)this.bugBlast();else if(alive.length)this.zapMinions(alive,crit?2:1);else this.startCombo(crit);
-      this.bugsReact('panic');}
+      this.bugsReact('panic');
+      if(D&&s.pug&&kind!=='small'&&D.has('pug')){s.pug=0;D.coins(2);D.pop('pug','Comeback! +2 coins');}
+      if(D&&kind==='selfcatch'&&D.has('puppy')){D.coins(3);D.pop('puppy','You caught it! +3 coins',{force:true});}}
+    if(kind==='hurt')s.pug=1;
     if(kind==='hurt'&&!s.atk)s.foeAtk={k:'lunge',t:0};
     if(kind==='hurt')this.bugsReact('laugh');
     _event(kind,info);
+    if(D&&good&&kind!=='small'&&D.has('shiba')){s.zoom=(s.zoom||0)+1;if(s.zoom%2===0&&s.pips<s.max){s.pips++;this.updSuper();D.pop('shiba','Extra SUPER charge!');}}
     if(s.drill&&kind==='hurt'){s.taunt=pick(['Ha! Got one!','My bugs ate that fact!','Too tricky for you?','Beep! Not that one!']);s.tauntT=2;}};
   B.startCombo=function(crit){const s=this.s;if(s.drill){s.atk={t:0,dur:0.5,crit,quick:true,hit:0};return;}s.atk={t:0,dur:crit?1.25:1.05,crit,hit:0};Snd.whoosh();};
   // bugs that can still take a zap (not flying away, not already covered by bolts in the air)
@@ -1834,7 +1853,9 @@ const BUG_HP={bug:1,zip:1,armor:2,king:3},BUG_SC={bug:1,zip:0.8,armor:1,king:1.5
     live.forEach(m=>{if(k==='panic'){m.panic=0.9;if(m.y>=0)m.vy=-H*(0.8+Math.random()*0.5);m.x=Math.min(this.foeX()-20,m.x+W*0.015);}else m.dance=1.5;});
     const t=pick(live);t.say=pick(k==='panic'?BUG_PANIC:BUG_LAUGH);t.sayT=1.1;};
   // a dojo miss: the streak resets and the bugs have a laugh
-  B.miss=function(){const s=this.s;if(!s)return;s.combo=0;Music.intensity=0;this.bugsReact('laugh');};
+  B.miss=function(){const s=this.s;if(!s)return;s.pug=1;
+    if(typeof DogPower!=='undefined'&&DogPower.has('lab')&&!s.guardUsed){s.guardUsed=1;s.shieldT=1;Snd.block();DogPower.pop('lab','Your streak is safe!',{force:true});return;}
+    s.combo=0;Music.intensity=0;this.bugsReact('laugh');};
   B.spawnWave=function(){const s=this.s;s.wave++;const w=s.wave;s.bugCol=BUG_COLS[(w-1)%BUG_COLS.length];
     let types;if(w===1)types=s.drill?['bug','bug','bug']:['bug','bug'];
     else if(w%3===0)types=[...Array(s.drill?2:1)].map(()=>pick(['bug','zip'])).concat(['king']);
@@ -1854,11 +1875,11 @@ const BUG_HP={bug:1,zip:1,armor:2,king:3},BUG_SC={bug:1,zip:0.8,armor:1,king:1.5
   B.bugHurt=function(m,tx,ty){const s=this.s,H=this.H;m.hurtT=0.4;m.vy=-H*0.8;m.x=Math.min(this.foeX()-20,m.x+this.W*0.02);
     for(let i=0;i<3;i++)this.sparks(6,['#c9cfdc','#ffffff','#ffe066'][i],tx,ty,200);this.text(m.type==='king'?'BONK!':'CRACK!','#e8eefc',false,tx,H*0.45);Snd.block();
     m.say=m.type==='king'?pick(['OW! My crown!','you dare?!']):pick(['my shell!','ow ow!']);m.sayT=1;};
-  B.squash=function(m){const s=this.s,W=this.W,H=this.H;if(m.dead)return;m.dead=true;const P=this.bugXY(m),tx=clamp(P.x+5*P.s,40,W-40),ty=clamp(P.y+4*P.s,20,H-20),val=m.type==='king'?5:m.max;
+  B.squash=function(m){const s=this.s,W=this.W,H=this.H;if(m.dead)return;m.dead=true;const P=this.bugXY(m),tx=clamp(P.x+5*P.s,40,W-40),ty=clamp(P.y+4*P.s,20,H-20),val=(m.type==='king'?5:m.max)+(typeof DogPower!=='undefined'&&DogPower.has('golden')?1:0);
     s.squashed=(s.squashed||0)+1;const bc=s.bugCol||BUG_COLS[0];[bc[0],'#ffe066','#ffffff'].forEach(cl=>this.sparks(8,cl,tx,ty,240));
     this.text((m.type==='king'?'KING SQUASHED!':pick(['SQUASH!','ZAP!','POP!','SPLAT!']))+' +'+val,'#ffe066',m.type==='king',tx,H*0.5);
-    Snd.coin();state.coins+=val;const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);
-    if(!s.minions.some(q=>!q.dead)){this.text('WAVE CLEAR! +3','#ffe066',true,W*0.5,H*0.45);state.coins+=3;saveState();const lc2=$('#lv-coins');if(lc2)lc2.textContent=String(state.coins);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
+    Snd.coin();state.coins+=val;if(typeof DogPower!=='undefined'&&DogPower.has('golden'))DogPower.pop('golden','Fetched +1 coin!');const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);
+    if(!s.minions.some(q=>!q.dead)){const wb=typeof DogPower!=='undefined'&&DogPower.has('corgi')?6:3;if(wb>3)DogPower.pop('corgi','Double wave bonus!');this.text('WAVE CLEAR! +'+wb,'#ffe066',true,W*0.5,H*0.45);state.coins+=wb;saveState();const lc2=$('#lv-coins');if(lc2)lc2.textContent=String(state.coins);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
       for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2,v=120+Math.random()*300;s.fx.push({x:tx,y:ty,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,life:0.6+Math.random()*0.6,col:pick(['#ffe066','#ff7b1c','#ffffff']),sz:3+Math.random()*3,grav:260});}
       setTimeout(()=>{if(this.s===s)s.minions=s.minions.filter(q=>!q.dead);},300);}};
   // small antics while he thinks: one at a time, every few seconds, never while the pen is moving
@@ -2102,16 +2123,18 @@ const Brawl={off:false,
       if(f.st==='windup'&&f.dur-f.t<0.45){f.st='open';f.t=0;f.dur=1.3;f.stun=1.3;G.perfect++;Snd.gem();say('PERFECT BLOCK!','#5ef2ff',true);G.flash=0.25;burst(G.heroX+60,G.Y-40,24,['#5ef2ff','#fff'],260);}
       else Snd.shield();};
     const win=()=>{G.phase='win';G.t=0;Snd.ko();G.flash=0.5;G.shake=0.6;burst(G.fX,G.Y-30,90,['#ffe066','#ff7b1c','#5ef2ff','#fff'],420);};
+    const DP=k=>typeof DogPower!=='undefined'&&DogPower.has(k);
     return Cine.play(60,(c,W,H,t,dt)=>{G.W=W;G.H=H;const gs=Math.max(5,Math.floor(Math.min(W,H)/42)),Y=H*0.72;G.Y=Y;const hx0=W*0.24,fx0=W*0.74;G.fX=fx0;
       // --- update
       G.t+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt);G.heroAtk=Math.max(0,G.heroAtk-dt);G.heroHit=Math.max(0,G.heroHit-dt);G.shield=Math.max(0,G.shield-dt);
       const f=G.foe;f.hurt=Math.max(0,f.hurt-dt);f.guard=Math.max(0,f.guard-dt);f.stun=Math.max(0,f.stun-dt);
-      if(G.phase==='intro'&&G.t>1.3){G.phase='fight';G.t=0;Music.play('boss');}
+      if(G.phase==='intro'&&G.t>1.3){G.phase='fight';G.t=0;Music.play('boss');if(DP('chihuahua')){f.st='open';f.t=0;f.dur=2;f.stun=2;say('BRAVE BARK!','#ffe066',true);DogPower.pop('chihuahua','Glitch is stunned!',{force:true});}}
       if(G.phase==='fight'){G.time-=dt;f.t+=dt;
         if(f.st==='idle'&&f.t>=f.dur){if(Math.random()<0.25&&f.guard<=0){f.guard=0.7;f.t=0;f.dur=0.9;}else{f.st='windup';f.t=0;f.dur=0.8+Math.random()*0.3;Snd.charge(0.4);}}
         else if(f.st==='windup'&&f.t>=f.dur){f.st='strike';f.t=0;f.dur=0.22;
+          const prot=G.shield<=0&&!G.prot&&DP('shepherd');if(prot){G.prot=1;G.shield=0.3;DogPower.pop('shepherd','Blocked Glitch’s attack!',{force:true});}
           if(G.shield>0){say('BLOCKED!','#5ef2ff',false);Snd.block();burst(G.heroX+50,Y-40,12,['#5ef2ff'],200);}
-          else{G.heroHit=0.35;G.combo=0;G.shake=0.3;Snd.hurt();say('OUCH!','#ff4d6d',false);}}
+          else{G.heroHit=0.35;if(DP('bulldog')){if(G.combo>=2)DogPower.pop('bulldog','Combo kept!');}else G.combo=0;G.shake=0.3;Snd.hurt();say('OUCH!','#ff4d6d',false);}}
         else if(f.st==='strike'&&f.t>=f.dur){f.st='open';f.t=0;f.dur=0.55;}
         else if(f.st==='open'&&f.t>=f.dur){f.st='idle';f.t=0;f.dur=0.7+Math.random()*0.8;}
         if(G.time<=0){G.phase='time';G.t=0;Snd.fanfare();}}
@@ -2359,27 +2382,32 @@ const Dojo={
     card.append(el('div',{class:'dj-expr'},el('span',null,(f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f,flip)+' =')),fld.el));
     const ink=el('div',{class:'dj-ink'});card.append(ink);if(typeof InkBox!=='undefined')InkBox.mount(ink,{big:true,allowDot:false});else ink.remove();
     Pad.focus(fld);say(teach?'No rush on new facts. Use the trick.':sp.kind==='sprint'?'Go go go!':'Type it or write it.','');
-    const t0=Date.now(),R=run;p.t0=t0;p.ts=t0;let done=false,tm=null,inkWrong=0;
-    const go=()=>{if(done||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
+    const t0=Date.now(),R=run;p.t0=t0;p.ts=t0;let done=false,tm=null,asking=false;
+    const go=()=>{if(done||asking||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
       if(src==='ink'){ // still writing? (e.g. the second loop of an 8). A short last "0" may be the top half of an 8, so wait longer.
         const it=(InkBox.lastR&&InkBox.lastR.items)||[],last=it[it.length-1],tall=Math.max(1,...it.map(i=>i.box.y1-i.box.y0));
         const maybe8=last&&last.ch==='0'&&(it.length===1||(last.box.y1-last.box.y0)<0.75*tall);
         if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
-      const lat=(ANS.firstInput||Date.now())-(p.ts||t0),ok=v===f.ans;
-      if(!ok&&src==='ink'&&(fld.inkP||1)<0.8&&inkWrong<1){inkWrong++;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();ANS.firstInput=null;say(`I read ${v}. Did I get that wrong? Write it again, or tap the keys.`,'info');return;}
+      const lat=p.lat0!=null?p.lat0:(ANS.firstInput||Date.now())-(p.ts||t0),ok=v===f.ans;
+      // wrong in handwriting? Ask first: "I read 17. Is that what you wrote?" A rewrite keeps his first speed.
+      if(!ok&&src==='ink'&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
+        InkCheck.ask(v,dj).then(keep=>{asking=false;if(run!==R||done)return;if(keep){p.inkKept=true;go();return;}
+          p.lat0=lat;p.inkClaim=v;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);say('Write it again, nice and clear. Or tap the keys.','info');});return;}
+      if(p.inkClaim!=null&&typeof InkCheck!=='undefined')InkCheck.after(p.inkClaim,v,ok);
       done=true;clearTimeout(tm);
-      const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,lat,src,p.k);
-      const fast=ok&&lat<=this.thr(src);
+      const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,p.hinted?99999:lat,src,p.k);
+      const fast=ok&&!p.hinted&&lat<=this.thr(src);
       if(p.k==='teach'||p.k==='again'){const t=this.st().today[sp.dojo];t.tk++;if(ok)t.tok++;}
       if(sp.kind!=='sprint'&&!before&&rec.owned&&!dj.newOwned.includes(f.key))dj.newOwned.push(f.key);
       Data.logAttempt({ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),skill:'dojo:'+sp.dojo,kind:'dojo',mode:p.k,diff:f.belt,variant:src,q:factExpr(f,flip),correct:f.ans,
-        firstTry:ok,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast,id:uid()});
+        firstTry:ok,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast,inkClaim:p.inkClaim!=null?p.inkClaim:undefined,inkKept:p.inkKept||undefined,hint:p.hinted||undefined,id:uid()});
       run.results[run.idx]={skill:'dojo',firstTry:ok,solved:ok,fast,ms:lat};
       if(ok){Pad.right(fld);Pad.lock(fld);dj.ok++;if(fast){dj.fast++;dj.bolt++;this.st().bolts++;dj.boltBest=Math.max(dj.boltBest,dj.bolt);}else dj.bolt=0;
         Battle.event(fast?'quick':'hit');stamp(fast?'quick':'right',null,{small:true,ms:fast?550:650});
-        if(!before&&rec.owned&&sp.kind!=='sprint'){Snd.gem();Battle.text('FACT OWNED!','#ffe066',true,null,Battle.H*0.22);}
+        if(!before&&rec.owned&&sp.kind!=='sprint'){Snd.gem();Battle.text('FACT OWNED!','#ffe066',true,null,Battle.H*0.22);if(typeof DogPower!=='undefined'&&DogPower.has('ellie'))DogPower.pop('ellie','Woof! That fact is yours forever!',{force:true});}
         if(teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;this.reask(p,[2,5]);}
         else if(p.k==='again')this.reask(p,[]);
+        else if(p.hinted)this.reask(p,[3]);
         setTimeout(()=>this.advance(p),fast?360:600);return;}
       // a miss: nothing is lost. Build the fact with the trick, copy it, and it comes back soon.
       Pad.set(fld,f.ans);Pad.lock(fld);fld.el.classList.add('shown');dj.bolt=0;dj.miss.push(f);if(Battle.miss)Battle.miss();
@@ -2395,7 +2423,12 @@ const Dojo={
         else if(cp.val.length>=len){Pad.wrong(cp);setTimeout(()=>{Pad.set(cp,'');if(typeof InkBox!=='undefined')InkBox.clear();},350);}};
       setActions([{label:'Skip ▸',cls:'btn-dark',onClick:()=>this.advance(p)}]);};
     fld.onChange=()=>{clearTimeout(tm);if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?600:140);};
-    setActions([[{label:'Show me',cls:'btn-dark',onClick:()=>{if(done)return;fld.val='-1';fld.src='key';go();}},{label:'Enter',cls:'btn-green',primary:true,onClick:go}]]);},
+    const acts=()=>{const row=[[{label:'Show me',cls:'btn-dark',onClick:()=>{if(done)return;fld.val='-1';fld.src='key';go();}},{label:'Enter',cls:'btn-green',primary:true,onClick:go}]];
+      // Border Collie: one free trick hint per round. A hinted fact earns no speed credit and comes back soon.
+      if(typeof DogPower!=='undefined'&&DogPower.has('collie')&&!dj.hint&&!teach&&sp.kind!=='sprint')row.push({label:'🐾 Big Brain hint',cls:'btn-dark',onClick:()=>{if(done||dj.hint)return;dj.hint=1;p.hinted=true;
+        card.querySelector('.dj-expr').after(el('div',{class:'dj-teach'},el('b',null,'Big Brain hint'),factVisual(f),el('p',null,factTip(f))));DogPower.pop('collie','Here’s the trick!',{force:true});setActions(acts());Pad.focus(fld);}});
+      return row;};
+    setActions(acts());},
   // expanding re-asks: after 2, then 5 more items (max 2 extra per fact per round)
   reask(p,gaps){const n=run.dj.extra[p.f.key]||0;if(n>=2)return;let at=run.idx;gaps.slice(0,2-n).forEach(g=>{at=Math.min(run.queue.length,at+g);run.queue.splice(at,0,{kind:'dfact',skill:'dojo',f:p.f,k:'again',answer:p.f.ans});});
     run.dj.extra[p.f.key]=n+Math.min(gaps.length,2-n);Battle.setTotal(run.queue.length);},
@@ -2414,7 +2447,8 @@ const Dojo={
     // belts: earned when every fact in the belt is owned. Never taken away.
     const newBelts=[];for(let i=0;i<8;i++){const be=this.belt(did,i),o=this.ownedIn(did,i);if(!be.earned&&o.n>=o.t){be.earned=new Date().toISOString();newBelts.push(i);}}
     const newSupers=newBelts.map(()=>unlockNextSuper()).filter(Boolean);
-    let coins=sp.kind==='sprint'?5+C:10+F+dj.newOwned.length*3+(diamond?40:0)+newBelts.length*100;state.coins+=coins;run.coins+=coins;
+    const ellie=sp.kind!=='sprint'&&typeof DogPower!=='undefined'&&DogPower.has('ellie');
+    let coins=(sp.kind==='sprint'?5+C:10+F+dj.newOwned.length*3+(diamond?40:0)+newBelts.length*100)+(ellie?5:0);state.coins+=coins;run.coins+=coins;
     if(diamond)d.medals.diamond=(d.medals.diamond||0)+1;
     const summary={title:sp.title,mode:'dojo',dojo:did,kind:sp.kind,n:N,firstTry:C,fast:F,newOwned:dj.newOwned,taught:dj.taught,beltsEarned:newBelts,coins,squashed:sq,ms:Date.now()-run.start,miss:[...new Set(dj.miss.map(f=>f.key))]};
     SESSION.runs.push(summary);saveState();Data.saveSession();Local.addSession(SESSION);if(typeof Sync!=='undefined')Sync.kick();
@@ -2430,7 +2464,7 @@ const Dojo={
       newBelts.length?el('p',{class:'dj-stripe'},newBelts.map(i=>BELTS[i][0]+' Belt earned!').join(' ')):null,
       newSupers.length?el('p',{class:'dj-stripe'},'New super move unlocked: '+newSupers.map(x=>x[1]).join(', ')+'! It joins your SUPER attacks.'):null);}
     if(sq)m.append(el('p',{class:'dj-bugs'},`🐞 Bugs squashed: ${sq}`+(sq>prevSq&&prevSq?' · NEW BEST!':` (best ${Math.max(prevSq,sq)})`)));
-    m.append(el('p',{class:'tiny-ok'},`+${coins} coins`));
+    m.append(el('p',{class:'tiny-ok'},`+${coins} coins`+(ellie?' (🐾 Ellie’s Best Buddy bonus +5)':'')));
     const nextDid=!this.doneToday('pm')?'pm':!this.doneToday('tm')?'tm':((t.secs||0)>((d.today[did==='pm'?'tm':'pm'].secs)||0)?(did==='pm'?'tm':'pm'):did);
     if(this.strict()&&!this.gateOk()){m.append(el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
         el('small',null,`Today: ${Math.floor(this.secsToday()/60)} of ${this.goalSecs()/60} minutes · about ${this.minsLeft()} to go`)),
@@ -2492,7 +2526,7 @@ function reportPayload(){const L=Local.log;
   return {app:'number-knight',v:2,generated:new Date().toISOString(),hero:state.hero&&state.hero.name,coins:state.coins,streak:state.streak,totals:state.totals,
     skills:state.skills,methods:state.methods,facts:state.facts,prog:state.prog,packsDone:state.packsDone,
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
-    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,sessions:Local.sess.slice(-60),log:L.slice(-300)};}
+    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300)};}
 const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null),err:null,lastTry:0,sent:lsGet('nk-sync-h',{}),
   pair(){const src=decodeURIComponent(location.hash+'&'+location.search);if(!/sync=/.test(src))return;
     const tok=(src.match(/(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/)||[])[1],rp=(src.match(/repo=([\w.-]+\/[\w.-]+)/)||[])[1];
@@ -2556,7 +2590,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004191325';
+const BUILD='20261004194719';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -2593,11 +2627,11 @@ function dogIcon(id,size){const cv=el('canvas',{width:size,height:size,class:'do
   drawSprite(c,p.rows,(size-w*s)/2,(size-h*s)/2,s,p.pal);return cv;}
 function dogGrid(selected,onPick){return el('div',{class:'dog-grid'},STARTER_DOGS.map(id=>{const b=el('button',{class:'dog-pick'+(id===selected?' on':''),type:'button',onclick:()=>{
     b.parentNode.querySelectorAll('.dog-pick').forEach(x=>x.classList.remove('on'));b.classList.add('on');Snd.init();Snd.tone(880,0.06,'square',0.04);Snd.tone(660,0.08,'square',0.04,0.07);onPick(id);}},
-    dogIcon(id,72),el('span',null,DOGS.find(d=>d[0]===id)[1]));return b;}));}
+    dogIcon(id,72),el('span',null,DOGS.find(d=>d[0]===id)[1]),typeof DOG_POWERS!=='undefined'&&DOG_POWERS[id]?el('small',{class:'dpw'},'🐾 '+DOG_POWERS[id][0]):null);return b;}));}
 // one-time: heroes who started before dogs existed get to pick a free dog
 const DogPick={maybe(){if(!state.hero||state.dogPicked)return;if(!$('#overlay').hidden||!$('#cine').hidden||!$('#talk').hidden||$('#scr-map').hidden){setTimeout(()=>this.maybe(),2500);return;}
     let pickId='puppy';const go=()=>{state.dogPicked=1;if(!state.owned.includes('pet:'+pickId))state.owned.push('pet:'+pickId);state.hero.pet=pickId;saveState();overlay(null);Snd.fanfare();renderMap();};
-    overlay(el('div',{class:'modal dog-modal'},el('h2',null,'Pick your dog!'),el('p',null,'Every hero needs a sidekick. Choose a free dog. You can buy more breeds in the Shop.'),
+    overlay(el('div',{class:'modal dog-modal'},el('h2',null,'Pick your dog!'),el('p',null,'Every hero needs a sidekick. Choose a free dog. Each dog has its own special power. You can buy more breeds in the Shop.'),
       dogGrid(pickId,id=>{pickId=id;}),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:go},'This one! ▸'))));}};
 
 // Ellie is the family dog: every hero gets her free, with a one-time welcome
@@ -2605,9 +2639,72 @@ const Ellie={maybe(){if(!state.hero)return;if(state.owned.includes('pet:ellie')&
     if(!state.owned.includes('pet:ellie')){state.owned.push('pet:ellie');saveState();}
     if(state.ellieMet)return;if(!$('#overlay').hidden||!$('#cine').hidden||!$('#talk').hidden||$('#scr-map').hidden){setTimeout(()=>this.maybe(),2500);return;}
     state.ellieMet=1;saveState();const big=el('canvas',{width:160,height:160,class:'ellie-big'});const c=big.getContext('2d');c.imageSmoothingEnabled=false;drawSprite(c,PETS.ellie.rows,10,30,10,PETS.ellie.pal);
-    Snd.fanfare();overlay(el('div',{class:'modal dog-modal ellie-modal'},el('h2',null,'Meet Ellie! 🐾'),big,el('p',null,'Ellie the Sheepadoodle wants to join your adventure. She’s yours, free!'),
+    Snd.fanfare();overlay(el('div',{class:'modal dog-modal ellie-modal'},el('h2',null,'Meet Ellie! 🐾'),big,el('p',null,'Ellie the Sheepadoodle wants to join your adventure. She’s yours, free!'),typeof DogPower!=='undefined'?el('p',{class:'dpw-line'},DogPower.line('ellie')):null,
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>{overlay(null);}},'Maybe later'),
         el('button',{class:'btn btn-green',type:'button',onclick:()=>{state.hero.pet='ellie';saveState();overlay(null);Snd.gem();renderMap();}},'Bring Ellie along! ▸'))));}};
+
+/* =========================================================
+   Dog powers: the dog at his side gives one small perk. Powers add fun and coins; none does the math for him.
+   ========================================================= */
+const DOG_POWERS={
+  ellie:['Best Buddy','+5 coins after every Dojo round, and a happy bark when you own a new fact'],
+  puppy:['Cheer','+3 coins when you catch your own mistake'],
+  golden:['Fetch','+1 extra coin for every bug you squash'],
+  lab:['Loyal Guard','blocks your first miss in each level or round, so your streak stays alive'],
+  dalmatian:['Spot It','after Check It, points to the place to look again'],
+  beagle:['Super Sniff','in Bug Hunt, sniffs out where Glitch messed up'],
+  pug:['Comeback','after a miss, your next right answer earns +2 coins'],
+  shiba:['Zoomies','your SUPER meter charges faster'],
+  corgi:['Herding','double coins for clearing a bug wave'],
+  shepherd:['Protector','blocks Glitch’s first attack in Battle Time'],
+  husky:['Sled Power','+5 mech power'],
+  collie:['Big Brain','one free trick hint per Dojo round'],
+  dachshund:['Dig','sometimes digs up bonus coins from chests'],
+  poodle:['Fancy','10% off everything in the Shop'],
+  chihuahua:['Brave Bark','stuns Glitch at the start of Battle Time'],
+  bulldog:['Tough','Glitch’s hits in Battle Time don’t break your combo'],
+  robodog:['Laser Eyes','start every battle with one SUPER pip charged']};
+const DogPower={last:{},
+  id(){return state.hero&&state.hero.pet;},
+  has(k){return this.id()===k&&!!DOG_POWERS[k];},
+  name(k){const d=DOGS.find(x=>x[0]===k);return d?d[1].replace(/ the .*/,''):k;},
+  line(k){const p=DOG_POWERS[k];return p?`🐾 ${p[0]}: ${p[1]}`:'';},
+  // a small toast with the dog's face; quiet repeats (one per power every few seconds)
+  pop(k,msg,o){o=o||{};const now=Date.now();if(!o.force&&now-(this.last[k+msg]||0)<6000)return;this.last[k+msg]=now;
+    const t=el('div',{class:'dog-pop'},dogIcon(k,44),el('div',null,el('b',null,`${this.name(k)}: ${DOG_POWERS[k][0]}!`),el('span',null,msg)));
+    $('#app').append(t);try{Snd.tone(988,0.05,'square',0.03);Snd.tone(1319,0.07,'square',0.03,0.06);}catch(e){}
+    setTimeout(()=>t.classList.add('out'),1700);setTimeout(()=>t.remove(),2100);},
+  coins(n){state.coins+=n;const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);saveState();},
+  price(p){return this.has('poodle')?Math.round(p*0.9):p;},
+  // Beagle: point at the place or step Glitch got wrong (only once he has missed a real bug)
+  sniff(p){if(!this.has('beagle'))return;const b=p.base;let msg=null;
+    if(b.kind==='word'&&b.glitchPlan){const gs=b.glitchPlan.steps,i=gs.findIndex((s,k)=>!b.steps[k]||!eqNum(s.res,b.steps[k].res));
+      const rows=[...document.querySelectorAll('#card .gwork > div')].slice(1,-1);if(i>=0&&rows[i]){rows[i].classList.add('sniffed');msg=`Sniff sniff! Step ${i+1} smells funny.`;}}
+    else if(b.kind==='arith'){const pl=diffPlaces(p.glitch,b.answer,b.dp||0)[0];if(pl)msg=`Sniff sniff! Something smells funny in the ${pl} place.`;}
+    else if(b.kind==='area')msg='Sniff sniff! One of Glitch’s parts smells funny.';
+    if(msg){this.pop('beagle',msg,{force:true});say(msg,'warn');}}};
+
+// Husky: +5 mech power (shows in the Mech Bay too)
+{const _mp=mechPower;mechPower=function(m){return _mp(m)+(DogPower.has('husky')?5:0);};}
+// Dachshund: 40% of chests come with a dug-up bonus
+{const _oc=openChest;openChest=function(ctx){const r=_oc(ctx);const dig=()=>{if(DogPower.has('dachshund')&&Math.random()<0.4){DogPower.coins(10);DogPower.pop('dachshund','Dug up 10 bonus coins!',{force:true});}};
+  if(r&&r.then)return r.then(v=>{dig();return v;});dig();return r;};}
+
+/* =========================================================
+   Handwriting check: before a handwritten answer counts as wrong, ask whether the reader got it right.
+   "No" means rewrite: no penalty, and his first speed still counts. Capped per round so it can’t become a free retry.
+   ========================================================= */
+const InkCheck={MAX:3,
+  st(){return state.inkStats=state.inkStats||{asked:0,yes:0,no:0,noThenRight:0,noThenWrong:0,log:[]};},
+  left(bag){return (bag.inkClaims||0)<this.MAX;},
+  ask(v,bag){const S=this.st();S.asked++;saveState();
+    const A=InkBox.active,cv=A&&A.cv;let snap=null;try{if(cv&&cv.width&&A.strokes&&A.strokes.length)snap=el('img',{class:'ink-snap',src:cv.toDataURL(),alt:'What you wrote'});}catch(e){}
+    return new Promise(res=>{const yes=el('button',{class:'btn btn-dark',type:'button'},'Yes, that’s my answer'),no=el('button',{class:'btn btn-green',type:'button'},'No, let me rewrite it');
+      const fin=k=>{if(fin.done)return;fin.done=1;overlay(null);if(k)S.yes++;else{S.no++;bag.inkClaims=(bag.inkClaims||0)+1;}saveState();res(k);};
+      tapify(yes,()=>fin(true));tapify(no,()=>fin(false));
+      overlay(el('div',{class:'modal ink-check'},el('h2',null,'Did I read that right?'),snap,el('p',{class:'ink-q'},'I read ',el('b',null,String(v)),'. Is that what you wrote?'),el('div',{class:'btns'},yes,no)));});},
+  // remember how the rewrite went, so the coach can see how often the reader is wrong
+  after(read,now,ok){const S=this.st();if(ok)S.noThenRight++;else S.noThenWrong++;S.log=(S.log||[]).concat([{t:new Date().toISOString(),read,now,ok}]).slice(-60);saveState();}};
 
 /* =========================================================
    Screen time: a visible clock, a daily limit, and a short daily allowance for the Shop/Mech Bay.
@@ -3409,11 +3506,11 @@ function renderShop(){const S=$('#scr-shop');S.innerHTML='';const look=Object.as
   CATALOG[shopTab].forEach(it=>{const key=shopTab+':'+it.id;const own=state.owned.includes(key);const eq=look[shopTab]===it.id;
     const ic=el('canvas',{width:96,height:96});const c=ic.getContext('2d');c.imageSmoothingEnabled=false;const l2=Object.assign({},look,{[shopTab]:it.id});
     if(shopTab==='pet'){if(it.id!=='none')drawPet(c,it.id,16,30,8,0);}else drawHero(c,24,shopTab==='hat'?22:12,4,l2,'stand',0);
-    const b=el('button',{class:'item'+(eq?' eq':'')+(!own&&state.coins<it.price?' cant':''),type:'button',onclick:()=>{
+    const b=el('button',{class:'item'+(eq?' eq':'')+(!own&&state.coins<DogPower.price(it.price)?' cant':''),type:'button',onclick:()=>{
       if(own){state.hero[shopTab]=it.id;saveState();Snd.tap();renderShop();return;}
-      if(state.coins<it.price){Snd.shield();b.querySelector('.pr').textContent=`Need ${it.price-state.coins} more`;return;}
-      state.coins-=it.price;state.owned.push(key);state.hero[shopTab]=it.id;saveState();Snd.gem();renderShop();}},
-      ic,el('span',{class:'nm'},it.name),el('span',{class:'pr'},eq?'Wearing':own?'Owned · tap to wear':[el('span',{class:'coin-ico'}),String(it.price)]));
+      if(state.coins<DogPower.price(it.price)){Snd.shield();b.querySelector('.pr').textContent=`Need ${DogPower.price(it.price)-state.coins} more`;return;}
+      state.coins-=DogPower.price(it.price);state.owned.push(key);state.hero[shopTab]=it.id;saveState();Snd.gem();renderShop();}},
+      ic,el('span',{class:'nm'},it.name),shopTab==='pet'&&DOG_POWERS[it.id]?el('span',{class:'dpw'},DogPower.line(it.id)):null,el('span',{class:'pr'},eq?'Wearing':own?'Owned · tap to wear':[el('span',{class:'coin-ico'}),String(DogPower.price(it.price))]));
     grid.append(b);});
   S.append(el('div',{class:'shop-body'},el('div',{class:'shop-prev'},prev,el('p',{style:'margin:0;color:var(--text-soft);text-align:center'},'Earn coins by solving and checking problems.')),el('div',{class:'scroll',style:'min-height:0'},tabs,grid)));
   paintPrev();}
@@ -3551,12 +3648,17 @@ function answerFlow(o){const st={tries:0,wrongAtCheck:false,checkedSince:false};
   const extra=o.extraBtn?[o.extraBtn]:[];
   setActions(o.check?[[checkBtn,submitBtn]].concat(extra):[submitBtn].concat(extra));
   async function submit(){const v=Pad.val(o.field);if(v==null){say('Type your answer on the keypad first.','info');return;}
+    if(!eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&!st.inkAsked&&typeof InkCheck!=='undefined'&&InkCheck.left(run)){st.inkAsked=true;
+      if(!(await InkCheck.ask(v,run))){st.inkClaim=v;Pad.set(o.field,'');o.field.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(o.field);say('Write it again, nice and clear. Or tap the keys.','info');return;}}
+    if(st.inkClaim!=null&&typeof InkCheck!=='undefined'){InkCheck.after(st.inkClaim,v,eqNum(v,o.correct));a.inkClaim=st.inkClaim;st.inkClaim=null;}
     if(st.tries===0&&a.confidence==null&&o.check&&Math.random()<0.25){a.confidence=await askConfidence();}
     st.tries++;a.tries.push({a:v,ms:Date.now()-a.t0,chk:st.checkedSince});st.checkedSince=false;
     if(eqNum(v,o.correct)){closeCheck();Pad.right(o.field);Pad.lock(o.field);o.onDone({solved:true,firstTry:st.tries===1,selfCatch:st.tries===1&&st.wrongAtCheck,tries:st.tries});return;}
     Pad.wrong(o.field);Battle.event(a.tries[a.tries.length-1].chk?'block':'hurt');stamp(a.tries[a.tries.length-1].chk?'block':'wrong',a.tries[a.tries.length-1].chk?'No power lost':'Try again');const dg=o.diag?o.diag(v):{tags:['other'],places:[]};a.errors=(a.errors||[]);a.errors.push({a:v,tags:dg.tags,places:dg.places});Talk.onWrong({skill:a.skill,kind:a.kind,tags:dg.tags,tries:st.tries,checked:a.tries[a.tries.length-1].chk});
     if(o.onWrong&&o.onWrong(st.tries,v))return;
-    if(st.tries===1)say('Shield up! Not quite yet. Tap Check It to hunt for the slip.','warn');
+    const spot=st.tries===1&&a.checkUsed&&!o.noPlaceHint&&dg.places&&dg.places[0]&&typeof DogPower!=='undefined'&&DogPower.has('dalmatian');
+    if(spot){say(`Spot it! Look again at the ${dg.places[0]} place.`,'warn');DogPower.pop('dalmatian',`Check the ${dg.places[0]} place!`,{force:true});}
+    else if(st.tries===1)say('Shield up! Not quite yet. Tap Check It to hunt for the slip.','warn');
     else if(st.tries===2){const pl=dg.places&&dg.places[0];say(pl&&!o.noPlaceHint?`Getting close. Look hard at the ${pl} place.`:'Try once more. Go one step at a time.','warn');}
     else{closeCheck();Pad.lock(o.field);say('Let’s look at it together.','info');const node=o.reveal?o.reveal(v):el('div',null,'The answer is '+fmt(o.correct));
       $('#card').append(el('div',{class:'reveal'},el('h4',null,'Here’s how it works'),node));$('#card').scrollTop=1e6;
@@ -3818,7 +3920,7 @@ function renderBug(p,a){const card=$('#card');const b=p.base;if(b.kind!=='arith'
         onDone:res=>complete(p,{solved:res.solved,firstTry:vt===1&&res.firstTry,selfCatch:res.selfCatch,tries:res.tries,revealed:res.revealed})});}
     else{Battle.event(a.checkUsed?'block':'hurt',{w:0.5});if(vt>=3){say(p.isBug?`Glitch made a mistake. The answer is ${fmt(b.answer)}.`:'Glitch was right this time!','info');
         complete(p,{solved:false,firstTry:false,tries:vt,revealed:true});return;}
-      say(p.isBug?'Look again. Glitch made a mistake somewhere. Use the check!':'Are you sure? Check Glitch’s answer before you decide.','warn');}}}
+      say(p.isBug?'Look again. Glitch made a mistake somewhere. Use the check!':'Are you sure? Check Glitch’s answer before you decide.','warn');if(p.isBug&&typeof DogPower!=='undefined')DogPower.sniff(p);}}}
 
 
 /* ---------- Coach report (for grown-ups) */
@@ -3877,7 +3979,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
