@@ -579,6 +579,15 @@ table.dt th{background:var(--paper-2)}
 .brawl-btn.atk{background:linear-gradient(#ffd166,#ff7b1c)}
 .brawl-btn.blk{background:linear-gradient(#9be7ff,#3fa7ff)}
 .brawl-btn.hit{animation:btnHit .18s ease-out}
+/* speed map */
+.dj-auto{font:800 17px var(--f-body);color:#3fdc6b}.dj-auto small{font-weight:500;color:var(--text-soft)}
+.spd-wrap summary{cursor:pointer;font-weight:700;padding:6px 0}
+.spd-grids{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:8px}
+table.spd{border-collapse:collapse;font:700 11px var(--f-math)}
+table.spd th{color:#aab1d6;padding:1px 3px;font-weight:700}
+table.spd td{width:22px;height:20px;text-align:center;color:#0b0d1f;border:1px solid #0b0d1f}
+table.spd td.x{background:transparent;border-color:transparent}
+.spd-leg{display:flex;flex-wrap:wrap;gap:10px;font-size:12px}.spd-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 </style>
 
 <div id="app">
@@ -741,7 +750,7 @@ const Local={log:lsGet('nk-log',[]),sess:lsGet('nk-sessions',[]),
   add(a){const tags=[].concat(...(a.errors||[]).map(e=>e.tags||[]));
     this.log.push({ts:a.ts,day:a.day,hour:a.hour,skill:a.skill,kind:a.kind,mode:a.mode,diff:a.diff,variant:a.variant,probe:a.probe,q:String(a.q||'').slice(0,240),
       correct:a.correct,firstTry:a.firstTry,solved:a.solved,selfCatch:a.selfCatch,revealed:a.revealed,checkUsed:!!a.checkUsed,checkMethod:a.checkMethod||null,
-      confidence:a.confidence==null?null:a.confidence,ms:a.ms,wrong:(a.errors||[]).map(e=>e.a),tags,stages:a.stages||null,decoder:!!a.decoderUsed,scratch:a.scratch?a.scratch.n:0,fast:a.fast==null?undefined:a.fast,tips:a.tips||undefined});
+      confidence:a.confidence==null?null:a.confidence,ms:a.ms,wrong:(a.errors||[]).map(e=>e.a),tags,stages:a.stages||null,decoder:!!a.decoderUsed,scratch:a.scratch?a.scratch.n:0,fast:a.fast==null?undefined:a.fast,lat:a.lat==null?undefined:a.lat,tips:a.tips||undefined});
     if(this.log.length>1500)this.log=this.log.slice(-1500);lsSet('nk-log',this.log);},
   addSession(s){this.sess=this.sess.filter(x=>x.id!==s.id);this.sess.push(JSON.parse(JSON.stringify(s)));if(this.sess.length>200)this.sess=this.sess.slice(-200);lsSet('nk-sessions',this.sess);}
 };
@@ -1757,8 +1766,10 @@ const Grip={init(){const g=$('#scGrip');if(!g)return;let drag=null;
 /* =========================================================
    Battle action: combo cutscenes, Glitch HP, counterattacks, bug waves
    ========================================================= */
-const MINION=["..g..g..",".gGGGGg.","gGWKGWKg","gGGGGGGg",".gGGGGg."];
-const MINION_LEGS=[["g.g..g.g"],[".g.gg.g."]];
+const MINION=["..a....a..","...a..a...","..gGGGGg..",".gGWWGWWGg",".gGWKGWKGg","gGGGGGGGGg","gGGMMMMGGg",".gGGGGGGg."];
+const MINION_LEGS=[[".g.g..g.g."],["g.g....g.g"]];
+const BUG_COLS=[['#ff4d6d','#7a1f3d'],['#3fdc6b','#1d6b35'],['#b26bff','#4a1f7a'],['#ffb627','#8a5a00'],['#5ef2ff','#1d5a6b']];
+const BUG_TALK=['nyeh!','bzzt!','hehe','2+2=5!','ERROR!','glitch!','mwahaha','oops!'];
 (()=>{const B=Battle,_setup=B.setup.bind(B),_event=B.event.bind(B),_update=B.update.bind(B);
   B.setup=function(o){_setup(o);const s=this.s;Object.assign(s,{hits:0,hp:1,hpShow:1,hpFlash:0,atk:null,minions:[],wave:0,waveT:o.drill?0.6:1.8,drill:!!o.drill,
     foeAtk:null,foeAtkT:o.drill?5:7+Math.random()*3,heroJump:0,heroJV:0,foeLift:0,foeLiftV:0,rings:[],slashes:[],bigUntil:0});this.big(false);};
@@ -1775,9 +1786,10 @@ const MINION_LEGS=[["g.g..g.g"],[".g.gg.g."]];
   B.startCombo=function(crit){const s=this.s;if(s.drill){s.atk={t:0,dur:0.5,crit,quick:true,hit:0};return;}s.atk={t:0,dur:crit?1.25:1.05,crit,hit:0};Snd.whoosh();};
   B.zapMinions=function(list,n){const s=this.s;list.sort((a,b)=>a.x-b.x).slice(0,n).forEach((m,i)=>{m.doomed=true;
       s.proj.push({k:'zap',x:this.heroX()+20,y:this.beamY()-10,tx:m,life:1.2,vx:0,vy:0,dl:i*0.08});});Snd.zap(s.combo+2);};
-  B.spawnWave=function(){const s=this.s,n=s.drill?3+(s.wave%3):2+(s.wave%3);s.wave++;
-    for(let i=0;i<n;i++)s.minions.push({x:this.foeX()-10+i*26,y:0,ph:Math.random()*6,stop:this.W*(0.42+i*0.07+Math.random()*0.04),doomed:false,dead:false,born:s.t});
-    this.text(s.drill?'BUG WAVE!':'BUGS INCOMING!','#ff4d6d',false,this.foeX()-60,this.H*0.32);};
+  B.spawnWave=function(){const s=this.s,n=s.drill?3+(s.wave%3):2+(s.wave%3);s.wave++;s.bugCol=BUG_COLS[(s.wave-1)%BUG_COLS.length];
+    for(let i=0;i<n;i++)s.minions.push({x:this.foeX()-10+i*30,y:0,ph:Math.random()*6,stop:this.W*(0.44+i*0.075+Math.random()*0.03),doomed:false,dead:false,born:s.t,say:null,sayT:0});
+    this.text('BUG ATTACK!','#ff4d6d',true,this.W*0.55,this.H*0.3);
+    if(!state.bugTip&&typeof Talk!=='undefined'){state.bugTip=1;saveState();setTimeout(()=>Talk.pop('byte','BEEP! Those are Glitch’s BUGS. Every right answer zaps one. Zap a whole wave for bonus coins!'),400);}};
   B.foeAttack=function(){const s=this.s;const k=pick(s.mech?['missile','laser','slam']:['missile','laser','slam','missile']);s.foeAtk={k,t:0};
     if(k==='laser')Snd.charge(0.5);else if(k==='missile')Snd.whoosh();};
   B.update=function(dt){const s=this.s;if(!s)return;_update(dt);if(s.freeze>0)return;const H=this.H,W=this.W;
@@ -1794,7 +1806,7 @@ const MINION_LEGS=[["g.g..g.g"],[".g.gg.g."]];
     if(s.heroJump<0||s.heroJV<0){s.heroJV+=H*8*dt;s.heroJump+=s.heroJV*dt;if(s.heroJump>0){s.heroJump=0;s.heroJV=0;}}
     // bug waves
     if(!s.gone&&!s.ko){if(!s.minions.some(m=>!m.dead)){s.waveT-=dt;if(s.waveT<=0){this.spawnWave();s.waveT=s.drill?1.2:2.5;}}}
-    for(const m of s.minions){if(m.dead)continue;if(m.x>m.stop)m.x-=W*0.05*dt;m.ph+=dt*8;}
+    for(const m of s.minions){if(m.dead)continue;if(m.x>m.stop)m.x-=W*0.05*dt;m.ph+=dt*8;m.sayT=Math.max(0,m.sayT-dt);if(!m.sayT&&Math.random()<dt*0.25){m.say=pick(BUG_TALK);m.sayT=1.4;}}
     // Glitch fights back between problems (looks only, never costs power)
     if(!s.drill&&!s.gone&&!s.ko&&!s.atk&&!s.foeAtk&&$('#cine').hidden){s.foeAtkT-=dt;if(s.foeAtkT<=0){this.foeAttack();s.foeAtkT=(s.drill?5:8)+Math.random()*4;}}
     if(s.foeAtk){const f=s.foeAtk;f.t+=dt;const hx=this.heroX(),gy=H*0.9;
@@ -1808,8 +1820,8 @@ const MINION_LEGS=[["g.g..g.g"],[".g.gg.g."]];
     s.slashes=s.slashes.filter(x=>(x.life-=dt)>0);
     // zap bolts that home onto bugs
     for(const p of s.proj){if(p.k!=='zap'||p.dl>0)continue;const m=p.tx;const tx=m.x+10,ty=H*0.9-14;const dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy);
-      if(d<16||p.life<0.05){p.life=0;if(!m.dead){m.dead=true;this.sparks(18,pick(['#ff4d6d','#ffe066','#5ef2ff']),tx,ty,220);this.text('POP!','#ffe066',false,tx,H*0.55);
-        if(!s.minions.some(q=>!q.dead)){this.text('WAVE CLEAR!','#ffe066',true,W*0.5,H*0.45);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
+      if(d<16||p.life<0.05){p.life=0;if(!m.dead){m.dead=true;this.sparks(22,[s.bugCol?s.bugCol[0]:'#ff4d6d','#ffe066','#ffffff'],tx,ty,240);this.text(pick(['SQUASH!','ZAP!','POP!','SPLAT!'])+' +1','#ffe066',false,tx,H*0.5);Snd.coin();state.coins+=1;const lc=$('#lv-coins');if(lc)lc.textContent=String(state.coins);
+        if(!s.minions.some(q=>!q.dead)){this.text('WAVE CLEAR! +3','#ffe066',true,W*0.5,H*0.45);state.coins+=3;saveState();const lc2=$('#lv-coins');if(lc2)lc2.textContent=String(state.coins);Snd.boom();s.rings.push({x:tx,life:1,boom:1});s.shake=RM?0:0.3;
           for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2,v=120+Math.random()*300;s.fx.push({x:tx,y:ty,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,life:0.6+Math.random()*0.6,col:pick(['#ffe066','#ff7b1c','#ffffff']),sz:3+Math.random()*3,grav:260});}
           setTimeout(()=>{if(this.s===s)s.minions=s.minions.filter(q=>!q.dead);},300);}}}
       else{p.x+=dx/d*Math.max(500,W*1.4)*dt;p.y+=dy/d*Math.max(500,W*1.4)*dt;}}};
@@ -1853,9 +1865,13 @@ const MINION_LEGS=[["g.g..g.g"],[".g.gg.g."]];
     for(const x of s.slashes){c.strokeStyle=x.col;c.globalAlpha=Math.min(1,x.life*5);c.lineWidth=Math.max(4,H*0.04);c.beginPath();
       if(x.up)c.arc(x.x,x.y+x.r*0.4,x.r,-2.6,-0.5);else c.arc(x.x,x.y,x.r,x.a0,x.a0+1.6);c.stroke();}c.globalAlpha=1;
     // bugs
-    const ms=Math.max(1.6,H/28);
-    for(const m of s.minions){if(m.dead)continue;const by=ground-6*ms-Math.abs(Math.sin(m.ph))*ms*1.5;drawSprite(c,MINION,m.x,by,ms,{g:'#7a1f3d',G:mix('#ff4d6d',s.form.col,0.3),W:'#ffffff',K:'#1d1f33'});
-      drawSprite(c,MINION_LEGS[(m.ph|0)%2],m.x,by+5*ms,ms,{g:'#7a1f3d'});}
+    const ms=Math.max(2,Math.min(H,200)/22),bc=s.bugCol||BUG_COLS[0];
+    for(const m of s.minions){if(m.dead)continue;const by=ground-9*ms-Math.abs(Math.sin(m.ph))*ms*1.5;
+      drawSprite(c,MINION,m.x,by,ms,{a:bc[1],g:bc[1],G:bc[0],W:'#ffffff',K:'#1d1f33',M:'#1d1f33'});drawSprite(c,MINION_LEGS[(m.ph|0)%2],m.x,by+8*ms,ms,{g:bc[1]});
+      if(m.sayT>0&&H>80){const fs=Math.max(10,Math.round(Math.min(H,200)*0.075));c.font=`700 ${fs}px Lexend,sans-serif`;const tw=c.measureText(m.say).width+10;c.globalAlpha=Math.min(1,m.sayT*3);
+        c.fillStyle='#ffffff';c.fillRect(m.x-2,by-fs-10,tw,fs+6);c.fillStyle='#1d1f33';c.textAlign='left';c.fillText(m.say,m.x+3,by-8);c.globalAlpha=1;}}
+    {const left=s.minions.filter(m=>!m.dead).length;if(left){const fs=Math.max(11,Math.round(Math.min(H,200)*0.09)),tx=W*0.5,ty=H-Math.max(4,H*0.02);c.font=`800 ${fs}px "Pixelify Sans",monospace`;c.textAlign='center';
+      const label=`BUGS LEFT: ${left}`;const tw=c.measureText(label).width+18;c.fillStyle='#000a';c.fillRect(tx-tw/2,ty-fs,tw,fs+8);c.fillStyle=bc[0];c.fillText(label,tx,ty);}}
     if(s.shieldT>0){const al=Math.min(1,s.shieldT*1.5),sx=this.heroX()+(s.mech?H*0.36:H*0.2)+hdx,r=H*0.3;c.strokeStyle=`rgba(94,242,255,${al})`;c.lineWidth=4;c.fillStyle=`rgba(94,242,255,${al*0.18})`;
       c.beginPath();for(let i=0;i<6;i++){const an=Math.PI/3*i+Math.PI/6;c.lineTo(sx+Math.cos(an)*r*0.6,y-6+Math.sin(an)*r);}c.closePath();c.fill();c.stroke();}
     if(f&&f.k==='missile'&&f.p&&!f.done){c.fillStyle='#ff4d6d';c.fillRect(f.p.x-7,f.p.y-3,14,6);c.fillStyle='#ffe066';c.fillRect(f.p.x+7,f.p.y-2,6,4);s.fx.push({x:f.p.x+12,y:f.p.y,vx:30,vy:rint(-15,15),life:0.3,col:'#ffb627',sz:3});}
@@ -2141,7 +2157,7 @@ const Dojo={
   KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
-  goalSecs(){return Math.round(60*((typeof cfg!=='undefined'&&cfg&&cfg.dojoMinutes)||20));},
+  goalSecs(){return Math.round(60*((typeof cfg!=='undefined'&&cfg&&cfg.dojoMinutes)||15));},
   secsToday(){const t=this.st().today;return (t.pm.secs||0)+(t.tm.secs||0);},
   minsLeft(){return Math.max(0,Math.ceil((this.goalSecs()-this.secsToday())/60));},
   gateOk(){const d=this.st();if(d.unlockDay===dayStr())return true;const both=this.doneToday('pm')&&this.doneToday('tm');return this.strict()?both&&this.secsToday()>=this.goalSecs():both;},
@@ -2149,9 +2165,12 @@ const Dojo={
     const m=Math.floor(this.secsToday()/60);return `Train first · ${Math.min(m,this.goalSecs()/60)} of ${this.goalSecs()/60} minutes`;},
   beltBonus(){let n=0;['pm','tm'].forEach(d=>{for(let i=0;i<8;i++)if(this.belt(d,i).earned)n+=2;});return n;},
   thr(src){return src==='ink'?DJ.THR_INK:DJ.THR;},
+  // how automatic is a fact? judged on his typical (median) speed over the last 5 right answers
+  speed(r){if(!r||!r.n)return 'new';if(r.rusty||(r.n>=2&&r.ok/r.n<0.7))return 'shaky';const L=r.lats||[];if(L.length<2)return 'seen';const m=med(L);return m<=2000?'auto':m<=3200?'fluent':'slow';},
+  autoCount(did){const F=this.st().facts;return this.facts(did).filter(f=>this.speed(F[f.key])==='auto').length;},
   // record one answer; returns true if this answer earned "day credit"
   log(f,ok,lat,src,kind){const r=this.rec(f),day=dayStr();r.n++;if(ok)r.ok++;r.last=day;const D=r.days[day]=r.days[day]||{first:null,lat:[]};
-    if(!D.src)D.src=src;if(D.first==null&&kind!=='teach'&&kind!=='again')D.first=ok;if(ok&&kind!=='teach')D.lat.push(lat);
+    if(!D.src)D.src=src;if(D.first==null&&kind!=='teach'&&kind!=='again')D.first=ok;if(ok&&kind!=='teach')r.lats=(r.lats||[]).concat([Math.round(lat-(src==='ink'?400:0))]).slice(-5);if(ok&&kind!=='teach')D.lat.push(lat);
     if(!r.intro){r.intro=true;if(ok&&lat<=this.thr(src))r.easy=true;else if(!ok)r.teach=true;}
     if(kind==='review'&&!ok){r.owned=false;r.rusty=true;r.credits=Math.max(0,r.credits-1);r.teach=true;}
     if(kind==='learn'&&!ok&&r.taught!==day)r.teach=true;
@@ -2203,6 +2222,7 @@ const Dojo={
       black?el('p',{class:'dj-cur'},el('b',null,'BLACK BELT!'),' Every fact owned. A quick review keeps them sharp.'):
       el('div',{class:'dj-cur'},el('b',null,B[0]+' Belt'),' · '+D.belts[i][0],el('div',{class:'dj-bar',title:`${o.n} of ${o.t} facts owned`},el('i',{style:`width:${pct}%`})),
         el('small',null,`${o.n} of ${o.t} facts owned · ${owned} of ${total} in this dojo`)),
+      el('div',{class:'dj-auto'},`⚡ ${this.autoCount(did)} automatic facts`,el('small',null,' (fast without counting)')),
       el('div',{class:'dj-today'},el('span',{class:t.rounds?'ok':''},(t.rounds?'✓ ':'○ ')+'Today’s round'),t.taught?el('span',null,`${t.taught} new fact${t.taught===1?'':'s'} learned`):null),
       this.graph(did),el('div',{class:'dj-btns'},btns));},
   graph(did){const h=(this.st().hist||[]).filter(x=>x.did===did&&x.kind!=='sprint').slice(-8);if(!h.length)return null;const best=Math.max(...h.map(x=>x.fast),1);
@@ -2327,7 +2347,7 @@ const Dojo={
   blocked(){Snd.init();const s=this.strict();Talk.say([['sensei',s?pick([`Not yet, {name}! ${this.minsLeft()} more minutes of facts, then everything opens.`,`Facts first! About ${this.minsLeft()} minutes to go. You've got this.`,'A true hero trains first. Dojo, then battle!']):
     pick(['Not so fast, {name}! One short round in each dojo first. Then the kingdoms open.','A true hero warms up first. Dojo, then battle!'])]]).then(()=>this.open());},
   announce(){const d=this.st();if(!this.strict()||d.strictAnnounced)return;d.strictAnnounced=dayStr();saveState();
-    Talk.say([['sensei','New training plan, {name}! For a while, we train facts for 20 minutes a day before battles.'],
+    Talk.say([['sensei',`New training plan, {name}! For a while, we train facts for ${this.goalSecs()/60} minutes a day before battles.`],
       ['sensei','Rounds are short. Take a power break between them. Every minute counts, and mistakes never cost you anything.'],
       ['sensei','When you own your key belts, teen subtraction and times tables to 10 × 10, the plan relaxes. Let’s go!']]);}
 };
@@ -2337,10 +2357,25 @@ function dojoReport(){if(!state.dojo)return null;const d=Dojo.st();const nice=k=
     return el('div',null,el('b',null,DOJOS[did].name+': '),ci>=8?'Black Belt':`${BELTS[ci][0]} Belt (${Dojo.ownedIn(did,ci).n}/${Dojo.ownedIn(did,ci).t} owned)`,` · ${own}/${fs.length} facts owned · today: ${Dojo.doneToday(did)?'done':'not yet'} · new facts/day: ${d.k[did]}`);});
   const weak=Object.entries(d.facts).filter(([k,r])=>r.n>=2&&!r.owned&&(r.ok/r.n<0.8||r.rusty)).sort((a,b)=>a[1].ok/a[1].n-b[1].ok/b[1].n).slice(0,10).map(([k])=>nice(k));
   const moods=Object.entries(d.mood||{}).slice(-7).map(([k,v])=>k.slice(5)+' '+v);
-  return el('div',{class:'rep-dojo'},el('p',null,el('b',null,'Fact Dojo')),lines,weak.length?el('div',null,'Shakiest facts: '+weak.join(', ')):null,moods.length?el('div',null,'How training felt: '+moods.join(' · ')):null,
+  return el('div',{class:'rep-dojo'},el('p',null,el('b',null,'Fact Dojo')),lines,speedMap(),weak.length?el('div',null,'Shakiest facts: '+weak.join(', ')):null,moods.length?el('div',null,'How training felt: '+moods.join(' · ')):null,
     el('div',null,el('b',null,'Daily rule: '),Dojo.strict()?`${Dojo.goalSecs()/60} minutes of facts first (until the key belts are owned) · today ${Math.floor(Dojo.secsToday()/60)} min`:(Dojo.keyDone()?'key belts owned · 1 round per dojo':'1 round per dojo (strict mode off)')),
-    Dojo.keyDone()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{const s=Dojo.st();s.strictOff=!s.strictOff;saveState();showReport();}},Dojo.st().strictOff?'Grown-up: turn the 20-minute rule back on':'Grown-up: turn off the 20-minute rule'),
+    Dojo.keyDone()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{const s=Dojo.st();s.strictOff=!s.strictOff;saveState();showReport();}},Dojo.st().strictOff?`Grown-up: turn the ${Dojo.goalSecs()/60}-minute rule back on`:`Grown-up: turn off the ${Dojo.goalSecs()/60}-minute rule`),
     Dojo.gateOk()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{Dojo.st().unlockDay=dayStr();saveState();overlay(null);renderMap();}},'Grown-up: unlock everything for today'));}
+
+const SPEED_LBL={auto:['⚡ Automatic','#3fdc6b'],fluent:['✓ Fluent','#b8e986'],slow:['🐢 Counting','#ffb627'],shaky:['✗ Shaky','#ff4d6d'],seen:['• Seen once','#6b7bb8'],new:['Not yet','#2b2f55']};
+function speedMap(){const F=Dojo.st().facts,cnt={auto:0,fluent:0,slow:0,shaky:0,seen:0,new:0};
+  const grid=(title,rows,cols,keyOf,txt,rl,cl)=>{const t=el('table',{class:'spd'});t.append(el('tr',null,el('th',null,title),cols.map(c=>el('th',null,cl?cl(c):String(c)))));
+    rows.forEach(r=>t.append(el('tr',null,el('th',null,rl?rl(r):String(r)),cols.map(c=>{const k=keyOf(r,c);if(!k)return el('td',{class:'x'});const st=Dojo.speed(F[k]);cnt[st]++;
+      return el('td',{style:'background:'+SPEED_LBL[st][1],title:k+' · '+SPEED_LBL[st][0]},txt(r,c));}))));return t;};
+  const r2=each(2,10,x=>x),r1=each(1,10,x=>x);
+  const gm=grid('×',r2,r2,(a,b)=>`${Math.min(a,b)}x${Math.max(a,b)}`,(a,b)=>String(a*b));
+  const gd=grid('÷',r2,r2,(d,q)=>`${d*q}/${d}`,(d,q)=>String(q),d=>'÷'+d,q=>'='+q);
+  const ga=grid('+',r1,r1,(a,b)=>`${Math.min(a,b)}+${Math.max(a,b)}`,(a,b)=>String(a+b));
+  const gs=grid('−',each(11,18,x=>x),each(2,9,x=>x),(c,b)=>c-b<=9&&c-b>=1?`${c}-${b}`:null,(c,b)=>String(c-b),c=>c+' −');
+  const legend=el('div',{class:'spd-leg'},Object.entries(SPEED_LBL).map(([k,[n,col]])=>el('span',null,el('i',{style:'background:'+col}),`${n} ${cnt[k]}`)));
+  return el('details',{class:'spd-wrap'},el('summary',null,`Fact speed map · ⚡ ${cnt.auto} automatic, 🐢 ${cnt.slow} counting, ✗ ${cnt.shaky} shaky`),
+    el('p',{class:'tiny-ok'},'Automatic = his usual answer comes in under 2 seconds (time to first tap or pen stroke). Counting = over 3.2 seconds. Each fact uses his last 5 right answers.'),
+    legend,el('div',{class:'spd-grids'},ga,gs,gm,gd));}
 
 /* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
@@ -2971,7 +3006,7 @@ function padOn(on){$('#keypad').classList.toggle('off',!on);$('.padcol').classLi
 /* =========================================================
    Screens
    ========================================================= */
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);if(id!=='scr-level'){Battle.stop();$('#superBtn').hidden=true;}
+function show(id){if(typeof Talk!=='undefined'&&Talk.popEl)Talk.unpop();document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);if(id!=='scr-level'){Battle.stop();$('#superBtn').hidden=true;}
   if(id==='scr-map'||id==='scr-mech'||id==='scr-shop'||id==='scr-dojo')Music.play('map');if(id!=='scr-level')$('#scr-level').classList.remove('dojo');}
 function overlay(node){const o=$('#overlay');o.innerHTML='';if(!node){o.hidden=true;return;}o.append(node);o.hidden=false;}
 
