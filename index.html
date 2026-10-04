@@ -1981,7 +1981,15 @@ const Dojo={
   cur(did){for(let i=0;i<8;i++)if(!this.belt(did,i).earned)return i;return 8;},
   black(did){return this.cur(did)>=8;},
   doneToday(did){return this.st().today[did].rounds>0;},
-  gateOk(){const d=this.st();return d.unlockDay===dayStr()||(this.doneToday('pm')&&this.doneToday('tm'));},
+  KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
+  keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
+  strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
+  goalSecs(){return Math.round(60*((typeof cfg!=='undefined'&&cfg&&cfg.dojoMinutes)||20));},
+  secsToday(){const t=this.st().today;return (t.pm.secs||0)+(t.tm.secs||0);},
+  minsLeft(){return Math.max(0,Math.ceil((this.goalSecs()-this.secsToday())/60));},
+  gateOk(){const d=this.st();if(d.unlockDay===dayStr())return true;const both=this.doneToday('pm')&&this.doneToday('tm');return this.strict()?both&&this.secsToday()>=this.goalSecs():both;},
+  gateText(){if(this.gateOk())return 'Trained today ✓ · go for more facts!';if(!this.strict())return `Train first · ${['pm','tm'].filter(x=>this.doneToday(x)).length}/2 dojos done`;
+    const m=Math.floor(this.secsToday()/60);return `Train first · ${Math.min(m,this.goalSecs()/60)} of ${this.goalSecs()/60} minutes`;},
   beltBonus(){let n=0;['pm','tm'].forEach(d=>{for(let i=0;i<8;i++)if(this.belt(d,i).earned)n+=2;});return n;},
   thr(src){return src==='ink'?DJ.THR_INK:DJ.THR;},
   // record one answer; returns true if this answer earned "day credit"
@@ -2008,20 +2016,22 @@ const Dojo={
     const take=(list,n,kind)=>{for(const f of list){if(base.length>=baseN||n<=0)break;if(used.has(f.key))continue;used.add(f.key);base.push({f,kind});n--;}};
     if(o.review){take(due,baseN,'review');take(shuffle(all.filter(f=>R(f)&&R(f).owned)),baseN,'review');take(learning,baseN,'learn');}
     else{take(learning,Math.ceil(baseN*0.55),'learn');take(due,Math.ceil(baseN*0.25),'review');take(probes.slice(0,learning.length>30?3:40),baseN,'probe');take(learning,baseN,'learn');take(due,baseN,'review');
-      take(shuffle(all.filter(f=>R(f)&&R(f).owned)),baseN,'review');}
+      take(shuffle(all.filter(f=>R(f)&&R(f).owned)),baseN,'review');take(shuffle(all.filter(f=>R(f)&&R(f).intro&&!R(f).owned)),baseN,'again');take(all.filter(f=>!R(f)).sort((a,b)=>a.belt-b.belt),baseN,'probe');}
     const items=shuffle(base);teach.forEach((f,i)=>items.splice(Math.min(items.length,1+i*5),0,{f,kind:'teach'}));
     return items;},
   // ---------- screen
-  open(){Talk.meet('sensei');this.render();show('scr-dojo');},
+  open(){Talk.meet('sensei');this.announce();this.render();show('scr-dojo');},
   render(){const S=$('#scr-dojo');S.innerHTML='';const d=this.st();
-    const pend=['pm','tm'].filter(x=>!this.doneToday(x));
-    const msg=d.unlockDay===dayStr()&&pend.length?'A grown-up unlocked the kingdoms today. A round still makes you stronger!':
+    const pend=['pm','tm'].filter(x=>!this.doneToday(x));const strict=this.strict(),gm=this.goalSecs()/60,sm=Math.min(gm,Math.floor(this.secsToday()/60));
+    const msg=strict&&!this.gateOk()?(d.unlockDay===dayStr()?'A grown-up unlocked the kingdoms today. Training still makes you stronger!':
+      `Today’s training: ${gm} minutes of facts. You’ve done ${sm}. ${pend.length?'Do at least one round in each dojo.':'Keep going, any dojo!'} Then the kingdoms open.`):d.unlockDay===dayStr()&&pend.length?'A grown-up unlocked the kingdoms today. A round still makes you stronger!':
       pend.length===2?'One short round in each dojo opens the kingdoms. About 3 minutes each.':
       pend.length===1?`One more round! Finish the ${DOJOS[pend[0]].short} Dojo to open the kingdoms.`:'Training done for today! The kingdoms are open. Come back tomorrow to own more facts.';
     const sv=el('canvas',{width:72,height:72});Talk.paint(sv,'sensei',{});
     S.append(el('header',{class:'lv-top'},el('button',{class:'icon-btn',type:'button',onclick:()=>{renderMap();show('scr-map');}},'◂ Map'),el('h2',null,'Fact Dojo'),
         el('span',{class:'chip',title:'Lightning answers'},'⚡ '+d.bolts),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins))),
-      el('div',{class:'dj-sensei'},sv,el('p',null,msg)),
+      el('div',{class:'dj-sensei'},sv,el('div',null,el('p',null,msg),strict?el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
+        el('small',null,`${sm} of ${gm} minutes today`+(this.gateOk()?' · done!':'')+' · until you own your key belts')):null)),
       el('div',{class:'dj-panels'},['pm','tm'].map(did=>this.panel(did))));},
   panel(did){const D=DOJOS[did],ci=this.cur(did),t=this.st().today[did],black=ci>=8,i=Math.min(ci,7),B=BELTS[i];
     const ladder=el('div',{class:'dj-ladder'},BELTS.map((b,k)=>{const be=this.belt(did,k),o=this.ownedIn(did,k);return el('div',{class:'dj-belt'+(be.earned?' got':k===ci?' cur':' lock'),style:'--bc:'+b[1],title:b[0]+' Belt · '+D.belts[k][0]},
@@ -2030,7 +2040,7 @@ const Dojo={
     const owned=this.facts(did).filter(f=>(this.st().facts[f.key]||{}).owned).length,total=this.facts(did).length;
     const btns=[];
     if(!t.rounds)btns.push(el('button',{class:'btn btn-green dj-go',type:'button',onclick:()=>this.start(did,'round')},black?'Daily review ▸':'Today’s round ▸'));
-    else btns.push(el('button',{class:'btn btn-green',type:'button',onclick:()=>this.start(did,'round')},'Extra round'));
+    else btns.push(el('button',{class:'btn btn-green'+(this.gateOk()?'':' dj-go'),type:'button',onclick:()=>this.start(did,'round')},this.gateOk()?'Extra round':'Next round ▸'));
     if(this.sprintPool(did).length>=8)btns.push(el('button',{class:'btn btn-gold',type:'button',onclick:()=>this.start(did,'sprint')},'⚡ 1-minute sprint'));
     return el('section',{class:'dj-panel',style:'--bc:'+B[1]},el('h3',null,D.name),ladder,
       black?el('p',{class:'dj-cur'},el('b',null,'BLACK BELT!'),' Every fact owned. A quick review keeps them sharp.'):
@@ -2054,7 +2064,7 @@ const Dojo={
     Battle.setup({total:kind==='sprint'?20:run.queue.length,mech:false,color:run.spec.color,drill:true});Music.play('battle');updateTop();
     if(kind==='sprint'){Talk.pop('sensei','Only facts you own. Beat your best! Wrong answers cost nothing.',{});const R0=run;setTimeout(()=>{if(run===R0&&!$('#scr-level').hidden)this.finish();},60200);}
     this.next();},
-  advance(p){if(run&&run.queue[run.idx]===p){run.idx++;this.next();}},
+  advance(p){if(run&&run.queue[run.idx]===p){if(p.t0&&run.spec.mode==='dojo'){const tt=this.st().today[run.spec.dojo];tt.secs=(tt.secs||0)+Math.min(45,(Date.now()-p.t0)/1000);p.t0=0;}run.idx++;this.next();}},
   next(){const sp=run.spec,dj=run.dj;if(run.idx>=run.queue.length||(sp.kind==='sprint'&&Date.now()>=dj.end))return this.finish();
     const p=run.queue[run.idx],f=p.f;if(sp.kind!=='sprint')updateTop();
     Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card dj-card';requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
@@ -2067,7 +2077,7 @@ const Dojo={
     card.append(el('div',{class:'dj-expr'},el('span',null,(f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f,flip)+' =')),fld.el));
     const ink=el('div',{class:'dj-ink'});card.append(ink);if(typeof InkBox!=='undefined')InkBox.mount(ink,{big:true,allowDot:false});else ink.remove();
     Pad.focus(fld);say(teach?'No rush on new facts. Use the trick.':sp.kind==='sprint'?'Go go go!':'Type it or write it.','');
-    const t0=Date.now(),R=run;let done=false,tm=null,inkWrong=0;
+    const t0=Date.now(),R=run;p.t0=t0;let done=false,tm=null,inkWrong=0;
     const go=()=>{if(done||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
       const lat=(ANS.firstInput||Date.now())-t0,ok=v===f.ans;
       if(!ok&&src==='ink'&&(fld.inkP||1)<0.8&&inkWrong<1){inkWrong++;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();ANS.firstInput=null;say(`I read ${v}. Did I get that wrong? Write it again, or tap the keys.`,'info');return;}
@@ -2131,7 +2141,12 @@ const Dojo={
       dj.newOwned.length?el('p',{class:'dj-stripe'},`★ Facts owned forever: ${dj.newOwned.map(fl).join(' · ')}`):null,
       newBelts.length?el('p',{class:'dj-stripe'},newBelts.map(i=>BELTS[i][0]+' Belt earned!').join(' ')):null);}
     m.append(el('p',{class:'tiny-ok'},`+${coins} coins`));
-    m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
+    const nextDid=!this.doneToday('pm')?'pm':!this.doneToday('tm')?'tm':((t.secs||0)>((d.today[did==='pm'?'tm':'pm'].secs)||0)?(did==='pm'?'tm':'pm'):did);
+    if(this.strict()&&!this.gateOk()){m.append(el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
+        el('small',null,`Today: ${Math.floor(this.secsToday()/60)} of ${this.goalSecs()/60} minutes · about ${this.minsLeft()} to go`)),
+      el('p',{class:'dj-break'},pick(['Power break! Stand up and do 10 jumping jacks.','Power break! Shake out your hands and take 3 big breaths.','Power break! Touch your toes 5 times.','Power break! Get a sip of water.'])));
+      m.append(el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:after},'Dojo'),el('button',{class:'btn btn-green',type:'button',onclick:()=>{overlay(null);this.start(nextDid,'round');}},`Next round: ${DOJOS[nextDid].short} ▸`)));}
+    else m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
     (async()=>{await Battle.ko();for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
   mood(){const d=this.st();if(d.mood[dayStr()])return;const pickM=k=>{d.mood[dayStr()]=k;SESSION.dojoMood=k;saveState();Data.saveSession();overlay(null);Snd.tap();};
     overlay(el('div',{class:'modal'},el('h2',null,'How did training feel today?'),el('p',null,'Just for your coach. There’s no wrong answer.'),
@@ -2146,7 +2161,12 @@ const Dojo={
         if(conf.length<160&&!RM)for(let n=0;n<4;n++)conf.push({x:Math.random()*W,y:-10,vy:80+Math.random()*120,vx:(Math.random()-0.5)*60,col:pick([B[1],'#ffe066','#ffffff','#ff4d6d','#5ef2ff'])});}
       for(const q of conf){q.y+=q.vy*dt;q.x+=q.vx*dt;c.fillStyle=q.col;c.fillRect(q.x,q.y,6,4);}
       if(t>2.6)Cine.cap(c,W,H,t-2.6,'+2 mech power · +100 coins');},{skip:true});},
-  blocked(){Snd.init();Talk.say([['sensei',pick(['Not so fast, {name}! One short round in each dojo first. Then the kingdoms open.','The kingdoms can wait three minutes. Dojo first!','A true hero warms up first. Dojo, then battle!'])]]).then(()=>this.open());}
+  blocked(){Snd.init();const s=this.strict();Talk.say([['sensei',s?pick([`Not yet, {name}! ${this.minsLeft()} more minutes of facts, then everything opens.`,`Facts first! About ${this.minsLeft()} minutes to go. You've got this.`,'A true hero trains first. Dojo, then battle!']):
+    pick(['Not so fast, {name}! One short round in each dojo first. Then the kingdoms open.','A true hero warms up first. Dojo, then battle!'])]]).then(()=>this.open());},
+  announce(){const d=this.st();if(!this.strict()||d.strictAnnounced)return;d.strictAnnounced=dayStr();saveState();
+    Talk.say([['sensei','New training plan, {name}! For a while, we train facts for 20 minutes a day before battles.'],
+      ['sensei','Rounds are short. Take a power break between them. Every minute counts, and mistakes never cost you anything.'],
+      ['sensei','When you own your key belts, teen subtraction and times tables to 10 × 10, the plan relaxes. Let’s go!']]);}
 };
 {const _mp=mechPower;mechPower=function(m){return _mp(m)+Dojo.beltBonus();};}
 function dojoReport(){if(!state.dojo)return null;const d=Dojo.st();const nice=k=>k.replace('x',' × ').replace('/',' ÷ ').replace(/^(\d+)-(\d+)$/,'$1 − $2').replace(/^(\d+)\+(\d+)$/,'$1 + $2');
@@ -2155,7 +2175,9 @@ function dojoReport(){if(!state.dojo)return null;const d=Dojo.st();const nice=k=
   const weak=Object.entries(d.facts).filter(([k,r])=>r.n>=2&&!r.owned&&(r.ok/r.n<0.8||r.rusty)).sort((a,b)=>a[1].ok/a[1].n-b[1].ok/b[1].n).slice(0,10).map(([k])=>nice(k));
   const moods=Object.entries(d.mood||{}).slice(-7).map(([k,v])=>k.slice(5)+' '+v);
   return el('div',{class:'rep-dojo'},el('p',null,el('b',null,'Fact Dojo')),lines,weak.length?el('div',null,'Shakiest facts: '+weak.join(', ')):null,moods.length?el('div',null,'How training felt: '+moods.join(' · ')):null,
-    Dojo.gateOk()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{Dojo.st().unlockDay=dayStr();saveState();overlay(null);renderMap();}},'Grown-up: unlock the kingdoms for today'));}
+    el('div',null,el('b',null,'Daily rule: '),Dojo.strict()?`${Dojo.goalSecs()/60} minutes of facts first (until the key belts are owned) · today ${Math.floor(Dojo.secsToday()/60)} min`:(Dojo.keyDone()?'key belts owned · 1 round per dojo':'1 round per dojo (strict mode off)')),
+    Dojo.keyDone()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{const s=Dojo.st();s.strictOff=!s.strictOff;saveState();showReport();}},Dojo.st().strictOff?'Grown-up: turn the 20-minute rule back on':'Grown-up: turn off the 20-minute rule'),
+    Dojo.gateOk()?null:el('button',{class:'btn btn-dark',type:'button',onclick:()=>{Dojo.st().unlockDay=dayStr();saveState();overlay(null);renderMap();}},'Grown-up: unlock everything for today'));}
 
 /* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
@@ -2862,8 +2884,8 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
   const av=el('canvas',{width:72,height:72,class:'ow-av'}),pend=(state.prizes||[]).filter(p=>p.status==='pending').length;
   const hud=el('div',{class:'ow-hud'},av,el('div',{class:'ow-name'},el('b',null,(state.hero&&state.hero.name)||'Hero'),el('span',null,`Mech power ${mechPower()} · ${glitchForm().name} is out there`)),
     el('span',{class:'chip',title:'Days in a row'},el('span',{class:'flame'}),String(state.streak.n||0)),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins)),
-    el('button',{class:'icon-btn',type:'button',onclick:()=>openMechBay(null)},'Mech Bay'),
-    el('button',{class:'icon-btn',type:'button',onclick:()=>{renderShop();show('scr-shop');Talk.meet('pip');}},'Shop'),
+    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}openMechBay(null);}},'Mech Bay'),
+    el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}renderShop();show('scr-shop');Talk.meet('pip');}},'Shop'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>Talk.book()},'Allies'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>showReport()},'Report'),
     el('button',{class:'icon-btn'+(state.mute?' off':''),type:'button','aria-label':'Sound effects',onclick:e=>{state.mute=!state.mute;Snd.levels();saveState();e.currentTarget.classList.toggle('off',state.mute);}},'Sound'),
@@ -2871,7 +2893,7 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
   const q=questToday();
   const bottom=el('div',{class:'ow-bottom'},
     el('button',{class:'quest ow-dojo'+(Dojo.gateOk()?' done':''),type:'button',onclick:()=>{Snd.init();Dojo.open();}},el('div',null,el('h2',null,'Fact Dojo'),
-      el('p',null,Dojo.gateOk()?'Trained today ✓ · go for stripes!':`Train first to open the kingdoms · ${['pm','tm'].filter(x=>Dojo.doneToday(x)).length}/2 done`))),
+      el('p',null,Dojo.gateText()))),
     el('button',{class:'quest ow-quest',type:'button',onclick:()=>{Snd.init();startQuest();}},el('div',null,el('h2',null,q.done?'Quest complete!':'Today’s Quest'),el('p',null,q.done?'Play again for practice. New quest tomorrow.':'About 12 minutes · loot chest + streak'))),
     el('div',{class:'ow-side'},pend?el('div',{class:'ow-prize'},'Prize waiting! Show a grown-up.'):null,
       cfg.message?el('button',{class:'icon-btn',type:'button',onclick:()=>overlay(el('div',{class:'modal'},el('h2',null,'Message from HQ'),el('p',null,cfg.message),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>overlay(null)},'Got it ▸'))))},'HQ message'):null));
@@ -3384,6 +3406,8 @@ function showReport(){const L=Local.log;const days=[...new Set(L.map(x=>x.day))]
     dojoReport(),
     prizeBlock(),
     Sync.block(),
+    el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(el('div',{class:'modal'},el('h2',null,'Start over?'),el('p',null,'This erases all progress on this iPad: hero, coins, belts, facts and history. Coach sync stays connected, and reports already sent to your coach are kept.'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-red',type:'button',onclick:()=>{['nk-state','nk-log','nk-sessions','nk-pending','nk-sync-h'].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});state=defaultState();location.reload();}},'Yes, erase everything'))))},'Grown-up: start over from scratch'),
     el('p',null,'To get a full report from Claude: tap the button below, then paste into Claude. Or just send a screenshot of this screen.'),
     el('div',{class:'btns'},copyBtn,el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(null)},'Close')),status));}
 /* =========================================================
