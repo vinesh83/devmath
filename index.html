@@ -573,6 +573,12 @@ table.dt th{background:var(--paper-2)}
 .dj-bars b{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:#fff}
 .dj-big{font:800 34px var(--f-display);color:#ffe066;margin:0}
 .bay-rand{width:90px;height:90px;display:grid;place-items:center;font:800 56px var(--f-display);color:#ffe066;background:conic-gradient(#ff4d6d,#ffe066,#3fdc6b,#5ef2ff,#b26bff,#ff4d6d);border-radius:16px;text-shadow:0 3px 0 #0008;margin:0 auto}
+/* ---------- brawl controls */
+.brawl-ctl{position:absolute;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;gap:16px;padding:0 18px;pointer-events:auto}
+.brawl-btn{flex:0 1 330px;height:clamp(84px,14vh,120px);border:0;border-radius:24px;font:800 clamp(24px,4vh,34px) var(--f-display);color:#0b0d1f;box-shadow:0 8px 0 #0009;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.brawl-btn.atk{background:linear-gradient(#ffd166,#ff7b1c)}
+.brawl-btn.blk{background:linear-gradient(#9be7ff,#3fa7ff)}
+.brawl-btn.hit{animation:btnHit .18s ease-out}
 </style>
 
 <div id="app">
@@ -1955,6 +1961,81 @@ Cine.superMove=function(kind,form,mech){if(!NEW_SUPERS[kind])return _superMove(k
     this.bars(c,W,H,Math.min(1,t*4));if(t>0.25){if(!F.t){F.t=1;Snd.slam();}this.title(c,W,H,t-0.25,name,SUPER_COL[kind]||'#ffe066');}});};
 
 /* =========================================================
+   Brawl: a 15-second battle he controls. ATTACK to hit, BLOCK when Glitch winds up.
+   Plays after each Dojo round and halfway through levels. Never costs anything.
+   ========================================================= */
+const Brawl={off:false,
+  play(o){o=o||{};if(this.off||RM&&o.optional)return Promise.resolve(0);
+    const G={hp:12,max:12,time:15,t:0,phase:'intro',combo:0,best:0,dmg:0,perfect:0,heroX:0,heroAtk:0,heroHit:0,shield:0,
+      foe:{st:'idle',t:0,dur:1.1,guard:0,stun:0,hurt:0,x:0,y:0},fx:[],txt:[],shake:0,flash:0,end:null,done:false,coins:0};
+    const form=glitchForm(),look=heroLook();
+    const say=(s,col,big,x,y)=>G.txt.push({s,col:col||'#fff',big:!!big,x,y,age:0,life:big?1.1:0.8});
+    const burst=(x,y,n,cols,sp)=>{for(let i=0;i<n;i++){const a=Math.random()*6.28,v=(sp||220)*(0.4+Math.random());G.fx.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,life:0.4+Math.random()*0.4,col:pick(cols)});}};
+    const attack=()=>{if(G.phase!=='fight'||G.heroAtk>0.05)return;G.heroAtk=0.22;const f=G.foe;
+      if(f.guard>0){say('CLANG!','#c9d3e6',false);Snd.block();G.combo=0;return;}
+      let d=1;if(f.st==='open'||f.stun>0){d=2;say('OPENING! x2','#ffe066',false);}if(G.combo>=4)d++;
+      G.combo++;G.best=Math.max(G.best,G.combo);G.hp=Math.max(0,G.hp-d);G.dmg+=d;f.hurt=0.25;G.shake=0.12+d*0.05;Snd.zap(Math.min(14,G.combo+2));if(d>=2)Snd.crit();
+      say('-'+d,d>=2?'#ffb627':'#fff',false);if(G.combo>=3&&G.combo%3===0)say('COMBO x'+G.combo+'!','#5ef2ff',true);
+      if(G.hp<=0)win();};
+    const block=()=>{if(G.phase!=='fight')return;G.shield=0.4;const f=G.foe;
+      if(f.st==='windup'&&f.dur-f.t<0.45){f.st='open';f.t=0;f.dur=1.3;f.stun=1.3;G.perfect++;Snd.gem();say('PERFECT BLOCK!','#5ef2ff',true);G.flash=0.25;burst(G.heroX+60,G.Y-40,24,['#5ef2ff','#fff'],260);}
+      else Snd.shield();};
+    const win=()=>{G.phase='win';G.t=0;Snd.ko();G.flash=0.5;G.shake=0.6;burst(G.fX,G.Y-30,90,['#ffe066','#ff7b1c','#5ef2ff','#fff'],420);};
+    return Cine.play(60,(c,W,H,t,dt)=>{G.W=W;G.H=H;const gs=Math.max(5,Math.floor(Math.min(W,H)/42)),Y=H*0.72;G.Y=Y;const hx0=W*0.24,fx0=W*0.74;G.fX=fx0;
+      // --- update
+      G.t+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt);G.heroAtk=Math.max(0,G.heroAtk-dt);G.heroHit=Math.max(0,G.heroHit-dt);G.shield=Math.max(0,G.shield-dt);
+      const f=G.foe;f.hurt=Math.max(0,f.hurt-dt);f.guard=Math.max(0,f.guard-dt);f.stun=Math.max(0,f.stun-dt);
+      if(G.phase==='intro'&&G.t>1.3){G.phase='fight';G.t=0;Music.play('boss');}
+      if(G.phase==='fight'){G.time-=dt;f.t+=dt;
+        if(f.st==='idle'&&f.t>=f.dur){if(Math.random()<0.25&&f.guard<=0){f.guard=0.7;f.t=0;f.dur=0.9;}else{f.st='windup';f.t=0;f.dur=0.8+Math.random()*0.3;Snd.charge(0.4);}}
+        else if(f.st==='windup'&&f.t>=f.dur){f.st='strike';f.t=0;f.dur=0.22;
+          if(G.shield>0){say('BLOCKED!','#5ef2ff',false);Snd.block();burst(G.heroX+50,Y-40,12,['#5ef2ff'],200);}
+          else{G.heroHit=0.35;G.combo=0;G.shake=0.3;Snd.hurt();say('OUCH!','#ff4d6d',false);}}
+        else if(f.st==='strike'&&f.t>=f.dur){f.st='open';f.t=0;f.dur=0.55;}
+        else if(f.st==='open'&&f.t>=f.dur){f.st='idle';f.t=0;f.dur=0.7+Math.random()*0.8;}
+        if(G.time<=0){G.phase='time';G.t=0;Snd.fanfare();}}
+      if((G.phase==='win'&&G.t>2.2)||(G.phase==='time'&&G.t>2.2)){if(!G.done){G.done=true;G.coins=G.phase==='win'?15+G.perfect*3:Math.max(3,G.dmg);state.coins+=G.coins;saveState();if(G.end)G.end();}}
+      for(const p of G.fx){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=400*dt;}G.fx=G.fx.filter(p=>p.life>0);
+      for(const x of G.txt)x.age+=dt;G.txt=G.txt.filter(x=>x.age<x.life);
+      // --- draw
+      c.save();if(G.shake>0&&!RM)c.translate((Math.random()-0.5)*G.shake*30,(Math.random()-0.5)*G.shake*30);
+      const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1a0f2e');g.addColorStop(1,'#3a1630');c.fillStyle=g;c.fillRect(-20,-20,W+40,H+40);
+      c.fillStyle='#ffffff';for(let i=0;i<40;i++){c.globalAlpha=0.2+((i*7)%5)/12;c.fillRect((i*137)%W,(i*59)%(H*0.6),2,2);}c.globalAlpha=1;
+      c.fillStyle='#2a1a3a';c.fillRect(0,Y,W,H-Y);c.fillStyle='#4a2a5a';for(let x=0;x<W;x+=48)c.fillRect(x,Y,24,6);
+      // hero
+      const lunge=G.heroAtk>0?Math.sin((1-G.heroAtk/0.22)*Math.PI)*(fx0-hx0-W*0.12):0;G.heroX=hx0+lunge-(G.heroHit>0?Math.sin(G.heroHit*20)*12:0);
+      drawHero(c,G.heroX-6*gs,Y-14*gs,gs,look,G.heroAtk>0?'runA':'stand',G.t);
+      if(G.heroAtk>0){c.strokeStyle='#ffffff';c.lineWidth=gs*1.2;c.globalAlpha=G.heroAtk/0.22;c.beginPath();c.arc(G.heroX+8*gs,Y-8*gs,gs*7,-1.2,1.0);c.stroke();c.globalAlpha=1;}
+      if(G.shield>0){c.strokeStyle='#5ef2ff';c.lineWidth=5;c.fillStyle='rgba(94,242,255,0.2)';c.beginPath();c.arc(G.heroX+9*gs,Y-8*gs,gs*8,-1.3,1.3);c.lineTo(G.heroX+9*gs,Y-8*gs);c.closePath();c.fill();c.stroke();}
+      // glitch
+      const wind=f.st==='windup',strike=f.st==='strike';const fx=fx0-(strike?(fx0-hx0-W*0.14)*Math.sin(f.t/f.dur*Math.PI):0)+(f.hurt>0?(Math.random()-0.5)*10:0)+(wind?Math.sin(G.t*40)*3:0);
+      if(G.phase!=='win'||G.t<0.3){const gsz=gs*1.15;drawGlitch(c,fx-6*gsz,Y-12*gsz-(f.stun>0?Math.abs(Math.sin(G.t*8))*6:0),gsz,form,G.t,f.hurt>0.1&&((G.t*20|0)%2===0));
+        if(wind){c.globalAlpha=0.35+0.25*Math.sin(G.t*30);c.fillStyle='#ff4d6d';c.beginPath();c.arc(fx,Y-6*gsz,gsz*9,0,6.28);c.fill();c.globalAlpha=1;
+          c.font=`900 ${Math.round(gs*7)}px "Pixelify Sans",monospace`;c.textAlign='center';c.lineWidth=6;c.strokeStyle='#000';c.strokeText('!',fx,Y-14*gsz);c.fillStyle='#ffe066';c.fillText('!',fx,Y-14*gsz);}
+        if(f.guard>0){c.fillStyle='#8a94ad';c.fillRect(fx-9*gsz,Y-11*gsz,gsz*2,gsz*10);c.fillStyle='#d7deeb';c.fillRect(fx-9*gsz,Y-11*gsz,gsz,gsz*10);}
+        if(f.stun>0){c.fillStyle='#ffe066';for(let i=0;i<3;i++){const a=G.t*6+i*2.1;c.fillRect(fx+Math.cos(a)*gsz*5-3,Y-14*gsz+Math.sin(a)*gsz*1.5,6,6);}}}
+      for(const p of G.fx){c.globalAlpha=Math.min(1,p.life*2.5);c.fillStyle=p.col;c.fillRect(p.x,p.y,5,5);}c.globalAlpha=1;
+      // HUD: Glitch HP, timer, combo
+      const bw=Math.min(W*0.5,420),bx=(W-bw)/2,by=H*0.12;c.fillStyle='#000a';c.fillRect(bx-4,by-4,bw+8,22);c.fillStyle='#3a1020';c.fillRect(bx,by,bw,14);
+      c.fillStyle=G.hp/G.max<0.34?'#ff4d6d':'#ff7b1c';c.fillRect(bx,by,bw*G.hp/G.max,14);c.font='800 14px "Pixelify Sans",monospace';c.textAlign='center';c.fillStyle='#fff';c.fillText(form.name.toUpperCase(),W/2,by-8);
+      if(G.phase==='fight'||G.phase==='intro'){const tl=Math.max(0,G.phase==='intro'?15:G.time);c.fillStyle='#ffffff22';c.fillRect(bx,by+24,bw,6);c.fillStyle='#5ef2ff';c.fillRect(bx,by+24,bw*tl/15,6);
+        c.font='700 13px Lexend,sans-serif';c.fillStyle='#cfd5ff';c.fillText(Math.ceil(tl)+'s',W/2,by+46);}
+      if(G.combo>=2){c.textAlign='left';c.font=`800 ${Math.round(gs*4)}px "Pixelify Sans",monospace`;c.lineWidth=5;c.strokeStyle='#000';c.strokeText('x'+G.combo,W*0.04,H*0.3);c.fillStyle=G.combo>=5?'#ff7b1c':'#5ef2ff';c.fillText('x'+G.combo,W*0.04,H*0.3);}
+      for(const x of G.txt){const k=x.age/x.life,sz=Math.round((x.big?gs*5:gs*3.4)*(x.big&&k<0.12?1.8-k*6:1));c.globalAlpha=k>0.7?(1-k)/0.3:1;c.font=`800 ${sz}px "Pixelify Sans",monospace`;c.textAlign='center';c.lineWidth=5;c.strokeStyle='#000';
+        const xx=x.x!=null?x.x:(x.big?W/2:fx0),yy=(x.y!=null?x.y:(x.big?H*0.34:Y-18*gs))-(x.big?0:k*40);c.strokeText(x.s,xx,yy);c.fillStyle=x.col;c.fillText(x.s,xx,yy);}c.globalAlpha=1;
+      if(G.phase==='intro')Cine.title(c,W,H,G.t,'BATTLE TIME!','#ffe066','Tap ATTACK! Tap BLOCK when you see !');
+      if(G.phase==='win')Cine.title(c,W,H,G.t,'VICTORY!','#ffe066',`+${15+G.perfect*3} coins`);
+      if(G.phase==='time')Cine.title(c,W,H,G.t,'TIME!','#5ef2ff',`Glitch escapes! You hit for ${G.dmg} · +${Math.max(3,G.dmg)} coins`);
+      if(G.flash>0){c.globalAlpha=G.flash;c.fillStyle='#fff';c.fillRect(-20,-20,W+40,H+40);c.globalAlpha=1;}
+      c.restore();},
+    {skip:true,hold:end=>{G.end=end;const ui=$('#cine .cine-ui');
+      const mk=(cls,label,fn)=>{const b=el('button',{class:'brawl-btn '+cls,type:'button'},label);tapify(b,()=>{Snd.init();fn();},{down:true});return b;};
+      ui.append(el('div',{class:'brawl-ctl'},mk('atk','⚔ ATTACK',attack),mk('blk','🛡 BLOCK',block)));
+      const kd=e=>{if(e.key===' '||e.key==='a'||e.key==='Enter'){e.preventDefault();attack();}else if(e.key==='b'||e.key==='Shift'){e.preventDefault();block();}};
+      document.addEventListener('keydown',kd);const _e=G.end;G.end=()=>{document.removeEventListener('keydown',kd);_e();};}}).then(()=>{Music.play(typeof run!=='undefined'&&run&&run.spec&&run.spec.mech?'boss':'battle');return G.coins;});}
+};
+
+/* =========================================================
    Fact Dojo v2 — built from the research:
    teach a trick first, then short rounds of mostly-known facts, a few new facts a day,
    expanding re-asks, no penalties, speed judged on his usual pace, facts "owned" fact by fact.
@@ -2155,6 +2236,10 @@ const Dojo={
     Pad.focus(fld);say(teach?'No rush on new facts. Use the trick.':sp.kind==='sprint'?'Go go go!':'Type it or write it.','');
     const t0=Date.now(),R=run;p.t0=t0;let done=false,tm=null,inkWrong=0;
     const go=()=>{if(done||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
+      if(src==='ink'){ // still writing? (e.g. the second loop of an 8). A short last "0" may be the top half of an 8, so wait longer.
+        const it=(InkBox.lastR&&InkBox.lastR.items)||[],last=it[it.length-1],tall=Math.max(1,...it.map(i=>i.box.y1-i.box.y0));
+        const maybe8=last&&last.ch==='0'&&(it.length===1||(last.box.y1-last.box.y0)<0.75*tall);
+        if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
       const lat=(ANS.firstInput||Date.now())-t0,ok=v===f.ans;
       if(!ok&&src==='ink'&&(fld.inkP||1)<0.8&&inkWrong<1){inkWrong++;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();ANS.firstInput=null;say(`I read ${v}. Did I get that wrong? Write it again, or tap the keys.`,'info');return;}
       done=true;clearTimeout(tm);
@@ -2184,7 +2269,7 @@ const Dojo={
       cp.onChange=()=>{if(Pad.val(cp)===f.ans){Pad.right(cp);Pad.lock(cp);Snd.coin();setTimeout(()=>this.advance(p),450);}
         else if(cp.val.length>=len){Pad.wrong(cp);setTimeout(()=>{Pad.set(cp,'');if(typeof InkBox!=='undefined')InkBox.clear();},350);}};
       setActions([{label:'Skip ▸',cls:'btn-dark',onClick:()=>this.advance(p)}]);};
-    fld.onChange=()=>{clearTimeout(tm);if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?250:140);};
+    fld.onChange=()=>{clearTimeout(tm);if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?600:140);};
     setActions([[{label:'Show me',cls:'btn-dark',onClick:()=>{if(done)return;fld.val='-1';fld.src='key';go();}},{label:'Enter',cls:'btn-green',primary:true,onClick:go}]]);},
   // expanding re-asks: after 2, then 5 more items (max 2 extra per fact per round)
   reask(p,gaps){const n=run.dj.extra[p.f.key]||0;if(n>=2)return;let at=run.idx;gaps.slice(0,2-n).forEach(g=>{at=Math.min(run.queue.length,at+g);run.queue.splice(at,0,{kind:'dfact',skill:'dojo',f:p.f,k:'again',answer:p.f.ans});});
@@ -2225,7 +2310,7 @@ const Dojo={
       el('p',{class:'dj-break'},pick(['Power break! Stand up and do 10 jumping jacks.','Power break! Shake out your hands and take 3 big breaths.','Power break! Touch your toes 5 times.','Power break! Get a sip of water.'])));
       m.append(el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:after},'Dojo'),el('button',{class:'btn btn-green',type:'button',onclick:()=>{overlay(null);this.start(nextDid,'round');}},`Next round: ${DOJOS[nextDid].short} ▸`)));}
     else m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
-    (async()=>{await Battle.ko();for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
+    (async()=>{await Battle.ko();if(sp.kind!=='sprint')await Brawl.play();for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
   mood(){const d=this.st();if(d.mood[dayStr()])return;const pickM=k=>{d.mood[dayStr()]=k;SESSION.dojoMood=k;saveState();Data.saveSession();overlay(null);Snd.tap();};
     overlay(el('div',{class:'modal'},el('h2',null,'How did training feel today?'),el('p',null,'Just for your coach. There’s no wrong answer.'),
       el('div',{class:'faces'},[['great','Awesome'],['ok','Okay'],['meh','Meh'],['hard','Stressful']].map(([k,t])=>el('button',{class:'btn btn-dark',type:'button',onclick:()=>pickM(k)},t)))));},
@@ -2649,6 +2734,9 @@ const HW = (function () {
     function boundaryPen(g1, g2) {
       var o = overlap(g1.b.x0, g1.b.x1, g2.b.x0, g2.b.x1);
       if (o <= 0) return 0;
+      // one part above the other with big horizontal overlap = the same character (e.g. an 8 drawn as two circles)
+      var stk = (g1.b.y1 <= g2.b.y0 + 0.3 * H) || (g2.b.y1 <= g1.b.y0 + 0.3 * H);
+      if (stk && o >= 0.45 * Math.max(Math.min(g1.b.w, g2.b.w), 1)) return 50;
       var mw = Math.max(Math.min(g1.b.w, g2.b.w), 0.25 * H);
       return K.OVL * Math.min(1.5, o / mw);
     }
@@ -2695,6 +2783,15 @@ const HW = (function () {
       var mi = 0; for (i = 1; i < out.length; i++) if (out[i].c.pd < out[mi].c.pd) mi = i; out.splice(mi, 1);
     }
 
+    // --- two closed loops stacked vertically is an 8 ("snowman 8")
+    function closedLoop(st) { var f = st.f, n = f.length; if (n < 8) return false; var d = Math.hypot(f[0] - f[n - 2], f[1] - f[n - 1]); return d < 0.45 * Math.max(st.w, st.h) && st.len > 2.2 * Math.max(st.w, st.h); }
+    out.forEach(function (g) {
+      if (g.list.length !== 2) return; var a = g.list[0], b = g.list[1]; if (a.cy > b.cy) { var tmp = a; a = b; b = tmp; }
+      var ov = overlap(a.x0, a.x1, b.x0, b.x1);
+      if (closedLoop(a) && closedLoop(b) && a.cy < b.y0 + 0.1 * H && b.cy > a.y1 - 0.1 * H && ov >= 0.45 * Math.min(a.w, b.w)) {
+        var q = []; for (var d = 0; d < 10; d++) q.push(d === 8 ? 0.95 : g.c.p[d] * 0.05 / Math.max(1e-6, 1 - g.c.p[8])); g.c = Object.assign({}, g.c, { p: q, pd: 0.95 });
+      }
+    });
     // --- assemble items
     var items = out.map(function (g) {
       var p = g.c.p, ranked = [];
@@ -2804,7 +2901,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = HW;
 /* =========================================================
    Write-in answers: Pencil handwriting -> the active answer box
    ========================================================= */
-const InkBox={active:null,pad:null,
+const InkBox={active:null,pad:null,drawing:false,lastUp:0,
   make(host,o){o=o||{};host.innerHTML='';host.classList.add('ink');if(o.big)host.classList.add('big');
     const cv=el('canvas',{class:'ink-cv','aria-label':'Write your answer here with your Pencil'}),hint=el('div',{class:'ink-hint'},o.big?'✏️ Write the answer here':'✏️ Write your answer'),
       read=el('div',{class:'ink-read'}),clr=el('button',{class:'ink-clr',type:'button'},'Erase');
@@ -2818,13 +2915,13 @@ const InkBox={active:null,pad:null,
       pt(e){const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};},
       down(e){if(e.pointerType==='touch'&&InkBox.penSeen)return;if(e.pointerType==='pen')InkBox.penSeen=true;e.preventDefault();Snd.init();
         if(Pad.active!==this.target){this.strokes=[];this.target=Pad.active;}if(!this.target||this.target.locked)return;
-        clearTimeout(this.tm);if(!ANS.firstInput)ANS.firstInput=Date.now();this.cur=[this.pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}this.draw();},
+        clearTimeout(this.tm);InkBox.drawing=true;if(!ANS.firstInput)ANS.firstInput=Date.now();this.cur=[this.pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}this.draw();},
       move(e){if(!this.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const v of evs)this.cur.push(this.pt(v));this.draw();},
-      up(){if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?380:520);},
+      up(){InkBox.drawing=false;InkBox.lastUp=Date.now();if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?380:520);},
       read(){const f=this.target;if(!f||f.locked||f!==Pad.active||typeof HW==='undefined'||!this.strokes.length)return;let r;
         try{r=HW.recognize(this.strokes,{allowDot:f.allowDot,maxLen:f.max+1});}catch(e){return;}
         if(!r||!r.text){read.textContent='Hmm, write it a bit bigger?';read.className='ink-read meh';return;}
-        read.textContent='I read: '+r.text;read.className='ink-read'+(r.minP<0.8?' meh':'');Pad.input(f,r.text,'ink',r.minP,this.lastAt);}};
+        InkBox.lastR=r;read.textContent='I read: '+r.text;read.className='ink-read'+(r.minP<0.8?' meh':'');Pad.input(f,r.text,'ink',r.minP,this.lastAt);}};
     cv.addEventListener('pointerdown',e=>I.down(e));cv.addEventListener('pointermove',e=>I.move(e));
     ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>I.up()));
     cv.addEventListener('touchstart',e=>{if(InkBox.penSeen)e.preventDefault();},{passive:false});
@@ -3093,7 +3190,8 @@ function chooseVariant(skill){const vs=VARIANTS[skill];if(!vs)return null;const 
     const x=betaS(1+((st[v]&&st[v].s)||0),1+((st[v]&&st[v].f)||0))*w;if(x>bv){bv=x;best=v;}}return best||vs[0];}
 
 let ATT=null;
-function nextProblem(){if(run.idx>=run.queue.length)return finishRun();const p=run.queue[run.idx];updateTop();
+function nextProblem(){if(run.idx>=run.queue.length)return finishRun();
+  if(!run.brawled&&run.spec.mode!=='dojo'&&run.idx>0&&run.idx===Math.floor(run.queue.length/2)){run.brawled=true;const R0=run;Brawl.play().then(()=>{if(run===R0&&!$('#scr-level').hidden)nextProblem();});return;}const p=run.queue[run.idx];updateTop();
   Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card';card.scrollTop=0;requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
   const sk=getSkill(p.skill);sk.cnt=(sk.cnt||0)+1;
   const probe=(p.skill==='word'||p.skill==='area')&&lvl(sk.r)>=2&&sk.cnt%4===0&&!run.spec.packId;
@@ -3509,7 +3607,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
