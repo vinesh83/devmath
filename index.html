@@ -588,6 +588,8 @@ table.spd th{color:#aab1d6;padding:1px 3px;font-weight:700}
 table.spd td{width:22px;height:20px;text-align:center;color:#0b0d1f;border:1px solid #0b0d1f}
 table.spd td.x{background:transparent;border-color:transparent}
 .spd-leg{display:flex;flex-wrap:wrap;gap:10px;font-size:12px}.spd-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+#lv-pause{font-size:15px;padding:8px 12px;white-space:nowrap}
+.pause-modal{text-align:center;justify-items:center}
 </style>
 
 <div id="app">
@@ -601,6 +603,7 @@ table.spd td.x{background:transparent;border-color:transparent}
       <button class="icon-btn" id="lv-exit" type="button" aria-label="Back to map">◂ Map</button>
       <h2 id="lv-title">Level</h2>
       <div class="prog" id="lv-prog"></div>
+      <button class="icon-btn" id="lv-pause" type="button" aria-label="Pause">⏸ Pause</button>
       <span class="chip"><span class="coin-ico"></span><span id="lv-coins">0</span></span>
     </header>
     <div class="scene-wrap"><canvas id="scene" aria-hidden="true"></canvas><button id="superBtn" class="superbtn" type="button" hidden>SUPER!</button></div>
@@ -723,7 +726,7 @@ const CATALOG={
     {id:'wizard',name:'Wizard hat',price:150},{id:'visor',name:'VR visor',price:180},{id:'crown',name:'Crown',price:300}],
   cape:[{id:'none',name:'No cape',price:0},{id:'red',name:'Red cape',price:60,c:'#e63946'},{id:'blue',name:'Blue cape',price:60,c:'#3a86ff'},
     {id:'shadow',name:'Shadow cape',price:120,c:'#2b2d42'},{id:'gold',name:'Gold cape',price:220,c:'#ffc933'}],
-  pet:[{id:'none',name:'No pet',price:0},{id:'slime',name:'Slime',price:100},{id:'cat',name:'Pixel cat',price:120},{id:'byte',name:'Byte the drone',price:150},{id:'dragon',name:'Baby dragon',price:300}],
+  pet:[{id:'none',name:'No pet',price:0},{id:'slime',name:'Slime',price:100},{id:'cat',name:'Pixel cat',price:120},{id:'byte',name:'Byte the drone',price:150},{id:'puppy',name:'Puppy',price:110},{id:'corgi',name:'Corgi',price:140},{id:'husky',name:'Husky',price:180},{id:'robodog',name:'Robo-Dog',price:240},{id:'dragon',name:'Baby dragon',price:300}],
 };
 
 /* =========================================================
@@ -882,6 +885,10 @@ const PETS={
   slime:{fly:false,pal:{g:'#2f8f3a',G:'#6ee06e',W:'#ffffff',D:'#1d1f33'},rows:["..gggg..",".gGGGGg.","gGWDGWDg","gGGGGGGg","gGGGGGGg",".gggggg."]},
   cat:{fly:false,pal:{o:'#c96f1c',O:'#ff9f43',D:'#1d1f33',W:'#fff3e0'},rows:["o.....o.","oo...oo.","OOOOOOO.","ODOOODO.","OOOWOOO.",".OOOOOOO",".O.O.O.O"]},
   byte:{fly:true,pal:{l:'#8a94ad',L:'#d7deeb',C:'#5ef2ff',D:'#1d1f33'},rows:["...ll...","..LLLL..",".LCDDCL.",".LLLLLL.","..l..l.."]},
+  puppy:{fly:false,pal:{b:'#6b3e26',B:'#b07a4a',K:'#1d1f33',n:'#1d1f33',P:'#ff8fa3'},rows:['......bb..','.....bBBB.','b....BBKBn','bBBBBBBBBP','.BBBBBBB..','.B.B..B.B.','.b.b..b.b.']},
+  corgi:{fly:false,pal:{b:'#a8581f',B:'#e8913a',W:'#fff3e0',K:'#1d1f33',n:'#1d1f33'},rows:['.....b.b..','.....BBBB.','.....BWKBn','BBBBBBBWW.','BWWWWWWB..','.b.b..b.b.']},
+  husky:{fly:false,pal:{b:'#4a5268',B:'#8a94ad',W:'#ffffff',K:'#3fa7ff',n:'#1d1f33'},rows:['.....b..b.','.....bBBb.','b....BWKWn','bBBBBBWWW.','.BWWWWWB..','.B.B..B.B.','.b.b..b.b.']},
+  robodog:{fly:false,pal:{b:'#5d6385',B:'#d7deeb',K:'#5ef2ff',n:'#ff4d6d',a:'#ffe066'},rows:['......a...','.....bBBB.','b....BBKBn','bBBBBBBBB.','.BbBBbBB..','.b.b..b.b.','.a.a..a.a.']},
   dragon:{fly:true,pal:{p:'#7a3fc9',P:'#b06bff',Y:'#ffe066',D:'#1d1f33'},rows:["......pp","..PPPPP.",".PPDPPPY","pPPPPPP.","PPPPPP..",".P.P...."]},
 };
 const BOSS=["..H..........H..","..HH........HH..","...BBBBBBBBBB...","..BBBBBBBBBBBB..",".BBWWBBBBBBWWBB.",".BBWDBBBBBBWDBB.",
@@ -2170,7 +2177,7 @@ const Dojo={
   autoCount(did){const F=this.st().facts;return this.facts(did).filter(f=>this.speed(F[f.key])==='auto').length;},
   // record one answer; returns true if this answer earned "day credit"
   log(f,ok,lat,src,kind){const r=this.rec(f),day=dayStr();r.n++;if(ok)r.ok++;r.last=day;const D=r.days[day]=r.days[day]||{first:null,lat:[]};
-    if(!D.src)D.src=src;if(D.first==null&&kind!=='teach'&&kind!=='again')D.first=ok;if(ok&&kind!=='teach')r.lats=(r.lats||[]).concat([Math.round(lat-(src==='ink'?400:0))]).slice(-5);if(ok&&kind!=='teach')D.lat.push(lat);
+    if(!D.src)D.src=src;if(D.first==null&&kind!=='teach'&&kind!=='again')D.first=ok;if(ok&&kind!=='teach'&&lat<15000)r.lats=(r.lats||[]).concat([Math.round(lat-(src==='ink'?400:0))]).slice(-5);if(ok&&kind!=='teach')D.lat.push(lat);
     if(!r.intro){r.intro=true;if(ok&&lat<=this.thr(src))r.easy=true;else if(!ok)r.teach=true;}
     if(kind==='review'&&!ok){r.owned=false;r.rusty=true;r.credits=Math.max(0,r.credits-1);r.teach=true;}
     if(kind==='learn'&&!ok&&r.taught!==day)r.teach=true;
@@ -2239,7 +2246,7 @@ const Dojo={
       dj:{ok:0,fast:0,miss:[],newOwned:[],taught:[],bolt:0,boltBest:0,extra:{},end:kind==='sprint'?Date.now()+60000:0}};
     $('#lv-title').textContent=title;show('scr-level');$('#scr-level').classList.add('dojo');
     Battle.setup({total:kind==='sprint'?20:run.queue.length,mech:false,color:run.spec.color,drill:true});Music.play('battle');updateTop();
-    if(kind==='sprint'){Talk.pop('sensei','Only facts you own. Beat your best! Wrong answers cost nothing.',{});const R0=run;setTimeout(()=>{if(run===R0&&!$('#scr-level').hidden)this.finish();},60200);}
+    if(kind==='sprint'){Talk.pop('sensei','Only facts you own. Beat your best! Wrong answers cost nothing.',{});const R0=run;const chk=()=>{if(run!==R0||$('#scr-level').hidden)return;if(Pause.on||Date.now()<run.dj.end-100){setTimeout(chk,400);return;}this.finish();};setTimeout(chk,60200);}
     this.next();},
   advance(p){if(run&&run.queue[run.idx]===p){if(p.t0&&run.spec.mode==='dojo'){const tt=this.st().today[run.spec.dojo];tt.secs=(tt.secs||0)+Math.min(45,(Date.now()-p.t0)/1000);p.t0=0;}run.idx++;this.next();}},
   next(){const sp=run.spec,dj=run.dj;if(run.idx>=run.queue.length||(sp.kind==='sprint'&&Date.now()>=dj.end))return this.finish();
@@ -2254,13 +2261,13 @@ const Dojo={
     card.append(el('div',{class:'dj-expr'},el('span',null,(f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f,flip)+' =')),fld.el));
     const ink=el('div',{class:'dj-ink'});card.append(ink);if(typeof InkBox!=='undefined')InkBox.mount(ink,{big:true,allowDot:false});else ink.remove();
     Pad.focus(fld);say(teach?'No rush on new facts. Use the trick.':sp.kind==='sprint'?'Go go go!':'Type it or write it.','');
-    const t0=Date.now(),R=run;p.t0=t0;let done=false,tm=null,inkWrong=0;
+    const t0=Date.now(),R=run;p.t0=t0;p.ts=t0;let done=false,tm=null,inkWrong=0;
     const go=()=>{if(done||run!==R||$('#scr-level').hidden)return;const v=Pad.val(fld);if(v==null)return;const src=fld.src||'key';
       if(src==='ink'){ // still writing? (e.g. the second loop of an 8). A short last "0" may be the top half of an 8, so wait longer.
         const it=(InkBox.lastR&&InkBox.lastR.items)||[],last=it[it.length-1],tall=Math.max(1,...it.map(i=>i.box.y1-i.box.y0));
         const maybe8=last&&last.ch==='0'&&(it.length===1||(last.box.y1-last.box.y0)<0.75*tall);
         if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
-      const lat=(ANS.firstInput||Date.now())-t0,ok=v===f.ans;
+      const lat=(ANS.firstInput||Date.now())-(p.ts||t0),ok=v===f.ans;
       if(!ok&&src==='ink'&&(fld.inkP||1)<0.8&&inkWrong<1){inkWrong++;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();ANS.firstInput=null;say(`I read ${v}. Did I get that wrong? Write it again, or tap the keys.`,'info');return;}
       done=true;clearTimeout(tm);
       const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,lat,src,p.k);
@@ -2427,6 +2434,34 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
     return el('div',{class:'syncbox'},el('p',null,el('b',null,'Coach sync (for grown-ups): '),'send results to Claude automatically.'),tok,repo,
       el('div',{class:'btns'},el('button',{class:'btn btn-blue',type:'button',onclick:async()=>{if(!tok.value.trim())return;this.connect(tok.value,repo.value);st.textContent='Connecting…';
         try{this.lastTry=0;await this.push();st.textContent='Connected and synced!';}catch(e){st.textContent='Sync problem: '+e.message;}}},'Connect')),st);}
+};
+
+/* =========================================================
+   Pause: stops the clock so time away never counts as slow answers.
+   Pauses itself when the app goes to the background or after 60 s with no touches.
+   ========================================================= */
+const Pause={on:false,at:0,last:Date.now(),
+  init(){const b=$('#lv-pause');if(b)tapify(b,()=>this.pause('button'));
+    ['pointerdown','keydown'].forEach(e=>document.addEventListener(e,()=>{this.last=Date.now();},true));
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)this.pause('away');});
+    setInterval(()=>{if(!this.on&&this.active()&&Date.now()-this.last>60000)this.pause('idle');},4000);},
+  active(){return typeof run!=='undefined'&&!!run&&!$('#scr-level').hidden&&$('#overlay').hidden&&$('#cine').hidden&&$('#talk').hidden;},
+  pause(why){if(this.on||!this.active())return;this.on=true;this.at=Date.now();Battle.stop();Music.stop();if(typeof Talk!=='undefined')Talk.unpop();
+    overlay(el('div',{class:'modal pause-modal'},el('h2',null,'⏸ Paused'),
+      el('p',null,why==='idle'?'Taking a break? The clock stopped so it won’t count against your speed.':'The clock is stopped. Take your time!'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>this.resume()},'Resume ▸'))));},
+  resume(){if(!this.on)return;const d=Date.now()-this.at;this.on=false;
+    if(run){const p=run.queue[run.idx];if(p){if(p.ts)p.ts+=d;if(p.t0)p.t0+=d;}if(run.dj&&run.dj.end)run.dj.end+=d;if(run.start)run.start+=d;}
+    if(ANS.firstInput)ANS.firstInput+=d;if(typeof ATT!=='undefined'&&ATT&&ATT.t0)ATT.t0+=d;
+    overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
+};
+/* auto-update: when a new version is published, reload on the map so he never has to restart the app */
+const BUILD='20261004182629';
+const Updater={want:false,
+  async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
+  apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
+    if(safe&&$('#overlay').hidden&&$('#cine').hidden&&$('#talk').hidden){saveState();lsSet('nk-upd',this.want);location.replace(location.pathname+'?v='+this.want);}else{clearTimeout(this.tm);this.tm=setTimeout(()=>this.apply(),3000);}},
+  init(){document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.check();});setInterval(()=>this.check(),10*60*1000);setTimeout(()=>this.check(),5000);}
 };
 
 /* hw.js - tiny handwritten-number recognizer (digits + optional decimal point).
@@ -3007,7 +3042,7 @@ function padOn(on){$('#keypad').classList.toggle('off',!on);$('.padcol').classLi
    Screens
    ========================================================= */
 function show(id){if(typeof Talk!=='undefined'&&Talk.popEl)Talk.unpop();document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);if(id!=='scr-level'){Battle.stop();$('#superBtn').hidden=true;}
-  if(id==='scr-map'||id==='scr-mech'||id==='scr-shop'||id==='scr-dojo')Music.play('map');if(id!=='scr-level')$('#scr-level').classList.remove('dojo');}
+  if(id==='scr-map'||id==='scr-mech'||id==='scr-shop'||id==='scr-dojo')Music.play('map');if(id==='scr-map'&&typeof Updater!=='undefined')setTimeout(()=>Updater.apply(),800);if(id!=='scr-level')$('#scr-level').classList.remove('dojo');}
 function overlay(node){const o=$('#overlay');o.innerHTML='';if(!node){o.hidden=true;return;}o.append(node);o.hidden=false;}
 
 /* ---------- onboarding */
@@ -3633,7 +3668,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   new MutationObserver(ms=>{if(CARD_QUIET)return;let last=null;for(const m of ms){if(m.target.closest&&m.target.closest('.field'))continue;
       for(const n of m.addedNodes)if(n.nodeType===1&&!n.classList.contains('field'))last=n;}
     if(last)requestAnimationFrame(()=>revealInCard(last));}).observe($('#card'),{childList:true,subtree:true});
-  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();giftSupers();InkBox.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
+  document.querySelectorAll('#keypad .key').forEach(k=>tapify(k,()=>{Snd.init();Pad.key(k.dataset.k);},{down:true}));Grip.init();Sync.init();Pause.init();Updater.init();giftSupers();InkBox.init();setTimeout(()=>{try{HW.classify28(new Float32Array(784));}catch(e){}},300);
   document.addEventListener('keydown',e=>{if($('#scr-level').hidden||e.target.tagName==='INPUT')return;if(/^[0-9]$/.test(e.key))Pad.key(e.key);else if(e.key==='.')Pad.key('.');
     else if(e.key==='Backspace')Pad.key('del');else if(e.key==='Enter'){if(Pad.active&&Pad.active.onEnter)Pad.active.onEnter();else if(primaryAction)primaryAction.click();}});
   document.addEventListener('pointerdown',()=>Snd.init(),{once:true});
@@ -3642,7 +3677,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
