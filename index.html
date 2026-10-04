@@ -606,6 +606,8 @@ table.spd td.x{background:transparent;border-color:transparent}
 .rep-st{display:grid;gap:6px}
 .st-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .st-sel{font:600 15px var(--f-body);padding:8px;border-radius:10px;background:#0e1130;color:#fff;border:2px solid #3a4180}
+.ellie-modal{text-align:center;justify-items:center}
+.ellie-big{width:160px;height:160px;image-rendering:pixelated}
 </style>
 
 <div id="app">
@@ -2473,7 +2475,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004184549';
+const BUILD='20261004185708';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -2485,6 +2487,7 @@ const Updater={want:false,
    Dogs! A pack of breeds for the Shop, and a free starter dog.
    ========================================================= */
 const DOGS=[
+  ['ellie','Ellie the Sheepadoodle',0,{b:'#1d1f33',W:'#ffffff',w:'#c9cfdc',K:'#1d1f33',n:'#1d1f33',P:'#ff8fa3'},['........bbbb..','.......bbWWWWb','ww.....bbWKWWW','www....bWWWWnn','.ww....WWWWWPW','.wwwbbbbbWWWW.','.wwWbbbbWWWWw.','.wWWWWWWWWWWw.','..WW.WW..WW.WW','..ww.ww..ww.ww']],
   ['puppy','Puppy',110,{b:'#6b3e26',B:'#b07a4a',K:'#1d1f33',n:'#1d1f33',P:'#ff8fa3'},['......bb..','.....bBBB.','b....BBKBn','bBBBBBBBBP','.BBBBBBB..','.B.B..B.B.','.b.b..b.b.']],
   ['golden','Golden Retriever',130,{b:'#b47a2a',B:'#e8b25a',K:'#1d1f33',n:'#1d1f33',P:'#ff8fa3'},['......bb..','.....bBBB.','bb...BBKBn','.bBBBBBBBP','.BBBBBBB..','.B.B..B.B.','.b.b..b.b.']],
   ['lab','Black Lab',130,{b:'#15151a',B:'#33333d',K:'#e0b030',n:'#000000',P:'#ff8fa3'},['......bb..','.....bBBB.','b....BBKBn','bBBBBBBBBP','.BBBBBBB..','.B.B..B.B.','.b.b..b.b.']],
@@ -2501,7 +2504,7 @@ const DOGS=[
   ['chihuahua','Chihuahua',120,{b:'#c9a06a',B:'#ecc98e',K:'#1d1f33',n:'#1d1f33'},['....b.b.','....BBB.','B...BKBn','BBBBBBB.','.B.B.B.B']],
   ['bulldog','Bulldog',170,{B:'#c9a27a',W:'#ffffff',m:'#5a3a2a',K:'#1d1f33',n:'#1d1f33'},['......mm..','.....BBBBB','.....BKBBm','BBBBBBWWWm','BWWWWWWWB.','BB.B..B.BB']],
   ['robodog','Robo-Dog',240,{b:'#5d6385',B:'#d7deeb',K:'#5ef2ff',n:'#ff4d6d',a:'#ffe066'},['......a...','.....bBBB.','b....BBKBn','bBBBBBBBB.','.BbBBbBB..','.b.b..b.b.','.a.a..a.a.']]];
-const STARTER_DOGS=['puppy','golden','lab','dalmatian','beagle','pug','shiba','corgi'];
+const STARTER_DOGS=['ellie','puppy','golden','lab','dalmatian','beagle','pug','shiba','corgi'];
 DOGS.forEach(([id,name,price,pal,rows])=>{PETS[id]={fly:false,pal,rows,dog:true};});
 {const keep=CATALOG.pet.filter(p=>!DOGS.some(d=>d[0]===p.id));const none=keep.shift();CATALOG.pet=[none,...DOGS.map(([id,name,price])=>({id,name,price})),...keep];}
 const isDog=id=>!!(PETS[id]&&PETS[id].dog);
@@ -2515,6 +2518,15 @@ const DogPick={maybe(){if(!state.hero||state.dogPicked)return;if(!$('#overlay').
     let pickId='puppy';const go=()=>{state.dogPicked=1;if(!state.owned.includes('pet:'+pickId))state.owned.push('pet:'+pickId);state.hero.pet=pickId;saveState();overlay(null);Snd.fanfare();renderMap();};
     overlay(el('div',{class:'modal dog-modal'},el('h2',null,'Pick your dog!'),el('p',null,'Every hero needs a sidekick. Choose a free dog. You can buy more breeds in the Shop.'),
       dogGrid(pickId,id=>{pickId=id;}),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:go},'This one! ▸'))));}};
+
+// Ellie is the family dog: every hero gets her free, with a one-time welcome
+const Ellie={maybe(){if(!state.hero)return;if(state.owned.includes('pet:ellie')&&state.ellieMet)return;
+    if(!state.owned.includes('pet:ellie')){state.owned.push('pet:ellie');saveState();}
+    if(state.ellieMet)return;if(!$('#overlay').hidden||!$('#cine').hidden||!$('#talk').hidden||$('#scr-map').hidden){setTimeout(()=>this.maybe(),2500);return;}
+    state.ellieMet=1;saveState();const big=el('canvas',{width:160,height:160,class:'ellie-big'});const c=big.getContext('2d');c.imageSmoothingEnabled=false;drawSprite(c,PETS.ellie.rows,10,30,10,PETS.ellie.pal);
+    Snd.fanfare();overlay(el('div',{class:'modal dog-modal ellie-modal'},el('h2',null,'Meet Ellie! 🐾'),big,el('p',null,'Ellie the Sheepadoodle wants to join your adventure. She’s yours, free!'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>{overlay(null);}},'Maybe later'),
+        el('button',{class:'btn btn-green',type:'button',onclick:()=>{state.hero.pet='ellie';saveState();overlay(null);Snd.gem();renderMap();}},'Bring Ellie along! ▸'))));}};
 
 /* =========================================================
    Screen time: a visible clock, a daily limit, and a short daily allowance for the Shop/Mech Bay.
@@ -3152,14 +3164,14 @@ function show(id){if(typeof Talk!=='undefined'&&Talk.popEl)Talk.unpop();setTimeo
 function overlay(node){const o=$('#overlay');o.innerHTML='';if(!node){o.hidden=true;return;}o.append(node);o.hidden=false;}
 
 /* ---------- onboarding */
-function renderOnboard(){const S=$('#scr-onboard');S.innerHTML='';const look={skin:SKINS[1],hair:HAIRS[0],outfit:'scout',hat:'none',cape:'none',pet:'puppy'};
+function renderOnboard(){const S=$('#scr-onboard');S.innerHTML='';const look={skin:SKINS[1],hair:HAIRS[0],outfit:'scout',hat:'none',cape:'none',pet:'ellie'};
   const cv=el('canvas',{width:120,height:120,style:'width:120px;height:120px'});
   const paint=()=>{const c=cv.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,120,120);drawHero(c,30,8,6,look,'stand',0);drawPet(c,look.pet,0,92,3,0);};
   const swRow=(arr,key)=>el('div',{class:'swatches'},arr.map(v=>{const b=el('button',{class:'sw'+(look[key]===v?' on':''),type:'button',style:'background:'+(key==='outfit'?CATALOG.outfit.find(o=>o.id===v).B:v),'aria-label':key+' '+v,
     onclick:()=>{look[key]=v;b.parentNode.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));b.classList.add('on');paint();}});return b;}));
   const name=el('input',{id:'ob-name',maxlength:'16',placeholder:'Hero name',autocomplete:'off',autocapitalize:'words'});
   const go=el('button',{class:'btn btn-green',type:'button',onclick:()=>{Snd.init();const n=name.value.trim()||'Number Knight';
-    state.hero=Object.assign({name:n},look);state.dogPicked=1;if(!state.owned.includes('pet:'+look.pet))state.owned.push('pet:'+look.pet);state.createdAt=state.createdAt||new Date().toISOString();saveState();Snd.fanfare();renderMap();show('scr-map');}},'Start the adventure ▸');
+    state.hero=Object.assign({name:n},look);state.dogPicked=1;if(look.pet==='ellie')state.ellieMet=1;if(!state.owned.includes('pet:ellie'))state.owned.push('pet:ellie');if(!state.owned.includes('pet:'+look.pet))state.owned.push('pet:'+look.pet);state.createdAt=state.createdAt||new Date().toISOString();saveState();Snd.fanfare();renderMap();show('scr-map');}},'Start the adventure ▸');
   S.append(el('div',{class:'ob'},el('h1',null,'Number Knight'),el('p',null,'Every problem you solve powers up your hero. Checking your work earns double coins.'),
     el('div',{class:'ob-row'},cv,el('div',{style:'flex:1;min-width:220px;display:grid;gap:8px'},el('label',{for:'ob-name'},'Name your hero'),name)),
     el('label',null,'Skin'),swRow(SKINS,'skin'),el('label',null,'Hair'),swRow(HAIRS,'hair'),el('label',null,'Outfit'),swRow(['scout','ember','leaf'],'outfit'),el('label',null,'Pick your dog'),dogGrid(look.pet,id=>{look.pet=id;paint();}),go));paint();}
@@ -3253,7 +3265,7 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
   const loop=()=>{if(S.hidden||!hero.isConnected)return;t+=0.016;hc.clearRect(0,0,48,56);drawHero(hc,3,4,3.5,look,hero.dataset.walk?((t*10|0)%2?'runA':'runB'):'stand',t);
     ac.clearRect(0,0,72,72);drawHero(ac,22,12,3,look,'stand',t);if(look.pet&&look.pet!=='none'&&PETS[look.pet])drawPet(ac,look.pet,2,PETS[look.pet].fly?18:44,2,t);mapAnim=requestAnimationFrame(loop);};
   mapAnim=requestAnimationFrame(loop);
-  requestAnimationFrame(()=>{ow.scrollLeft=at.x*SC-ow.clientWidth/2;ow.scrollTop=at.y*SC-ow.clientHeight/2;});Talk.onMap();setTimeout(()=>DogPick.maybe(),1800);}
+  requestAnimationFrame(()=>{ow.scrollLeft=at.x*SC-ow.clientWidth/2;ow.scrollTop=at.y*SC-ow.clientHeight/2;});Talk.onMap();setTimeout(()=>DogPick.maybe(),1800);setTimeout(()=>Ellie.maybe(),2200);}
 function placeHero(h,x,y){h.style.left=(x*MAP_S-24)+'px';h.style.top=(y*MAP_S-54)+'px';h.dataset.x=x;h.dataset.y=y;}
 function walkTo(p,done){const h=document.querySelector('.ow-hero');if(!h||RM){done();return;}const x0=+h.dataset.x,y0=+h.dataset.y,dur=clamp(Math.hypot(p.x-x0,p.y-y0)*9,250,1100);
   const ow=document.querySelector('.ow'),t0=performance.now();h.dataset.walk='1';h.style.transform=p.x<x0?'scaleX(-1)':'';
