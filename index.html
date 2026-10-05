@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -668,6 +668,9 @@ table.spd td.x{background:transparent;border-color:transparent}
 .bb-round{color:#9aa3c7}
 /* digit boxes on the ink pads */
 .ink.boxed .ink-hint{display:none}
+/* no long-press callouts or double-tap zoom on game buttons */
+html,body{touch-action:manipulation}
+.bb-btn,.brawl-btn,.key,.btn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 </style>
 
 <div id="app">
@@ -2237,7 +2240,7 @@ const Brawl={off:false,
         else if(close)say('DODGE!','#ffe066',false,h.x,Y-hw*1.6);}};
     const win=()=>G.phase==='win';
     return Cine.play(999,(c,w,hh,t,dtRaw)=>{W=w;H=hh;const tall=H>W*1.1;Y=H*(tall?0.62:0.74);hs=Math.max(3,Math.round(Math.min(H*0.17/14,W*(tall?0.135:0.1)/12)));gs=Math.round(hs*1.35);hw=12*hs;gw=12*gs;
-      const dt=(document.hidden||(typeof Pause!=='undefined'&&Pause.on))?0:dtRaw;const h=G.hero,f=G.foe;
+      const dt=document.hidden?0:dtRaw;const h=G.hero,f=G.foe;
       if(!G.init){G.init=true;h.x=W*0.2;f.x=W*0.78;}
       // ---------- update
       G.t+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt);
@@ -2800,7 +2803,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
    Pauses itself when the app goes to the background or after 60 s with no touches.
    ========================================================= */
 const Pause={on:false,at:0,last:Date.now(),
-  init(){const b=$('#lv-pause');if(b)tapify(b,()=>this.pause('button'));
+  init(){const b=$('#lv-pause');if(b)tapify(b,()=>this.pause('button'));NoZoom.init();
     ['pointerdown','keydown'].forEach(e=>document.addEventListener(e,()=>{this.last=Date.now();},true));
     document.addEventListener('visibilitychange',()=>{if(document.hidden)this.pause('away');});
     setInterval(()=>{if(!this.on&&this.active()&&Date.now()-this.last>60000)this.pause('idle');},4000);},
@@ -2819,8 +2822,17 @@ const Pause={on:false,at:0,last:Date.now(),
     if(ANS.firstInput)ANS.firstInput+=d;if(typeof ATT!=='undefined'&&ATT&&ATT.t0)ATT.t0+=d;
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
+/* No accidental zoom: fast taps and two-finger play in battles can make iPad zoom in and get stuck.
+   Block pinch and double-tap zoom, and if the screen ever ends up zoomed, snap it back. */
+const NoZoom={init(){const stop=e=>e.preventDefault();
+    ['gesturestart','gesturechange','gestureend'].forEach(k=>document.addEventListener(k,stop,{passive:false}));
+    document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1&&!e.target.closest('.scratch,.ink,.bp-cv,.bb-cv'))e.preventDefault();},{passive:false});
+    let last=0;document.addEventListener('touchend',e=>{const now=Date.now();if(now-last<320&&!e.target.closest('input,textarea,select'))e.preventDefault();last=now;},{passive:false});
+    const vv=window.visualViewport;if(vv)vv.addEventListener('resize',()=>{if(vv.scale>1.02)this.reset();});},
+  reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
+    m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261005213651';
+const BUILD='20261005234550';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4559,7 +4571,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
