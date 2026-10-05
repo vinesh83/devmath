@@ -2814,7 +2814,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261004221908';
+const BUILD='20261005205547';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3745,18 +3745,22 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
   readBoxes(strokes,n,W,H,o){o=o||{};const bw=W/n;
     // group strokes that overlap side to side (a 4 drawn in two strokes stays one digit), then drop each group in a box by its center
     const info=strokes.map(s=>{const xs=s.map(p=>p.x),ys=s.map(p=>p.y);return {s,x0:Math.min(...xs),x1:Math.max(...xs),y0:Math.min(...ys),y1:Math.max(...ys)};}).sort((a,b)=>a.x0-b.x0);
-    const groups=[];for(const it of info){const g=groups[groups.length-1];const ov=g?Math.min(g.x1,it.x1)-Math.max(g.x0,it.x0):-1;
-      if(g&&ov>0.3*Math.min(g.x1-g.x0||1,it.x1-it.x0||1)){g.list.push(it.s);g.x0=Math.min(g.x0,it.x0);g.x1=Math.max(g.x1,it.x1);g.y0=Math.min(g.y0,it.y0);g.y1=Math.max(g.y1,it.y1);}
+    const tallS=Math.max(10,...info.map(x=>x.y1-x.y0)),mg=tallS*0.03;
+    const groups=[];for(const it of info){const g=groups[groups.length-1];let join=false;
+      if(g){const ov=Math.min(g.x1,it.x1)-Math.max(g.x0,it.x0)+2*mg,wa=g.x1-g.x0+2*mg,wb=it.x1-it.x0+2*mg,cb=(it.x0+it.x1)/2,ca=(g.x0+g.x1)/2;
+        join=ov>0.3*Math.min(wa,wb)||(cb>=g.x0-mg&&cb<=g.x1+mg&&wb<=wa)||(ca>=it.x0-mg&&ca<=it.x1+mg&&wa<=wb);}
+      if(join){g.list.push(it.s);g.x0=Math.min(g.x0,it.x0);g.x1=Math.max(g.x1,it.x1);g.y0=Math.min(g.y0,it.y0);g.y1=Math.max(g.y1,it.y1);}
       else groups.push({list:[it.s],x0:it.x0,x1:it.x1,y0:it.y0,y1:it.y1});}
-    const per=Array.from({length:n},()=>null);groups.forEach(g=>{const i=clamp(Math.floor(((g.x0+g.x1)/2)/bw),0,n-1);const b=per[i];
-      if(b){b.list=b.list.concat(g.list);b.x0=Math.min(b.x0,g.x0);b.x1=Math.max(b.x1,g.x1);b.y0=Math.min(b.y0,g.y0);b.y1=Math.max(b.y1,g.y1);}else per[i]=Object.assign({},g);});
-    let text='',minP=1;const items=[],imgs=[];
-    per.forEach((b,i)=>{if(!b)return;const w=b.x1-b.x0,h=b.y1-b.y0;
-      if(o.allowDot&&w<bw*0.2&&h<H*0.2){text+='.';items.push({ch:'.',p:1,box:b,i});return;}
-      // two digits squeezed into one box: fall back to the splitter for that box only
-      if(w>h*1.15&&w>bw*0.6){const r=HW.recognize(b.list,{allowDot:!!o.allowDot,maxLen:3});if(r&&r.text){text+=r.text;minP=Math.min(minP,r.minP);r.items.forEach(x=>items.push(Object.assign({},x,{i})));}return;}
-      const img=HW.render(b.list);let pr=HW.classify28(img);pr=InkBox.mine.adjust(img,pr);let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;
-      text+=String(k);minP=Math.min(minP,pr[k]);items.push({ch:String(k),p:pr[k],box:b,i});imgs.push({ch:String(k),img});});
+    // every separate shape is its own digit, wherever he wrote it; the boxes are only guides
+    let text='',minP=1;const items=[],imgs=[];const boxOf=g=>clamp(Math.floor(((g.x0+g.x1)/2)/bw),0,n-1);
+    const hs=groups.map(g=>g.y1-g.y0).sort((a,c)=>a-c),tall=hs.length?hs[hs.length-1]:H;
+    groups.forEach(g=>{const w=g.x1-g.x0,h=g.y1-g.y0,i=boxOf(g);
+      if(o.allowDot&&w<tall*0.25&&h<tall*0.25&&groups.length>1){text+='.';items.push({ch:'.',p:1,box:g,i});return;}
+      if(w<3&&h<3)return; // stray tap
+      // two digits touching each other: let the splitter handle this shape
+      if(w>h*1.15){const r=HW.recognize(g.list,{allowDot:!!o.allowDot,maxLen:3});if(r&&r.text){text+=r.text;minP=Math.min(minP,r.minP);r.items.forEach(x=>items.push(Object.assign({},x,{i})));}return;}
+      const img=HW.render(g.list);let pr=HW.classify28(img);pr=InkBox.mine.adjust(img,pr);let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;
+      text+=String(k);minP=Math.min(minP,pr[k]);items.push({ch:String(k),p:pr[k],box:g,i});imgs.push({ch:String(k),img});});
     return {text,items,minP,imgs};},
   // ---- learns Dev's own handwriting: every correct written answer saves his digits as examples
   mine:{data:null,
