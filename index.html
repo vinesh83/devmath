@@ -2571,7 +2571,7 @@ const Dojo={
         const it=(InkBox.lastR&&InkBox.lastR.items)||[],last=it[it.length-1],tall=Math.max(1,...it.map(i=>i.box.y1-i.box.y0));
         const maybe8=last&&last.ch==='0'&&(it.length===1||(last.box.y1-last.box.y0)<0.75*tall);
         const nb=(InkBox.active&&InkBox.active.boxes)||0;
-        if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1900:nb&&it.length<nb?1500:1000)){clearTimeout(tm);tm=setTimeout(go,250);return;}}
+        if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1100:600)){clearTimeout(tm);tm=setTimeout(go,120);return;}}
       const lat=p.lat0!=null?p.lat0:(ANS.firstInput||Date.now())-(p.ts||t0),ok=v===f.ans;
       // wrong in handwriting? Ask first: "I read 17. Is that what you wrote?" A rewrite keeps his first speed.
       if(!ok&&src==='ink'&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
@@ -2611,7 +2611,8 @@ const Dojo={
       cp.onChange=()=>{if(Pad.val(cp)===f.ans){Pad.right(cp);Pad.lock(cp);Snd.coin();setTimeout(()=>this.advance(p),450);}
         else if(cp.val.length>=len){Pad.wrong(cp);setTimeout(()=>{Pad.set(cp,'');if(typeof InkBox!=='undefined')InkBox.clear();},350);}};
       setActions([{label:'Skip ▸',cls:'btn-dark',onClick:()=>this.advance(p)}]);};
-    fld.onChange=()=>{clearTimeout(tm);if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?600:140);};
+    // written answers check themselves quickly; a shorter answer gets a little extra time in case a second digit is coming
+    fld.onChange=()=>{clearTimeout(tm);if(!fld.val.length)return;if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?150:140);else if(fld.src==='ink')tm=setTimeout(go,1300);};
     const acts=()=>{const row=[[{label:'Show me',cls:'btn-dark',onClick:()=>{if(done)return;fld.val='-1';fld.src='key';go();}},{label:'Enter',cls:'btn-green',primary:true,onClick:go}]];
       // Border Collie: one free trick hint per round. A hinted fact earns no speed credit and comes back soon.
       if(typeof DogPower!=='undefined'&&DogPower.has('collie')&&!dj.hint&&!teach&&sp.kind!=='sprint')row.push({label:'🐾 Big Brain hint',cls:'btn-dark',onClick:()=>{if(done||dj.hint)return;dj.hint=1;p.hinted=true;
@@ -2814,7 +2815,7 @@ const Pause={on:false,at:0,last:Date.now(),
     overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
 };
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261005211440';
+const BUILD='20261005212209';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3726,7 +3727,7 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
         if(Pad.active!==this.target){this.strokes=[];this.target=Pad.active;}if(!this.target||this.target.locked)return;
         clearTimeout(this.tm);InkBox.drawing=true;if(!ANS.firstInput)ANS.firstInput=Date.now();this.cur=[this.pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}this.draw();},
       move(e){if(!this.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const v of evs)this.cur.push(this.pt(v));this.draw();},
-      up(){InkBox.drawing=false;InkBox.lastUp=Date.now();if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?380:520);},
+      up(){InkBox.drawing=false;InkBox.lastUp=Date.now();if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?220:400);},
       read(){const f=this.target;if(!f||f.locked||f!==Pad.active||typeof HW==='undefined'||!this.strokes.length)return;let r;
         try{r=this.boxes?InkBox.readBoxes(this.strokes,this.boxes,this.W,this.H,{allowDot:f.allowDot}):HW.recognize(this.strokes,{allowDot:f.allowDot,maxLen:f.max+1});}catch(e){return;}
         if(!r||!r.text){read.textContent='Hmm, write it a bit bigger?';read.className='ink-read meh';return;}
