@@ -1284,8 +1284,8 @@ const Scratch={cv:null,ctx:null,strokes:[],pages:[[]],pi:0,cur:null,penSeen:fals
     c.save();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='destination-over';c.drawImage(bg,0,0);c.restore();},
   drawBg(c){const W=this.W,H=this.H,g=44;c.fillStyle='#fffaf0';c.fillRect(0,0,W,H);c.strokeStyle='#e7eaf4';c.lineWidth=1;c.beginPath();
     for(let x=g;x<W;x+=g){c.moveTo(x+0.5,0);c.lineTo(x+0.5,H);}for(let y=g;y<H;y+=g){c.moveTo(0,y+0.5);c.lineTo(W,y+0.5);}c.stroke();
-    if(this.bg&&this.pi===0)this.bg(c,W,H,g);
-    else if(this.pi>0){c.font='600 13px Lexend,sans-serif';c.fillStyle='#b4b8cc';c.textAlign='left';c.fillText('Page '+(this.pi+1),12,22);}},
+    if(this.bg)this.bg(c,W,H,g);
+    if(this.pi>0){c.font='600 13px Lexend,sans-serif';c.fillStyle='#b4b8cc';c.textAlign='left';c.fillText('Page '+(this.pi+1),12,22);}},
   export(){const n=this.pages.reduce((t,p)=>t+p.length,0);if(!n)return null;
     // pages are separated by '#', strokes by '|', eraser strokes start with 'e'
     let pages=this.pages.map(pg=>pg.map(s=>({t:s.t,pts:s.pts.map(p=>[Math.round(p[0]),Math.round(p[1])])})));
@@ -2907,7 +2907,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006001810';
+const BUILD='20261006002748';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4552,7 +4552,7 @@ function cardHead(tag,extra){return el('div',{style:'display:flex;gap:8px;align-
 function renderArith(p,a){const card=$('#card');const isDec=p.dp>0;const method=p.variant||'estimate';p.checkMethod=(method==='addBack'&&p.op==='−')||(method==='subBack'&&p.op==='+'&&p.nums.length===2)?method:'estimate';a.checkMethod=p.checkMethod;
   const verb=p.op==='−'?'Subtract':'Add';
   card.append(cardHead(verb+(isDec?' decimals':'')));
-  if(p.stacked){card.append(el('div',{class:'prompt'},'Solve it on the paper below. Then type your answer.'));}
+  if(p.stacked){card.append(el('div',{class:'expr'},p.nums.map(fmtStr).join(` ${p.op} `)+' ='),el('div',{class:'prompt'},'Solve it on the paper below. Then type your answer.'));}
   else{card.append(el('div',{class:'expr'},p.nums.map(fmtStr).join(` ${p.op} `)+' ='),el('div',{class:'tip'},isDec?'Stack it on the paper. Line up the decimal points first!':'Stack it on the paper. Line up the places first!'));}
   const f=Pad.make({});card.append(el('div',{class:'ans-row'},el('span',null,'Answer'),f.el));Pad.focus(f);
   Scratch.reset(p.stacked?drawStackOnGrid(p):null);
