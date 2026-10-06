@@ -2866,7 +2866,7 @@ const Dojo={
         else if(cp.val.length>=len){Pad.wrong(cp);setTimeout(()=>{Pad.set(cp,'');if(typeof InkBox!=='undefined')InkBox.clear();},350);}};
       setActions([{label:'Skip ▸',cls:'btn-dark',onClick:()=>this.advance(p)}]);};
     // written answers check themselves quickly; a shorter answer gets a little extra time in case a second digit is coming
-    fld.onChange=()=>{clearTimeout(tm);if(!fld.val.length)return;if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?150:140);else if(fld.src==='ink')tm=setTimeout(go,1300);};
+    fld.onChange=()=>{clearTimeout(tm);if(!fld.val.length)return;if(fld.val.length>=len)tm=setTimeout(go,fld.src==='ink'?150:140);else if(fld.src==='ink')tm=setTimeout(go,2000);};
     const acts=()=>{const row=[[{label:'Show me',cls:'btn-dark',onClick:()=>{if(done)return;fld.val='-1';fld.src='key';go();}},{label:'Enter',cls:'btn-green',primary:true,onClick:go}]];
       // Border Collie: one free trick hint per round. A hinted fact earns no speed credit and comes back soon.
       if(typeof DogPower!=='undefined'&&DogPower.has('collie')&&!dj.hint&&!teach&&sp.kind!=='sprint')row.push({label:'🐾 Big Brain hint',cls:'btn-dark',onClick:()=>{if(done||dj.hint)return;dj.hint=1;p.hinted=true;
@@ -3087,7 +3087,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006222833';
+const BUILD='20261006223123';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4474,7 +4474,12 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
     return {text,items,minP,imgs};},
   // ---- benefit of the doubt: if the reader was unsure about a digit and its close second choice makes the answer right,
   // count it right (he likely wrote it right) and save those digits as examples of his handwriting so the reader learns them.
-  doubt(correct){const r=this.lastR;if(!r||!r.items)return false;const c=String(correct),it=r.items.filter(x=>x.ch!=='.');if(it.length!==c.length)return false;let unsure=0;
+  doubt(correct){const r=this.lastR;if(!r||!r.items)return false;const c=String(correct),it=r.items.filter(x=>x.ch!=='.');
+    // one digit short: two digits written close together may have been read as one shape. Try splitting each shape.
+    if(it.length===c.length-1&&typeof HW!=='undefined'){for(let i=0;i<it.length;i++){const g=it[i].box;if(!g||!g.list)continue;let s2=null;try{s2=HW.recognize(g.list,{maxLen:3});}catch(e){}
+        if(s2&&s2.text&&s2.text.length===2&&it.slice(0,i).map(x=>x.ch).join('')+s2.text+it.slice(i+1).map(x=>x.ch).join('')===c){state.inkStats=state.inkStats||{};state.inkStats.splits=(state.inkStats.splits||0)+1;saveState();return true;}}
+      return false;}
+    if(it.length!==c.length)return false;let unsure=0;
     for(let i=0;i<c.length;i++){const x=it[i];if(x.ch===c[i])continue;if(!x.pr||x.p>=0.8)return false;const d=+c[i],sorted=x.pr.slice().sort((a,b)=>b-a);if(x.pr[d]<0.08||x.pr[d]<sorted[2])return false;unsure++;}
     if(!unsure)return false;it.forEach((x,i)=>{if(x.img)this.mine.add(c[i],x.img);});state.inkStats=state.inkStats||{};state.inkStats.doubts=(state.inkStats.doubts||0)+1;saveState();return true;},
   // ---- learns Dev's own handwriting: every correct written answer saves his digits as examples
