@@ -700,6 +700,24 @@ html,body{touch-action:manipulation}
 .sc-label{font-weight:700;color:#8a7a55!important}
 .ag-pad{position:absolute;inset:0;touch-action:none;-webkit-user-select:none;user-select:none}
 .sync-badge{position:absolute;left:12px;top:82px;z-index:5;border:0;border-radius:12px;padding:10px 14px;font:700 14px Lexend,sans-serif;background:#ffb627;color:#1d1f33;box-shadow:0 3px 0 #0006}
+/* Blocks: picture hints and replays */
+.bk-box{background:#f3f8ff;border:3px solid #5ab0ff;border-radius:14px;padding:10px 14px;display:grid;gap:8px;justify-items:start}
+.bk-box.bk-show{background:#eefcf2;border-color:#3fdc6b;padding:6px 10px;gap:4px;justify-items:center}
+.bk-grid{display:grid;gap:calc(var(--c) * .18)}
+.bk-row{display:flex;gap:calc(var(--c) * .14);align-items:center}
+.bk{display:block;width:var(--c);height:var(--c);border-radius:calc(var(--c) * .2);position:relative;animation:bkIn .28s cubic-bezier(.3,1.6,.6,1) both}
+.bk.gap{margin-right:calc(var(--c) * .35)}
+.bk.b{background:#5ab0ff;box-shadow:inset 0 -3px 0 #2a7acc}.bk.o{background:#ff9f43;box-shadow:inset 0 -3px 0 #d06a10}
+.bk.e{background:transparent;border:2px dashed #8a94ad;box-sizing:border-box}
+.bk.x::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(45deg,transparent 42%,#e8463c 42%,#e8463c 58%,transparent 58%),linear-gradient(-45deg,transparent 42%,#e8463c 42%,#e8463c 58%,transparent 58%);opacity:0;animation:bkX .25s ease both;animation-delay:var(--xd,0s)}
+.bk.x{animation:bkIn .28s both,bkFade .25s ease both;animation-delay:0s,var(--xd,0s)}
+.bk-lab{font:800 16px var(--f-math);color:#1d6bb8;margin-left:8px;animation:bkIn .3s both}
+.bk-show .bk-lab{font-size:14px}
+.bk-say{margin:0;font:600 18px/1.35 var(--f-body);color:#1d1f33}
+.bk-ans{font:800 22px var(--f-math);color:#1a7a3a;animation:bkIn .3s .5s both}
+@keyframes bkIn{from{transform:translateY(-14px) scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes bkX{to{opacity:1}}
+@keyframes bkFade{to{filter:grayscale(.6);opacity:.45}}
 </style>
 
 <div id="app">
@@ -2616,6 +2634,51 @@ const Games={
 };
 
 /* =========================================================
+   Blocks: simple animated block pictures for facts.
+   hint(f): after a miss, shows the fact with blocks but never the answer. He tries again.
+   show(f): after a right answer on a fact he's still learning, replays it with blocks and the answer.
+   ========================================================= */
+const Blocks={
+  // grid of cells. cells: [{k:'b'|'o'|'e'|'x', d:delay}] laid out in rows of `per`, with a gap after 5
+  grid(cells,per,size,labels){const wrap=el('div',{class:'bk-grid',style:`--c:${size}px`});
+    for(let r=0;r*per<cells.length;r++){const row=el('div',{class:'bk-row'});
+      cells.slice(r*per,r*per+per).forEach((c,i)=>{const b=el('i',{class:'bk '+c.k+(per===10&&i===4?' gap':''),style:`animation-delay:${c.d||0}s`});if(c.x!=null)b.style.setProperty('--xd',c.x+'s');row.append(b);});
+      if(labels&&labels[r]!=null)row.append(el('span',{class:'bk-lab',style:`animation-delay:${labels[r].d}s`},labels[r].s));
+      wrap.append(row);}return wrap;},
+  box(cls,grid,text){return el('div',{class:'bk-box '+cls},grid,text?el('p',{class:'bk-say'},text):null);},
+  // multiplication: which factor to count by (2s, 5s and 10s are easiest, then the smaller number)
+  mulPlan(a,b){const easy=[10,5,2];for(const e of easy){if(a===e)return {by:a,rows:b};if(b===e)return {by:b,rows:a};}const by=Math.min(a,b);return {by,rows:Math.max(a,b)};},
+  cells(n,k,d0,step){return Array.from({length:n},(_,i)=>({k,d:d0+i*(step||0)}));},
+  hint(f){const {op,a,b}=f;let g=null,t='';const S=0.12;
+    if(op==='+'){const hi=Math.max(a,b),lo=Math.min(a,b),tot=hi+lo;
+      g=this.grid(this.cells(hi,'b',0,0.02).concat(this.cells(lo,'o',0.4,0.22)),10,tot>20?20:32);
+      if(a===b)t=`Double ${a}: two groups of ${a}.`;else if(hi-lo===1)t=`Near double: ${lo} + ${lo} is a double. Then 1 more.`;
+      else if(tot>10&&hi<10)t=`Fill the ten first: ${hi} + ${10-hi} makes 10. How many oranges spill over?`;
+      else if(hi===10)t=`10 and ${lo} more.`;else t=`Start at ${hi}. Count on ${lo} more.`;}
+    else if(op==='−'){const cs=Array.from({length:a},(_,i)=>i>=a-b?{k:'b x',d:0,x:0.5+(a-1-i)*0.22}:{k:'b',d:0});
+      g=this.grid(cs,10,a>20?20:32);
+      t=a>10&&b>a-10&&b<10?`Take away ${a-10} to get down to 10. Then take away ${b-(a-10)} more. How many are left?`:`Start with ${a}. Take away ${b}. How many are left? Or think: ${b} + ? = ${a}.`;}
+    else if(op==='×'){const P=this.mulPlan(a,b),size=P.rows*P.by>60?16:P.rows*P.by>30?20:28,cs=[],labs=[];
+      for(let r=0;r<P.rows;r++){cs.push(...this.cells(P.by,r%2?'o':'b',0.25*r,0));labs.push({s:r<P.rows-1?String(P.by*(r+1)):'?',d:0.25*r+0.15});}
+      g=this.grid(cs,P.by,size,labs);t=`${P.rows} rows of ${P.by}. Count by ${P.by}s.`;}
+    else if(op==='÷'){const rows=f.ans,size=a>60?16:a>30?20:28,cs=[];for(let r=0;r<rows;r++)cs.push(...this.cells(b,r%2?'o':'b',0.3*r,0));
+      g=this.grid(cs,b,size);t=`Put ${a} into rows of ${b}. How many rows?`;}
+    else if(op==='+?'){g=this.grid(this.cells(a,'b',0,0.02).concat(this.cells(b-a,'e',0.4,0.15)),10,b>20?20:32);t=`You have ${a}. How many more to make ${b}? Count the empty spots.`;}
+    else if(op==='−?'){const cs=Array.from({length:a},(_,i)=>i>=b?{k:'b x',d:0,x:0.5+(i-b)*0.2}:{k:'b',d:0});g=this.grid(cs,10,a>20?20:32);t=`${a} take away how many leaves ${b}? Count the crossed ones.`;}
+    if(!g)return null;return this.box('bk-hint',g,t);},
+  // after a right answer: the same picture, with the answer
+  show(f){const {op,a,b,ans}=f;let g=null;
+    if(op==='+'){const hi=Math.max(a,b),lo=Math.min(a,b);g=this.grid(this.cells(hi,'b',0,0.015).concat(this.cells(lo,'o',0.2,0.05)),10,ans>20?18:28);}
+    else if(op==='−'){g=this.grid(Array.from({length:a},(_,i)=>i>=a-b?{k:'b x',d:0,x:0.15+(a-1-i)*0.05}:{k:'b',d:0}),10,a>20?18:28);}
+    else if(op==='×'){const P=this.mulPlan(a,b),cs=[],labs=[];for(let r=0;r<P.rows;r++){cs.push(...this.cells(P.by,r%2?'o':'b',0.08*r,0));labs.push({s:String(P.by*(r+1)),d:0.08*r+0.05});}g=this.grid(cs,P.by,ans>60?14:ans>30?18:22,labs);}
+    else if(op==='÷'){const cs=[];for(let r=0;r<ans;r++)cs.push(...this.cells(b,r%2?'o':'b',0.08*r,0));g=this.grid(cs,b,a>60?12:14);}
+    else if(op==='+?'){g=this.grid(this.cells(a,'b',0,0.015).concat(this.cells(ans,'o',0.2,0.05)),10,b>20?18:28);}
+    else if(op==='−?'){g=this.grid(Array.from({length:a},(_,i)=>i>=b?{k:'b x',d:0,x:0.15+(i-b)*0.05}:{k:'b',d:0}),10,a>20?18:28);}
+    if(!g)return null;const ex=op==='+?'?`${a} + ${ans} = ${b}`:op==='−?'?`${a} − ${ans} = ${b}`:`${a} ${op} ${b} = ${ans}`;
+    return el('div',{class:'bk-box bk-show'},g,el('b',{class:'bk-ans'},ex));}
+};
+
+/* =========================================================
    Fact Dojo v2 — built from the research:
    teach a trick first, then short rounds of mostly-known facts, a few new facts a day,
    expanding re-asks, no penalties, speed judged on his usual pace, facts "owned" fact by fact.
@@ -2832,6 +2895,12 @@ const Dojo={
         InkCheck.ask(v,dj).then(keep=>{asking=false;if(run!==R||done)return;if(keep){p.inkKept=true;go();return;}
           p.lat0=lat;p.inkClaim=v;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);say('Write it again, nice and clear. Or tap the keys.','info');});return;}
       if(p.inkClaim!=null&&typeof InkCheck!=='undefined')InkCheck.after(p.inkClaim,v,ok);
+      // second try after a picture hint: the first try already counted, so this one only decides what he sees
+      if(p.retry){done=true;clearTimeout(tm);
+        Data.logAttempt({ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),skill:'dojo:'+sp.dojo,kind:'dojo',mode:'retry',diff:f.belt,variant:src,q:factExpr(f,flip),correct:f.ans,firstTry:false,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast:false,id:uid()});
+        if(ok){Pad.right(fld);Pad.lock(fld);Snd.good();stamp('right',null,{small:true,ms:650});Battle.event('hit');const hb=card.querySelector('.bk-hint');if(hb)hb.remove();
+          const sh=Blocks.show(f);if(sh)card.querySelector('.dj-expr').before(sh);say('Yes! You figured it out.','good');this.reask(p,[3]);setTimeout(()=>this.advance(p),1900);return;}
+        const hb=card.querySelector('.bk-hint');if(hb)hb.remove();reveal(null,true);return;}
       done=true;clearTimeout(tm);
       const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,p.hinted?99999:lat,src,p.k);
       const fast=ok&&!p.hinted&&lat<=this.thr(src);
@@ -2851,11 +2920,19 @@ const Dojo={
         if(teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;this.reask(p,[2,5]);}
         else if(p.k==='again')this.reask(p,[]);
         else if(p.hinted)this.reask(p,[3]);
+        if(sp.kind!=='sprint'&&!rec.owned&&typeof Blocks!=='undefined'){const sh=Blocks.show(f);if(sh){card.querySelector('.dj-expr').before(sh);setTimeout(()=>this.advance(p),1500);return;}}
         setTimeout(()=>this.advance(p),fast?360:600);return;}
-      // a miss: nothing is lost. Build the fact with the trick, copy it, and it comes back soon.
-      Pad.set(fld,f.ans);Pad.lock(fld);fld.el.classList.add('shown');dj.bolt=0;dj.miss.push(f);if(Battle.miss)Battle.miss();
+      // a miss: nothing is lost. First a picture hint and another try (no answer shown). Miss again: build it, copy it, and it comes back soon.
+      dj.bolt=0;dj.miss.push(f);if(Battle.miss)Battle.miss();
+      if(sp.kind!=='sprint'&&!teach&&typeof Blocks!=='undefined'){const h=Blocks.hint(f);if(h){p.retry=true;done=false;Pad.wrong(fld);
+          setTimeout(()=>{if(run!==R||done)return;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);},450);
+          card.querySelector('.dj-expr').before(h);say('Not quite. Look at the blocks and try again.','info');Snd.tone(392,0.12,'triangle',0.04);
+          setActions([{label:'Show me ▸',cls:'btn-dark',onClick:()=>{if(done)return;done=true;clearTimeout(tm);h.remove();reveal(rec,true);}}]);return;}}
+      reveal(rec,false);};
+    const reveal=(rec,counted)=>{
+      Pad.set(fld,f.ans);Pad.lock(fld);fld.el.classList.add('shown');
       if(sp.kind==='sprint'){setTimeout(()=>this.advance(p),700);return;}
-      if(teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;}
+      if(rec&&teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;}
       this.reask(p,[2,5]);
       const v2=teach?null:factVisual(f);
       const fix=el('div',{class:'dj-miss'},el('div',{class:'dj-build'},'Let’s build it'),v2,teach?null:el('div',{class:'dj-tip'},factTip(f)));card.querySelector('.dj-expr').after(fix);
@@ -3087,7 +3164,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006223345';
+const BUILD='20261006224430';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -5190,7 +5267,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
