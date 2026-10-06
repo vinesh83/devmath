@@ -2827,8 +2827,8 @@ const Dojo={
         if(InkBox.drawing||Date.now()-InkBox.lastUp<(maybe8?1100:600)){clearTimeout(tm);tm=setTimeout(go,120);return;}}
       const lat=p.lat0!=null?p.lat0:(ANS.firstInput||Date.now())-(p.ts||t0);let ok=v===f.ans;
       if(!ok&&src==='ink'&&typeof InkBox!=='undefined'&&InkBox.doubt(f.ans)){ok=true;p.inkDoubt=true;Pad.set(fld,String(f.ans));}
-      // wrong in handwriting? Ask first: "I read 17. Is that what you wrote?" A rewrite keeps his first speed.
-      if(!ok&&src==='ink'&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
+      // reader unsure of his handwriting (right or wrong answer alike)? Ask first: "I read 17. Is that what you wrote?" A rewrite keeps his first speed.
+      if(src==='ink'&&!p.inkDoubt&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.unsure(v)&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
         InkCheck.ask(v,dj).then(keep=>{asking=false;if(run!==R||done)return;if(keep){p.inkKept=true;go();return;}
           p.lat0=lat;p.inkClaim=v;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);say('Write it again, nice and clear. Or tap the keys.','info');});return;}
       if(p.inkClaim!=null&&typeof InkCheck!=='undefined')InkCheck.after(p.inkClaim,v,ok);
@@ -3087,7 +3087,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006223123';
+const BUILD='20261006223345';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3194,6 +3194,8 @@ const DogPower={last:{},
 const InkCheck={MAX:3,
   st(){return state.inkStats=state.inkStats||{asked:0,yes:0,no:0,noThenRight:0,noThenWrong:0,log:[]};},
   left(bag){return (bag.inkClaims||0)<this.MAX;},
+  // ask only when the reader is unsure of what he wrote, never because the answer is wrong (that would give the answer away)
+  unsure(v){const r=typeof InkBox!=='undefined'&&InkBox.lastR;if(!r||String(r.text)!==String(v))return false;return r.minP<0.6;},
   ask(v,bag){const S=this.st();S.asked++;saveState();
     const A=InkBox.active,cv=A&&A.cv;let snap=null;try{if(cv&&cv.width&&A.strokes&&A.strokes.length)snap=el('img',{class:'ink-snap',src:cv.toDataURL(),alt:'What you wrote'});}catch(e){}
     return new Promise(res=>{const yes=el('button',{class:'btn btn-dark',type:'button'},'Yes, that’s my answer'),no=el('button',{class:'btn btn-green',type:'button'},'No, let me rewrite it');
@@ -4853,7 +4855,7 @@ function answerFlow(o){const st={tries:0,wrongAtCheck:false,checkedSince:false};
   const extra=o.extraBtn?[o.extraBtn]:[];
   setActions(o.check?[[checkBtn,submitBtn]].concat(extra):[submitBtn].concat(extra));
   async function submit(){let v=Pad.val(o.field);if(v!=null&&!eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&typeof InkBox!=='undefined'&&InkBox.doubt(o.correct)){Pad.set(o.field,String(o.correct));v=Pad.val(o.field);}if(v==null){say('Type your answer on the keypad first.','info');return;}
-    if(!eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&!st.inkAsked&&typeof InkCheck!=='undefined'&&InkCheck.left(run)){st.inkAsked=true;
+    if(o.field&&o.field.src==='ink'&&!st.inkAsked&&typeof InkCheck!=='undefined'&&InkCheck.unsure(v)&&InkCheck.left(run)){st.inkAsked=true;
       if(!(await InkCheck.ask(v,run))){st.inkClaim=v;Pad.set(o.field,'');o.field.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(o.field);say('Write it again, nice and clear. Or tap the keys.','info');return;}}
     if(eqNum(v,o.correct)&&o.field&&o.field.src==='ink'&&typeof InkBox!=='undefined'&&InkBox.lastR&&InkBox.lastR.imgs&&InkBox.lastR.text===String(v))InkBox.lastR.imgs.forEach(x=>InkBox.mine.add(x.ch,x.img));
     if(st.inkClaim!=null&&typeof InkCheck!=='undefined'){InkCheck.after(st.inkClaim,v,eqNum(v,o.correct));a.inkClaim=st.inkClaim;st.inkClaim=null;}
