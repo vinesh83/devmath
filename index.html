@@ -671,6 +671,10 @@ table.spd td.x{background:transparent;border-color:transparent}
 /* no long-press callouts or double-tap zoom on game buttons */
 html,body{touch-action:manipulation}
 .bb-btn,.brawl-btn,.key,.btn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* saving goal chip on the map */
+.goal-chip{display:inline-flex;align-items:center;gap:6px;background:#2a2350;color:#ffe066;font-weight:800;border:0;cursor:pointer}
+.goal-chip .goal-bar{display:inline-block;width:60px;height:8px;border-radius:4px;background:#ffffff22;overflow:hidden}.goal-chip .goal-bar i{display:block;height:100%;background:linear-gradient(90deg,#ffb627,#3fdc6b)}
+.goal-chip.ready{background:#3fdc6b;color:#1d1f33;animation:goalpulse 1s ease infinite alternate}@keyframes goalpulse{to{box-shadow:0 0 14px #3fdc6b}}
 </style>
 
 <div id="app">
@@ -2203,7 +2207,9 @@ const Brawl={off:false,
       if(G.hearts<=0){G.phase='lose';G.t=0;Snd.shield();}};
     // ---- hero moves
     const reach=()=>hw*0.55+W*0.11;
-    const attack=()=>{const h=G.hero;if(!fight()||h.cd>0||G.sp)return;h.atk=0.22;h.cd=0.28;let hit=false;
+    const attack=(noDash)=>{const h=G.hero;if(!fight()||h.cd>0||G.sp)return;
+      if(!noDash&&G.foe.x-h.x>reach()+gw*0.35&&!G.bugs.some(b=>!b.dead&&b.x-h.x>-hw*0.2&&b.x-h.x<reach())){G.dash={dir:1,t:0.2,sp:W*1.1};G.pendingAtk=0.2;h.cd=0.25;Snd.whoosh();return;}
+      h.atk=0.22;h.cd=0.28;let hit=false;
       for(const b of G.bugs){if(b.dead)continue;const dx=b.x-h.x;if(dx>-hw*0.2&&dx<reach()&&Math.abs(h.y)<H*0.2){b.dead=true;hit=true;G.squashed++;const v=1+(DP('golden')?1:0);state.coins+=v;
         burst(b.x,Y-hs*3,16,['#3fdc6b','#ffe066','#fff'],220);say('SQUASH! +'+v,'#ffe066',false,b.x,Y-hs*8);Snd.coin();if(DP('golden'))DogPower.pop('golden','Fetched +1 coin!');}}
       const f=G.foe,dx=f.x-h.x;
@@ -2253,7 +2259,9 @@ const Brawl={off:false,
         if(DP('robodog'))DPop('robodog','SUPER boost!');}
       if(fight()){G.time-=dt;
         // hero
-        const mv=(G.keys.r?1:0)-(G.keys.l?1:0),sp=W*0.42*(h.blk>0?0.5:1);if(!G.sp&&mv)h.x+=mv*sp*dt;h.run=mv?h.run+dt:0;
+        const mv=(G.keys.r?1:0)-(G.keys.l?1:0),sp=W*0.42*(h.blk>0?0.5:1);if(!G.sp&&mv)h.x+=mv*sp*dt;
+        if(G.dash&&!G.sp){h.x+=G.dash.dir*G.dash.sp*dt;G.dash.t-=dt;if(G.dash.t<=0)G.dash=null;}h.run=(mv||G.dash)?h.run+dt:0;
+        if(G.pendingAtk>0){G.pendingAtk-=dt;if(G.pendingAtk<=0){h.cd=0;attack(true);}}
         h.x=clamp(h.x,W*0.05,f.x-(hw+gw)*0.38);if(h.y<0||h.vy<0){h.vy+=H*4.4*dt;h.y+=h.vy*dt;if(h.y>0){h.y=0;h.vy=0;}}
         // super move: Glitch freezes and takes a big hit
         if(G.sp){G.sp.t+=dt;if(G.sp.t>1.05&&!G.sp.hitDone){G.sp.hitDone=true;hurtFoe(boss?12:10,f.x,Y-gw*1.2,'#ffe066');G.shake=0.8;Snd.crit();Snd.boom();burst(f.x,Y-gw*0.5,80,[G.sp.col,'#fff','#ffe066'],420);}
@@ -2358,7 +2366,7 @@ const Brawl={off:false,
       if(G.supBtn)G.supBtn.classList.toggle('ready',G.sup>=1&&fight()&&!G.sp);},
     {skip:true,hold:end=>{G.end=end;const ui=$('#cine .cine-ui');
       const act=(cls,label,fn)=>{const b=el('button',{class:'bb-btn '+cls,type:'button'},label);tapify(b,()=>{Snd.init();fn();},{down:true});return b;};
-      const hold=(cls,label,key)=>{const b=el('button',{class:'bb-btn '+cls,type:'button'},label);const on=e=>{e.preventDefault();G.keys[key]=1;b.classList.add('hit');try{b.setPointerCapture(e.pointerId);}catch(_){}},off=()=>{G.keys[key]=0;b.classList.remove('hit');};
+      const hold=(cls,label,key)=>{const b=el('button',{class:'bb-btn '+cls,type:'button'},label);const on=e=>{e.preventDefault();G.keys[key]=1;if(fight()&&!G.sp)G.dash={dir:key==='r'?1:-1,t:0.16,sp:W*0.75};b.classList.add('hit');try{b.setPointerCapture(e.pointerId);}catch(_){}},off=()=>{G.keys[key]=0;b.classList.remove('hit');};
         b.addEventListener('pointerdown',on);['pointerup','pointercancel','lostpointercapture'].forEach(t=>b.addEventListener(t,off));return b;};
       G.supBtn=act('sup','★ SUPER',superMove);
       ui.append(el('div',{class:'bb-ctl'},el('div',{class:'bb-move'},hold('mv','◀','l'),hold('mv','▶','r')),
@@ -2831,11 +2839,12 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
     ['gesturestart','gesturechange','gestureend'].forEach(k=>document.addEventListener(k,stop,{passive:false}));
     document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1&&!e.target.closest('.scratch,.ink,.bp-cv,.bb-cv'))e.preventDefault();},{passive:false});
     let last=0;document.addEventListener('touchend',e=>{const now=Date.now();if(now-last<320&&!e.target.closest('input,textarea,select'))e.preventDefault();last=now;},{passive:false});
+    const cine=document.querySelector('#cine');if(cine)['touchstart','touchmove'].forEach(k=>cine.addEventListener(k,e=>{if(e.cancelable&&e.target.closest('canvas,.bb-ctl,.bb-btn'))e.preventDefault();},{passive:false}));
     const vv=window.visualViewport;if(vv)vv.addEventListener('resize',()=>{if(vv.scale>1.02)this.reset();});},
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261005235255';
+const BUILD='20261006000554';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3095,7 +3104,8 @@ const Inter={bag:[],last:null,
     if(k.startsWith('super:'))return Cine.superMove(k.slice(6),glitchForm(),false);return this.anim(k);},
   anim(kind){const [name0,col]=INTERLUDES[kind],D=RM?1.6:2.8,look=heroLook(),form=glitchForm();
     const pet=look.pet&&PETS[look.pet]&&PETS[look.pet].dog?look.pet:'ellie',petName=(DOGS.find(d=>d[0]===pet)||[0,'Dog'])[1].replace(/ the .*/,'');
-    const name=kind==='zoomies'?petName.toUpperCase()+' ZOOMIES!':name0,P=[],S={},dogs=shuffle(DOGS.map(d=>d[0])).slice(0,9);
+    const ride=look.ride&&look.ride!=='none'&&typeof Rides!=='undefined'?look.ride:null;
+    const name=kind==='zoomies'?petName.toUpperCase()+' ZOOMIES!':kind==='kart'&&ride?Rides.name(ride).toUpperCase()+' RAM!':name0,P=[],S={},dogs=shuffle(DOGS.map(d=>d[0])).slice(0,9);
     const burst=(x,y,n,cols,sp,grav)=>{for(let i=0;i<n;i++){const a=Math.random()*6.28,v=(sp||220)*(0.3+Math.random());P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-40,life:0.5+Math.random()*0.6,col:pick(cols),sz:3+Math.random()*4,g:grav==null?380:grav});}};
     const once=(k,fn)=>{if(!S[k]){S[k]=1;fn();}};
     Snd.charge(0.4);
@@ -3300,7 +3310,7 @@ const Inter={bag:[],last:null,
         if(t>0.45&&t<1.4){once('l',()=>Snd.tone(1800,0.9,'sawtooth',0.03,0,900));post.push(()=>{const ey=ground-ph*0.7;c.strokeStyle='#ff2d4d';c.lineWidth=gs*0.9+Math.sin(t*50)*gs*0.3;c.beginPath();c.moveTo(dx+pw*0.8,ey);c.lineTo(gx,ground-G2*7+Math.sin(t*20)*gs*3);c.stroke();c.strokeStyle='#fff';c.lineWidth=gs*0.3;c.stroke();});
           if(Math.random()<0.7)burst(gx,ground-G2*7,3,['#ff2d4d','#ffe066'],180);Gl.white=(t*14|0)%2===0;shake=4;}
         if(t>1.4){Gl.tint='rgba(20,20,30,0.55)';Gl.dizzy=true;c.font=`800 ${gs*3.6}px "Pixelify Sans",monospace`;c.fillStyle='#ffe066';c.textAlign='center';c.fillText('GOOD DOG!',dx+pw/2,ground-ph-gs*3);}}
-      else if(kind==='kart'){heroHide=true;const k=Math.min(1,t/0.85),kx=-gs*20+k*(gx-G2*7+gs*20),bump=t>0.85&&t<1.0;post.push(()=>{const ky=ground-gs*5;c.fillStyle='#ff4d6d';c.fillRect(kx-gs*8,ky,gs*16,gs*4);c.fillStyle='#1d1f33';c.beginPath();c.arc(kx-gs*5,ground-gs,gs*2,0,6.28);c.arc(kx+gs*5,ground-gs,gs*2,0,6.28);c.fill();
+      else if(kind==='kart'){heroHide=true;const k=Math.min(1,t/0.85),kx=-gs*20+k*(gx-G2*7+gs*20),bump=t>0.85&&t<1.0;post.push(()=>{if(ride){Rides.draw(c,ride,kx-13*gs,ground-22*gs,gs,look,t,t<0.85);return;}const ky=ground-gs*5;c.fillStyle='#ff4d6d';c.fillRect(kx-gs*8,ky,gs*16,gs*4);c.fillStyle='#1d1f33';c.beginPath();c.arc(kx-gs*5,ground-gs,gs*2,0,6.28);c.arc(kx+gs*5,ground-gs,gs*2,0,6.28);c.fill();
           drawHero(c,kx-6*gs*0.8,ky-gs*9,gs*0.8,look,'stand',t);c.fillStyle='#ffe066';c.fillRect(kx+gs*7,ky+gs,gs*2,gs*2);});
         if(t<0.85&&Math.random()<0.8)P.push({x:kx-gs*9,y:ground-gs*3,vx:-80,vy:-20,life:0.4,col:'#8a8a9a',sz:5,g:0});if((t*10|0)!==S.v&&t<0.85){S.v=t*10|0;Snd.tone(110+t*80,0.06,'sawtooth',0.03);}
         if(t>0.85){once('b',()=>{Snd.crit();Snd.slam();burst(gx-G2*5,ground-G2*6,30,['#ffe066','#fff'],280);});const q=Math.min(1,(t-0.85)/0.7);Gl.ox=q*W*0.25;Gl.oy=-Math.sin(q*Math.PI)*H*0.25;Gl.rot=q*10;Gl.dizzy=q>=1;shake=bump?16:0;
@@ -3379,6 +3389,84 @@ const BoxBreath={
     const btn=el('button',{class:'btn btn-green',type:'button'},'Done ▸');tapify(btn,()=>{B.stop();if(back)back();else overlay(null);});
     overlay(el('div',{class:'modal recharge'},el('h2',null,'Box breathing 🧘'),el('p',null,'Breathe in for 4, hold for 4, out for 4, hold for 4.'),B.el,el('div',{class:'btns'},btn)));}
 };
+
+/* =========================================================
+   Rides (cars and motorbikes) and Dog Gear: big things to save coins for.
+   He rides his vehicle on the map; his dog wears its gear everywhere it appears.
+   Tapping something he can't afford yet makes it his saving goal, shown on the map.
+   ========================================================= */
+const RIDES=[['none','Walking',0],['scooter','Kick Scooter',120],['bmx','BMX Bike',200],['dirt','Dirt Bike',350],['kart','Go-Kart',450],['moto','Motorbike',600],
+  ['sports','Sports Car',800],['police','Police Car',1000],['hover','Hover Bike',1200],['race','Race Car',1500],['monster','Monster Truck',2000],['rocket','Rocket Car',3000],['gold','Golden Supercar',5000]];
+const DOG_GEAR=[ // [id, name, price, slot]
+  ['collar','Red Collar',40,'neck'],['bandana','Bandana',60,'neck'],['bowtie','Bow Tie',60,'neck'],['spiked','Spiked Collar',90,'neck'],['cape','Super Cape',150,'neck'],['chain','Gold Chain',220,'neck'],
+  ['nerd','Nerd Glasses',50,'face'],['monocle','Fancy Monocle',70,'face'],['shades','Sunglasses',80,'face'],['starglasses','Star Glasses',100,'face'],
+  ['party','Party Hat',70,'hat'],['flower','Flower Crown',80,'hat'],['santa','Santa Hat',90,'hat'],['propeller','Propeller Cap',110,'hat'],['cowboy','Cowboy Hat',120,'hat'],
+  ['pirate','Pirate Hat',140,'hat'],['crown','Royal Crown',160,'hat'],['viking','Viking Helmet',160,'hat'],['wizard','Wizard Hat',180,'hat']];
+CATALOG.ride=RIDES.map(([id,name,price])=>({id,name,price}));
+CATALOG.dogacc=DOG_GEAR.map(([id,name,price,slot])=>({id,name,price,slot}));
+
+/* ---------- dog gear: drawn on whatever dog he has, placed from the dog's own eye and head */
+const DogGear={
+  PAL:{R:'#ff4d6d',Y:'#ffd23f',B:'#3fa7ff',P:'#c084fc',K:'#1d1f33',W:'#ffffff',G:'#3fae5a',O:'#ff7b1c',N:'#8a5a2a',S:'#c9cfdc',Q:'#ff8fa3'},
+  ART:{ // hats sit on the head top (bottom-center anchor); face items center on the eye; neck items hang just behind the head
+    party:['..Y..','..Q..','.QYQ.','QQQQQ'],crown:['Y.Y.Y','YYYYY','YRYBY'],cowboy:['.NNN.','.NNN.','NNNNNNN'],propeller:['RRYBB','..Y..','.RRB.','RRRBB'],
+    wizard:['...P.','..PP.','.PYP.','PPPPP'],viking:['W...W','WSSSW','SSSSS'],flower:['R.Y.Q','GGGGG'],pirate:['.KKK.','KKWKK','KKKKKKK'],santa:['....W','.RRR.','RRRR.','WWWWW'],
+    shades:['KKKKK'],starglasses:['YKY','KYK'],monocle:['.Y.','Y.Y','.Y.'],nerd:['KKKK','K..K'],
+    collar:['R','R','Y'],spiked:['W','K','W','K'],bandana:['RRR','.RR','..R'],bowtie:['B.B','BBB','B.B'],chain:['Y','Y','Y','O'],cape:['.RRRR','RRRRRR','RRRRRRR']},
+  anchors:{},
+  anchor(id){if(this.anchors[id])return this.anchors[id];const rows=PETS[id].rows;let ex=-1,ey=-1;
+    for(let r=0;r<rows.length&&ex<0;r++){const c=rows[r].indexOf('K');if(c>=0){ex=c;ey=r;}}
+    if(ex<0){const w=rows[0].length;ex=Math.floor(w*0.8);ey=Math.floor(rows.length*0.3);}
+    let top=ey;for(let r=0;r<=ey;r++){if([ex-1,ex,ex+1].some(c=>rows[r][c]&&rows[r][c]!=='.')){top=r;break;}}
+    // the back: first row where the body is wide
+    let back=ey+1;for(let r=0;r<rows.length;r++){if(rows[r].replace(/\./g,'').length>=rows[0].length*0.6){back=r;break;}}
+    return this.anchors[id]={ex,ey,top,back};},
+  draw(c,id,x,y,s,acc){if(!acc||!PETS[id]||!PETS[id].dog)return;const A=this.anchor(id);
+    const put=(art,cx,cy,mode)=>{const w=Math.max(...art.map(r=>r.length)),h=art.length;let ox,oy;
+      if(mode==='hat'){ox=cx-Math.floor(w/2);oy=cy-h;}else if(mode==='face'){ox=cx-Math.floor(w/2);oy=cy-Math.floor(h/2);}else{ox=cx-w+1;oy=cy;}
+      drawSprite(c,art,x+ox*s,y+oy*s,s,this.PAL);};
+    if(acc.neck==='cape')put(this.ART.cape,A.ex-2,A.back-1,'neck');else if(acc.neck&&this.ART[acc.neck])put(this.ART[acc.neck],A.ex-1,A.ey+1,'neck');
+    if(acc.face&&this.ART[acc.face])put(this.ART[acc.face],A.ex,A.ey,'face');
+    if(acc.hat&&this.ART[acc.hat])put(this.ART[acc.hat],A.ex,A.top,'hat');}};
+// his own dog wears its gear everywhere drawPet is used
+{const _dp=drawPet;drawPet=function(ctx,id,x,y,s,t){_dp(ctx,id,x,y,s,t);const p=PETS[id];
+  if(p&&p.dog&&state.hero&&state.hero.pet===id&&state.hero.dogAcc){const bob=Math.round(Math.sin((t||0)*(p.fly?5:3))*(p.fly?3:1));DogGear.draw(ctx,id,x,y+bob,s,state.hero.dogAcc);}};}
+
+/* ---------- rides: drawn with shapes in a 26 x 14 box (s = one cell), facing right; the hero rides on top */
+const Rides={
+  COL:{scooter:'#5ef2ff',bmx:'#ff4d6d',dirt:'#3fdc6b',kart:'#ffb627',moto:'#2a2a3a',sports:'#ff2d4d',police:'#f4f7fb',hover:'#c084fc',race:'#3fa7ff',monster:'#ff7b1c',rocket:'#8a94ad',gold:'#ffd23f'},
+  name(id){const r=RIDES.find(x=>x[0]===id);return r?r[1]:'';},
+  wheel(c,x,y,r,t){c.fillStyle='#1d1f33';c.beginPath();c.arc(x,y,r,0,6.28);c.fill();c.fillStyle='#8a94ad';c.beginPath();c.arc(x,y,r*0.45,0,6.28);c.fill();
+    c.strokeStyle='#d7deeb';c.lineWidth=Math.max(1,r*0.15);const a=t*8;c.beginPath();c.moveTo(x+Math.cos(a)*r*0.45,y+Math.sin(a)*r*0.45);c.lineTo(x-Math.cos(a)*r*0.45,y-Math.sin(a)*r*0.45);c.stroke();},
+  // draws the ride with the hero aboard; (x,y) = top-left, total box 26s wide x 22s tall (hero included)
+  draw(c,id,x,y,s,look,t,moving){const col=this.COL[id]||'#ff4d6d',g=y+22*s,W=(a,b)=>this.wheel(c,x+a*s,g-b*s,b*s,moving?t:0);c.save();
+    const hero=(hx,hy,hs,frame)=>drawHero(c,x+hx*s,y+hy*s,hs*s,look,frame||'stand',t);
+    if(id==='scooter'){hero(7,5.2,1,'stand');c.fillStyle=col;c.fillRect(x+4*s,g-3.4*s,15*s,1.4*s);c.fillRect(x+18*s,g-15*s,1.4*s,12*s);c.fillRect(x+16*s,g-15.4*s,5*s,1.2*s);W(5,2);W(19,2);}
+    else if(id==='bmx'){W(5.5,3.5);W(19.5,3.5);c.strokeStyle=col;c.lineWidth=1.3*s;c.beginPath();c.moveTo(x+5.5*s,g-3.5*s);c.lineTo(x+11*s,g-9*s);c.lineTo(x+18*s,g-9*s);c.lineTo(x+19.5*s,g-3.5*s);c.moveTo(x+11*s,g-9*s);c.lineTo(x+13*s,g-3.5*s);c.lineTo(x+5.5*s,g-3.5*s);c.moveTo(x+18*s,g-9*s);c.lineTo(x+17*s,g-13*s);c.stroke();
+      c.fillStyle='#1d1f33';c.fillRect(x+9*s,g-10.4*s,4*s,1.2*s);c.fillRect(x+15.5*s,g-13.6*s,4*s,1.2*s);hero(6,-2.2,1,'runA');}
+    else if(id==='dirt'||id==='moto'){const big=id==='moto';hero(7,big?-0.6:-1.4,1,'runA');W(5,big?3.6:3.8);W(21,big?3.6:3.8);c.fillStyle=col;c.fillRect(x+7*s,g-9*s,12*s,4*s);c.fillRect(x+17*s,g-12*s,3*s,4*s);
+      c.fillStyle='#1d1f33';c.fillRect(x+8*s,g-10.2*s,7*s,1.6*s);c.fillStyle=big?'#d7deeb':'#ffffff';c.fillRect(x+3*s,g-6.5*s,5*s,1.2*s);c.fillRect(x+19*s,g-13.5*s,3*s,1.2*s);if(!big){c.fillStyle='#ffffff';c.font=`800 ${2.4*s}px sans-serif`;c.fillText('7',x+11*s,g-6*s);}}
+    else if(id==='hover'){const b=Math.sin(t*4)*s;hero(7,-1.2+b/s,1,'runA');c.fillStyle='#5ef2ff';c.globalAlpha=0.5+0.3*Math.sin(t*12);c.fillRect(x+4*s,g-2.2*s+b,18*s,1.4*s);c.globalAlpha=1;
+      c.fillStyle=col;c.beginPath();c.ellipse(x+13*s,g-6.5*s+b,10*s,2.6*s,0,0,6.28);c.fill();c.fillStyle='#1d1f33';c.fillRect(x+8*s,g-9.5*s+b,6*s,1.6*s);c.fillStyle='#ffe066';c.fillRect(x+21*s,g-7.5*s+b,2*s,1.6*s);}
+    else if(id==='kart'){hero(8,4.6,0.95,'stand');c.fillStyle=col;c.fillRect(x+3*s,g-6*s,21*s,3.5*s);c.fillRect(x+19*s,g-8*s,5*s,2*s);c.fillStyle='#1d1f33';c.fillRect(x+16*s,g-10*s,1*s,4*s);c.fillRect(x+15*s,g-10.5*s,3*s,1*s);W(6,2.6);W(21,2.2);}
+    else{ // cars
+      const mon=id==='monster',lift=mon?6:0;hero(8,mon?-1.6:4.4,0.95,'stand');
+      c.fillStyle=col;c.fillRect(x+2*s,g-(9+lift)*s,23*s,5*s);c.fillRect(x+6*s,g-(12+lift)*s,9*s,3.2*s);c.fillStyle='#bfe8ff';c.fillRect(x+15*s,g-(11.6+lift)*s,3.2*s,2.6*s);
+      c.fillStyle='#1d1f33';c.fillRect(x+2*s,g-(5+lift)*s,23*s,1*s);c.fillStyle='#ffe066';c.fillRect(x+23.5*s,g-(8.5+lift)*s,1.5*s,1.4*s);c.fillStyle='#ff4d6d';c.fillRect(x+2*s,g-(8.5+lift)*s,1.2*s,1.4*s);
+      if(id==='police'){c.fillStyle='#1d1f33';c.fillRect(x+2*s,g-(7.2+lift)*s,23*s,1.4*s);const on=(t*6|0)%2;c.fillStyle=on?'#ff2d4d':'#5a1020';c.fillRect(x+8*s,g-(13.4+lift)*s,2.4*s,1.4*s);c.fillStyle=on?'#1a3060':'#3fa7ff';c.fillRect(x+10.6*s,g-(13.4+lift)*s,2.4*s,1.4*s);}
+      if(id==='race'){c.fillStyle='#1d1f33';c.fillRect(x+1*s,g-(12+lift)*s,3*s,1.2*s);c.fillRect(x+2*s,g-(11+lift)*s,1*s,2*s);c.fillStyle='#fff';c.beginPath();c.arc(x+20*s,g-(6.6+lift)*s,1.6*s,0,6.28);c.fill();c.fillStyle='#1d1f33';c.font=`800 ${2.2*s}px sans-serif`;c.textAlign='center';c.fillText('1',x+20*s,g-(5.8+lift)*s);c.textAlign='left';}
+      if(id==='rocket'&&(moving||true)){c.fillStyle=pick(['#ff7b1c','#ffe066']);c.beginPath();c.moveTo(x+2*s,g-(8.5+lift)*s);c.lineTo(x-(3+Math.random()*3)*s,g-(6.8+lift)*s);c.lineTo(x+2*s,g-(5.2+lift)*s);c.fill();c.fillStyle='#5d6385';c.fillRect(x+3*s,g-(10+lift)*s,4*s,2*s);}
+      if(id==='gold'&&Math.random()<0.3){c.fillStyle='#fff';const sx=x+(3+Math.random()*20)*s,sy=g-(6+Math.random()*6)*s;c.fillRect(sx-s,sy,2*s,s*0.4);c.fillRect(sx-s*0.2,sy-s*0.8,s*0.4,2*s);}
+      if(mon){c.fillStyle='#5d6385';c.fillRect(x+6*s,g-(4+lift)*s,15*s,lift*s);W(6,4.6);W(21,4.6);}else{W(7,2.6);W(20,2.6);}}
+    c.restore();},
+  // map: the little hero canvas (48 x 56) shows him on his ride
+  drawMap(c,look,t,walking){if(!look.ride||look.ride==='none'){drawHero(c,3,4,3.5,look,walking?((t*10|0)%2?'runA':'runB'):'stand',t);return;}this.draw(c,look.ride,1,15,1.75,look,t,walking);},
+  goalChip(){const g=state.goal;if(!g)return null;const cat=CATALOG[g.tab]||[],it=cat.find(x=>x.id===g.id);if(!it||state.owned.includes(g.tab+':'+g.id)){return null;}
+    const price=typeof DogPower!=='undefined'?DogPower.price(it.price):it.price,pct=Math.min(100,Math.round(100*state.coins/price)),ready=state.coins>=price;
+    return el('button',{class:'chip goal-chip'+(ready?' ready':''),type:'button',title:'Saving goal',onclick:()=>{shopTab=g.tab;renderShop();show('scr-shop');}},
+      '🎯 '+it.name+' ',el('span',{class:'goal-bar'},el('i',{style:`width:${pct}%`})),ready?' Ready!':` ${state.coins}/${price}`);}
+};
+const ShopX={equip(tab,it){if(tab==='dogacc'){const a=state.hero.dogAcc=Object.assign({},state.hero.dogAcc||{});a[it.slot]=a[it.slot]===it.id?null:it.id;}else state.hero[tab]=it.id;}};
 
 /* hw.js - tiny handwritten-number recognizer (digits + optional decimal point).
  * Classic script, defines one global: HW.
@@ -4082,7 +4170,7 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
   ow.append(inner);
   const av=el('canvas',{width:72,height:72,class:'ow-av'}),pend=(state.prizes||[]).filter(p=>p.status==='pending').length;
   const hud=el('div',{class:'ow-hud'},av,el('div',{class:'ow-name'},el('b',null,(state.hero&&state.hero.name)||'Hero'),el('span',null,`Mech power ${mechPower()} · ${glitchForm().name} is out there`)),
-    el('span',{class:'chip',title:'Days in a row'},el('span',{class:'flame'}),String(state.streak.n||0)),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins)),el('span',{class:'chip st-chip'},'⏱'),
+    el('span',{class:'chip',title:'Days in a row'},el('span',{class:'flame'}),String(state.streak.n||0)),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins)),Rides.goalChip(),el('span',{class:'chip st-chip'},'⏱'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}if(!ScreenTime.shopOk()){Talk.say([['pip','The Mech Bay is closed for today! Come back tomorrow.']]);return;}openMechBay(null);}},'Mech Bay'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>{if(!Dojo.gateOk()){Dojo.blocked();return;}if(!ScreenTime.shopOk()){Talk.say([['pip','Shop’s closed for today, {name}! Come back tomorrow.']]);return;}renderShop();show('scr-shop');Talk.meet('pip');}},'Shop'),
     el('button',{class:'icon-btn',type:'button',onclick:()=>Talk.book()},'Allies'),
@@ -4098,7 +4186,7 @@ function renderMap(){const S=$('#scr-map');S.innerHTML='';const look=heroLook(),
       cfg.message?el('button',{class:'icon-btn',type:'button',onclick:()=>overlay(el('div',{class:'modal'},el('h2',null,'Message from HQ'),el('p',null,cfg.message),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>overlay(null)},'Got it ▸'))))},'HQ message'):null));
   S.append(ow,hud,bottom,el('div',{class:'ow-toast',id:'owToast',hidden:true}));
   cancelAnimationFrame(mapAnim);let t=0;const hc=hero.getContext('2d'),ac=av.getContext('2d');hc.imageSmoothingEnabled=false;ac.imageSmoothingEnabled=false;
-  const loop=()=>{if(S.hidden||!hero.isConnected)return;t+=0.016;hc.clearRect(0,0,48,56);drawHero(hc,3,4,3.5,look,hero.dataset.walk?((t*10|0)%2?'runA':'runB'):'stand',t);
+  const loop=()=>{if(S.hidden||!hero.isConnected)return;t+=0.016;hc.clearRect(0,0,48,56);Rides.drawMap(hc,look,t,!!hero.dataset.walk);
     ac.clearRect(0,0,72,72);drawHero(ac,22,12,3,look,'stand',t);if(look.pet&&look.pet!=='none'&&PETS[look.pet])drawPet(ac,look.pet,2,PETS[look.pet].fly?18:44,2,t);mapAnim=requestAnimationFrame(loop);};
   mapAnim=requestAnimationFrame(loop);
   requestAnimationFrame(()=>{ow.scrollLeft=at.x*SC-ow.clientWidth/2;ow.scrollTop=at.y*SC-ow.clientHeight/2;});Talk.onMap();setTimeout(()=>DogPick.maybe(),1800);setTimeout(()=>Ellie.maybe(),2200);}
@@ -4156,19 +4244,21 @@ function renderMechBay(){const S=$('#scr-mech');S.innerHTML='';const m=mechCfg()
 let shopTab='outfit';
 function renderShop(){const S=$('#scr-shop');S.innerHTML='';const look=Object.assign({},heroLook());
   const prev=el('canvas',{width:200,height:200});
-  const paintPrev=()=>{const c=prev.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,200,200);drawHero(c,52,40,8,look,'stand',0);if(look.pet!=='none')drawPet(c,look.pet,6,PETS[look.pet].fly?60:150,5,0);};
+  const paintPrev=()=>{const c=prev.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,200,200);if(look.ride&&look.ride!=='none'){Rides.draw(c,look.ride,22,6,6,look,0,false);}else drawHero(c,52,40,8,look,'stand',0);if(look.pet!=='none')drawPet(c,look.pet,6,PETS[look.pet].fly?60:150,5,0);};
   const coins=el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins));
   S.append(el('header',{class:'map-top'},el('button',{class:'icon-btn',type:'button',onclick:()=>{renderMap();show('scr-map');}},'◂ Map'),el('div',{class:'who'},el('h1',null,'Shop')),coins));
-  const tabs=el('div',{class:'tabs'},[['outfit','Outfits'],['hat','Hats'],['cape','Capes'],['pet','Pets']].map(([k,n])=>el('button',{class:'tab'+(shopTab===k?' on':''),type:'button',onclick:()=>{shopTab=k;renderShop();}},n)));
+  const tabs=el('div',{class:'tabs'},[['outfit','Outfits'],['hat','Hats'],['cape','Capes'],['pet','Pets'],['dogacc','Dog Gear'],['ride','Rides']].map(([k,n])=>el('button',{class:'tab'+(shopTab===k?' on':''),type:'button',onclick:()=>{shopTab=k;renderShop();}},n)));
   const grid=el('div',{class:'items'});
-  CATALOG[shopTab].forEach(it=>{const key=shopTab+':'+it.id;const own=state.owned.includes(key);const eq=look[shopTab]===it.id;
+  CATALOG[shopTab].forEach(it=>{const key=shopTab+':'+it.id;const own=state.owned.includes(key)||!it.price;const eq=shopTab==='dogacc'?((look.dogAcc||{})[it.slot]===it.id):(look[shopTab]||'none')===it.id;const goal=state.goal&&state.goal.tab===shopTab&&state.goal.id===it.id;
     const ic=el('canvas',{width:96,height:96});const c=ic.getContext('2d');c.imageSmoothingEnabled=false;const l2=Object.assign({},look,{[shopTab]:it.id});
-    if(shopTab==='pet'){if(it.id!=='none')drawPet(c,it.id,16,30,8,0);}else drawHero(c,24,shopTab==='hat'?22:12,4,l2,'stand',0);
+    if(shopTab==='ride'){if(it.id!=='none')Rides.draw(c,it.id,4,12,3.3,look,0,false);else drawHero(c,24,12,4,look,'stand',0);}
+    else if(shopTab==='dogacc'){const dg=look.pet&&PETS[look.pet]&&PETS[look.pet].dog?look.pet:'ellie',p=PETS[dg];drawSprite(c,p.rows,10,40,5,p.pal);DogGear.draw(c,dg,10,40,5,{[it.slot]:it.id});}
+    else if(shopTab==='pet'){if(it.id!=='none')drawPet(c,it.id,16,30,8,0);}else drawHero(c,24,shopTab==='hat'?22:12,4,l2,'stand',0);
     const b=el('button',{class:'item'+(eq?' eq':'')+(!own&&state.coins<DogPower.price(it.price)?' cant':''),type:'button',onclick:()=>{
-      if(own){state.hero[shopTab]=it.id;saveState();Snd.tap();renderShop();return;}
-      if(state.coins<DogPower.price(it.price)){Snd.shield();b.querySelector('.pr').textContent=`Need ${DogPower.price(it.price)-state.coins} more`;return;}
-      state.coins-=DogPower.price(it.price);state.owned.push(key);state.hero[shopTab]=it.id;saveState();Snd.gem();renderShop();}},
-      ic,el('span',{class:'nm'},it.name),shopTab==='pet'&&DOG_POWERS[it.id]?el('span',{class:'dpw'},DogPower.line(it.id)):null,el('span',{class:'pr'},eq?'Wearing':own?'Owned · tap to wear':[el('span',{class:'coin-ico'}),String(DogPower.price(it.price))]));
+      if(own){ShopX.equip(shopTab,it);saveState();Snd.tap();renderShop();return;}
+      if(state.coins<DogPower.price(it.price)){Snd.shield();state.goal={tab:shopTab,id:it.id};saveState();b.querySelector('.pr').textContent=`🎯 Goal set! Need ${DogPower.price(it.price)-state.coins} more`;return;}
+      state.coins-=DogPower.price(it.price);state.owned.push(key);ShopX.equip(shopTab,it);if(state.goal&&state.goal.id===it.id)state.goal=null;saveState();Snd.gem();Snd.fanfare();renderShop();}},
+      ic,el('span',{class:'nm'},it.name),shopTab==='pet'&&DOG_POWERS[it.id]?el('span',{class:'dpw'},DogPower.line(it.id)):null,el('span',{class:'pr'},eq?(shopTab==='ride'?'Riding':shopTab==='dogacc'?'On your dog · tap to remove':'Wearing'):own?(shopTab==='ride'?'Owned · tap to ride':'Owned · tap to wear'):[goal?'🎯 ':'',el('span',{class:'coin-ico'}),String(DogPower.price(it.price))]));
     grid.append(b);});
   S.append(el('div',{class:'shop-body'},el('div',{class:'shop-prev'},prev,el('p',{style:'margin:0;color:var(--text-soft);text-align:center'},'Earn coins by solving and checking problems.')),el('div',{class:'scroll',style:'min-height:0'},tabs,grid)));
   paintPrev();}
@@ -4616,6 +4706,7 @@ function showReport(){const L=Local.log;const days=[...new Set(L.map(x=>x.day))]
     dojoReport(),
     prizeBlock(),
     Sync.block(),
+    el('p',{class:'tiny-ok'},'App version '+BUILD),
     el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>overlay(el('div',{class:'modal'},el('h2',null,'Start over?'),el('p',null,'This erases all progress on this iPad: hero, coins, belts, facts and history. Coach sync stays connected, and reports already sent to your coach are kept.'),
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-red',type:'button',onclick:()=>{['nk-state','nk-log','nk-sessions','nk-pending','nk-sync-h'].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});state=defaultState();location.reload();}},'Yes, erase everything')))))},'Grown-up: start over from scratch'),
     el('p',null,'To get a full report from Claude: tap the button below, then paste into Claude. Or just send a screenshot of this screen.'),
@@ -4640,7 +4731,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
