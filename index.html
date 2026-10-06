@@ -699,6 +699,7 @@ html,body{touch-action:manipulation}
 @keyframes padnudge{to{box-shadow:0 0 0 6px #ffe06688;transform:scale(1.02)}}
 .sc-label{font-weight:700;color:#8a7a55!important}
 .ag-pad{position:absolute;inset:0;touch-action:none;-webkit-user-select:none;user-select:none}
+.sync-badge{position:absolute;left:12px;top:82px;z-index:5;border:0;border-radius:12px;padding:10px 14px;font:700 14px Lexend,sans-serif;background:#ffb627;color:#1d1f33;box-shadow:0 3px 0 #0006}
 </style>
 
 <div id="app">
@@ -2988,7 +2989,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
       .catch(e=>setTimeout(()=>Talk.say([['knight','Coach sync could not connect: '+e.message]]),1200));},
   init(){this.pair();window.addEventListener('hashchange',()=>this.pair());
     document.addEventListener('visibilitychange',()=>{if(document.hidden)this.kick(true);});
-    setInterval(()=>this.kick(),4*60*1000);setTimeout(()=>this.kick(true),4000);},
+    setInterval(()=>this.kick(),60*1000);setTimeout(()=>this.kick(true),4000);},
   connect(token,repo){const m=String(token).match(/(github_pat_[A-Za-z0-9_]+|gh[pousr]_[A-Za-z0-9]+)/);if(m)token=m[1];this.cfg={token:token.trim(),repo:(repo||'vinesh83/devmath-data').trim()};lsSet('nk-sync',this.cfg);this.sent={};lsSet('nk-sync-h',{});this.kick(true);},
   disconnect(){this.cfg=null;lsSet('nk-sync',null);},
   on(){return !!(this.cfg&&this.cfg.token&&this.cfg.repo);},
@@ -3043,6 +3044,14 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
         try{this.lastTry=0;await this.push();if(this.needRestore){showReport();return;}st.textContent='Connected and synced!';}catch(e){st.textContent='Sync problem: '+e.message;}}},'Connect')),st);}
 };
 
+/* Sync warning: if this copy of the app is not connected, say so on the map so a grown-up notices.
+   (On iPad, the home-screen app keeps its own storage, separate from Safari, so it must be connected on its own.) */
+const SyncBadge={el:null,
+  tick(){const map=$('#scr-map');if(!map)return;if(!this.el){this.el=el('button',{class:'sync-badge',type:'button'},'⚠️ Coach sync is OFF on this copy · grown-up: tap to connect');tapify(this.el,()=>showReport());map.append(this.el);}
+    this.el.hidden=Sync.on();},
+  init(){this.tick();setInterval(()=>this.tick(),5000);}};
+setTimeout(()=>{try{SyncBadge.init();}catch(e){}},1500);
+
 /* =========================================================
    Pause: stops the clock so time away never counts as slow answers.
    Pauses itself when the app goes to the background or after 60 s with no touches.
@@ -3078,7 +3087,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006221735';
+const BUILD='20261006222833';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
