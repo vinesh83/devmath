@@ -667,7 +667,7 @@ table.spd td.x{background:transparent;border-color:transparent}
 .bb-meter{width:min(300px,70vw);height:10px;border-radius:6px;background:#ffffff1a;overflow:hidden}.bb-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5ef2ff,#3fdc6b);transition:width .3s}
 .bb-round{color:#9aa3c7}
 /* digit boxes on the ink pads */
-.ink.boxed .ink-hint{display:none}
+.ink.boxed .ink-hint{top:auto;bottom:10px;transform:none;left:0;right:0;font-size:16px;opacity:.75;pointer-events:none}
 /* no long-press callouts or double-tap zoom on game buttons */
 html,body{touch-action:manipulation}
 .bb-btn,.brawl-btn,.key,.btn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -688,6 +688,16 @@ html,body{touch-action:manipulation}
 .bk-stars{font-size:24px;min-height:28px}
 .bk-dots{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .bk-dot{width:54px;height:54px;border-radius:50%;border:3px solid #5ef2ff;background:transparent;touch-action:manipulation}.bk-dot.on{background:#3fdc6b;border-color:#3fdc6b}
+/* Fact Forge: big answer pad, no scratch paper */
+#scr-level.factmode .scratch-wrap,#scr-level.factmode .sc-grip{display:none}
+#scr-level.factmode .card{flex:1 1 auto;display:flex;flex-direction:column;gap:10px}
+#scr-level.factmode #inkPad,#scr-level.factmode .ink-title{display:none!important}
+/* the answer pad is labeled and can pulse to get his attention */
+.ink-title{font:800 15px var(--f-display);color:#ffe066;margin:2px 0 -4px 4px}
+#scr-level.dojo .ink-title{display:none}
+#inkPad.nudge{animation:padnudge .5s ease 4 alternate;border-color:#ffe066!important}
+@keyframes padnudge{to{box-shadow:0 0 0 6px #ffe06688;transform:scale(1.02)}}
+.sc-label{font-weight:700;color:#8a7a55!important}
 </style>
 
 <div id="app">
@@ -726,7 +736,7 @@ html,body{touch-action:manipulation}
             <button type="button" id="sc-next" aria-label="Next page" hidden>▸</button>
             <button type="button" id="sc-add">+ Paper</button>
           </div>
-          <div class="sc-label">Scratch paper · use your Pencil</div>
+          <div class="sc-label">✏️ Work it out here · the game doesn’t read this paper</div>
         </div>
       </div>
       <aside class="padcol">
@@ -2916,7 +2926,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006003429';
+const BUILD='20261006215542';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3120,7 +3130,7 @@ const BigPad={
     const host=$('#inkPad');if(host)host.classList.toggle('to-big',this.wants(Pad.active));},
   init(){const host=$('#inkPad');if(!host)return;
     host.addEventListener('pointerdown',e=>{if(e.target.closest('.ink-clr'))return;const f=Pad.active;if(!this.wants(f))return;e.preventDefault();e.stopPropagation();this.open(f);},true);
-    const _f=Pad.focus.bind(Pad);Pad.focus=f=>{_f(f);setTimeout(()=>this.hint(),0);};},
+    const _f=Pad.focus.bind(Pad);Pad.focus=f=>{_f(f);setTimeout(()=>this.hint(),0);};AnswerHint.init();},
   open(f){const n=Math.max(4,Math.min(9,this.digits()+1)),dot=!!f.allowDot&&String(this.ans()).includes('.');
     const app=$('#app').getBoundingClientRect(),bw=Math.floor(Math.min(92,(Math.min(app.width,980)-64)/n)),bh=Math.round(bw*1.25),W=bw*n,H=bh;
     const cv=el('canvas',{class:'bp-cv',style:`width:${W}px;height:${H}px`}),reads=el('div',{class:'bp-reads',style:`width:${W}px`}),said=el('div',{class:'bp-said'},' ');
@@ -3156,6 +3166,16 @@ const BigPad={
       el('div',{class:'bp-wrap'},cv,reads),said,el('div',{class:'btns'},mvb,cancel,clr,undo,done));overlay(modal);
     draw();}
 };
+/* Answer hint: the scratch paper is for working out; the answer goes in the ANSWER pad.
+   If he has been writing on the paper and stops without answering, the answer pad pulses and a tip points to it. */
+const AnswerHint={tm:null,p:null,nudges:0,
+  init(){const sc=$('#scratch');if(sc)sc.addEventListener('pointerup',()=>this.onScratch());
+    const pad=$('#inkPad');if(pad&&!document.querySelector('.ink-title'))pad.before(el('div',{class:'ink-title'},'✍️ Write your ANSWER here'));},
+  arm(p){this.p=p;this.nudges=0;clearTimeout(this.tm);const pad=$('#inkPad');if(pad)pad.classList.remove('nudge');},
+  waiting(){const f=Pad.active;return !$('#scr-level').hidden&&!$('#scr-level').classList.contains('dojo')&&!$('#scr-level').classList.contains('factmode')&&f&&!f.locked&&!f.val&&$('#overlay').hidden&&$('#cine').hidden;},
+  onScratch(){if(!this.p||this.nudges>=2)return;clearTimeout(this.tm);this.tm=setTimeout(()=>{if(!this.waiting())return;this.nudges++;
+    const pad=$('#inkPad'),big=BigPad.wants(Pad.active);if(pad){pad.classList.remove('nudge');void pad.offsetWidth;pad.classList.add('nudge');}
+    say(big?'Done working? Tap the ANSWER box (✍️) to write your answer big →':'Done working? Write your answer in the ANSWER box →','info');},5000);}};
 
 /* =========================================================
    Interludes: short full-screen animations between problems, as rewards for right answers.
@@ -4159,7 +4179,7 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
         if(this.boxes){const n=this.boxes,bw=this.W/n,pad=Math.min(8,bw*0.06);c.strokeStyle='#c9b98f';c.lineWidth=2;c.setLineDash([7,6]);for(let i=0;i<n;i++)c.strokeRect(i*bw+pad,pad,bw-2*pad,this.H-2*pad);c.setLineDash([]);}
         c.strokeStyle='#1d1f33';c.lineWidth=o.big?6:4.5;c.lineCap='round';c.lineJoin='round';
         for(const s of this.strokes.concat(this.cur?[this.cur]:[])){c.beginPath();s.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));if(s.length===1)c.lineTo(s[0].x+0.1,s[0].y);c.stroke();}
-        hint.hidden=this.strokes.length>0||!!this.cur||!!this.boxes;},
+        hint.hidden=this.strokes.length>0||!!this.cur;},
       clear(){this.strokes=[];this.cur=null;clearTimeout(this.tm);read.textContent='';read.className='ink-read';this.draw();},
       pt(e){const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};},
       down(e){if(e.pointerType==='touch'&&InkBox.penSeen)return;if(e.pointerType==='pen')InkBox.penSeen=true;e.preventDefault();Snd.init();
@@ -4488,7 +4508,10 @@ function nextProblem(){if(run.idx>=run.queue.length)return finishRun();
     pack:run.spec.packId||null,skill:p.skill,kind:p.kind,diff:p.L||null,r:+sk.r.toFixed(2),variant,probe,twin:!!p.twin,q:describe(p),correct:p.answer,tries:[],t0:Date.now()};
   p.variant=variant;p.probe=probe;
   ({arith:renderArith,fact:renderFact,area:renderArea,word:renderWord,table:renderTable,bug:renderBug})[p.kind](p,ATT);
-  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();InkBox.usePad();}
+  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();
+  const factBig=p.kind==='fact'&&typeof InkBox!=='undefined'&&!!InkBox.pad;$('#scr-level').classList.toggle('factmode',factBig);
+  if(factBig){const ink=el('div',{class:'dj-ink fact-ink'});card.append(ink);InkBox.mount(ink,{big:true,allowDot:false,boxes:p.answer>=100?3:2});}else InkBox.usePad();
+  if(typeof AnswerHint!=='undefined')AnswerHint.arm(p);}
 function describe(p){if(p.kind==='arith')return p.nums.map(fmtStr).join(` ${p.op} `);if(p.kind==='fact')return `${p.a} × ${p.b}`;if(p.kind==='area')return `${p.a} × ${p.b}`;
   if(p.kind==='word')return p.sentences.map(s=>s.map(x=>typeof x==='string'?x:(x.pre+fmtStr(x.str)+(x.role==='decoy'?'*':''))).join('')).join(' ');
   if(p.kind==='table')return p.title+': '+p.stmts.map(s=>s.text).join(' | ');if(p.kind==='bug')return 'BUG['+p.bugType+'] '+describe(p.base)+' glitch='+p.glitch;return '';}
@@ -4667,7 +4690,9 @@ function renderArith(p,a){const card=$('#card');const isDec=p.dp>0;const method=
 /* ---------- facts */
 const FACT_TIPS={9:'Nines: do 10 times the number, then take away one group.',8:'Eights: double, double, double. 8 × 7 → 14, 28, 56.',7:'Sevens: split it. 7 × n = 5 × n plus 2 × n.',6:'Sixes: 5 × n plus one more group.',4:'Fours: double it, then double again.',3:'Threes: 2 × n plus one more group.'};
 function renderFact(p,a){const card=$('#card');card.append(cardHead('Fact Forge'),el('div',{class:'expr',style:'font-size:56px;margin:4px 0'},`${p.a} × ${p.b} =`));
-  const f=Pad.make({allowDot:false});card.append(el('div',{class:'ans-row'},f.el));Pad.focus(f);Scratch.reset(null);say('Quick! Type the product.','');
+  const f=Pad.make({allowDot:false});card.append(el('div',{class:'ans-row'},f.el));Pad.focus(f);Scratch.reset(null);say('Quick! Write the answer in the big box, or type it.','');
+  // a written answer checks itself, like the Dojo
+  f.onChange=()=>{clearTimeout(f._t);if(f.src!=='ink'||!f.val.length||f.locked)return;f._t=setTimeout(()=>{if(f.locked||(typeof InkBox!=='undefined'&&InkBox.drawing))return;const b=[...document.querySelectorAll('#actions button')].find(x=>/Submit/.test(x.textContent));if(b)b.click();},f.val.length>=String(p.answer).length?700:1600);};
   let tries=0;setActions([{label:'Submit',cls:'btn-green',primary:true,onClick:()=>{const v=Pad.val(f);if(v==null)return;tries++;a.tries.push({a:v,ms:Date.now()-a.t0});
     if(v===p.answer){Pad.right(f);Pad.lock(f);complete(p,{solved:true,firstTry:tries===1,tries});return;}
     Pad.wrong(f);Battle.event('hurt',{w:0.5});stamp('wrong',null,{small:true});const tags=[];if(v===p.a+p.b)tags.push('addedInstead');if([p.a-1,p.a+1].some(x=>x*p.b===v)||[p.b-1,p.b+1].some(x=>x*p.a===v))tags.push('neighborFact');a.errors=(a.errors||[]).concat([{a:v,tags}]);Talk.onWrong({skill:'fact',kind:'fact',tags,tries});
