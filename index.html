@@ -2785,7 +2785,7 @@ const Dojo={
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
   goalSecs(){return Math.round(60*((typeof cfg!=='undefined'&&cfg&&cfg.dojoMinutes)||15));},
-  secsToday(){const t=this.st().today;return (t.pm.secs||0)+(t.tm.secs||0);},
+  secsToday(){const t=this.st().today;return (t.pm.secs||0)+(t.tm.secs||0)+(t.brkSecs||0);}, // recharge breaks taken during training count too
   minsLeft(){return Math.max(0,Math.ceil((this.goalSecs()-this.secsToday())/60));},
   gateOk(){const d=this.st();if(d.unlockDay===dayStr())return true;const both=this.doneToday('pm')&&this.doneToday('tm');return this.strict()?both&&this.secsToday()>=this.goalSecs():both;},
   gateText(){if(this.gateOk())return 'Trained today ✓ · go for more facts!';if(!this.strict())return `Train first · ${['pm','tm'].filter(x=>this.doneToday(x)).length}/2 dojos done`;
@@ -2834,7 +2834,7 @@ const Dojo={
     S.append(el('header',{class:'lv-top'},el('button',{class:'icon-btn',type:'button',onclick:()=>{renderMap();show('scr-map');}},'◂ Map'),el('h2',null,'Fact Dojo'),
         el('span',{class:'chip st-chip'},'⏱'),el('span',{class:'chip',title:'Lightning answers'},'⚡ '+d.bolts),el('span',{class:'chip'},el('span',{class:'coin-ico'}),String(state.coins))),
       el('div',{class:'dj-sensei'},sv,el('div',null,el('p',null,msg),strict?el('div',{class:'dj-mins'},el('div',{class:'dj-bar'},el('i',{style:`width:${Math.min(100,Math.round(100*this.secsToday()/this.goalSecs()))}%;--bc:#3fdc6b`})),
-        el('small',null,`${sm} of ${gm} minutes today`+(this.gateOk()?' · done!':'')+' · until you own your key belts')):null)),
+        el('small',null,`${sm} of ${gm} minutes today (breaks count)`+(this.gateOk()?' · done!':'')+' · until you own your key belts')):null)),
       el('div',{class:'dj-panels'},['pm','tm'].map(did=>this.panel(did))));},
   panel(did){const D=DOJOS[did],ci=this.cur(did),t=this.st().today[did],black=ci>=8,i=Math.min(ci,7),B=BELTS[i];
     const ladder=el('div',{class:'dj-ladder'},BELTS.map((b,k)=>{const be=this.belt(did,k),o=this.ownedIn(did,k);return el('div',{class:'dj-belt'+(be.earned?' got':k===ci?' cur':' lock'),style:'--bc:'+b[1],title:b[0]+' Belt · '+D.belts[k][0]},
@@ -3164,7 +3164,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261006224430';
+const BUILD='20261007003942';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3910,6 +3910,10 @@ const Breaks={
       else if(ph===2){ring.firstChild.style.width=Math.min(100,s/8*100)+'%';if(s>=8&&!done){done=true;ring.hidden=true;set('✨','Fresh eyes! Ready to go.');try{Snd.gem();}catch(_){}if(o.onDone)o.onDone(1);}}},100);
     box.append(em,tx,ring,btn);return {el:box,stop:()=>clearInterval(iv),secs:45};}
 };
+
+// breaks taken before the daily training is done count toward the training minutes (up to 3 minutes each)
+{const _b=ScreenTime.brk.bind(ScreenTime);ScreenTime.brk=function(o){const gated=typeof Dojo!=='undefined'&&Dojo.strict&&Dojo.strict()&&!Dojo.gateOk(),t0=Date.now();
+  return _b(o).then(r=>{if(gated){const t=Dojo.st().today;t.brkSecs=(t.brkSecs||0)+Math.min(180,(Date.now()-t0)/1000);saveState();if(typeof renderMap==='function'&&!$('#scr-map').hidden)renderMap();}return r;});};}
 
 /* =========================================================
    Rides (cars and motorbikes) and Dog Gear: big things to save coins for.
