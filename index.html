@@ -2577,29 +2577,43 @@ const Games={
 
   /* ---------- DOG DASH: his dog runs; tap to jump (tap again in the air to double jump). Grab bones, hop the bugs. */
   dash(o){const dog=this.dog(),dn=this.dname(dog),look=heroLook();
-    return this.run({id:'dash',title:'DOG DASH!',col:'#ffb627',icon:'🦴',len:25,how:`Tap to jump with ${dn}! Tap again in the air to double jump. Grab bones!`,
-      init(G){G.d={y:0,vy:0,jumps:0,stun:0};G.obj=[];G.next=1.2;G.boneT=0.5;G.x=0;},
-      tap(G){const d=G.d;if(d.jumps<2){d.vy=-G.H*(d.jumps?1.15:1.35);d.jumps++;Snd.tone(d.jumps>1?880:660,0.08,'square',0.04,0,d.jumps>1?1320:990);}},
-      step(G,dt){const H=G.H,W=G.W,d=G.d,sp=W*(0.38+Math.min(0.22,G.t*0.012));G.x+=sp*dt;d.stun=Math.max(0,d.stun-dt);
-        d.vy+=H*4.2*dt;d.y+=d.vy*dt;if(d.y>0){d.y=0;d.vy=0;d.jumps=0;}
-        G.next-=dt;if(G.next<=0){G.next=0.9+Math.random()*0.9;G.obj.push({k:Math.random()<0.25?'glitchbug':'bug',x:W+40});}
-        G.boneT-=dt;if(G.boneT<=0){G.boneT=0.35+Math.random()*0.5;const hgt=pick([0,0.12,0.24,0.32]);G.obj.push({k:Math.random()<0.08?'gold':'bone',x:W+40,h:hgt});}
-        const gy=H*0.72,ps=Math.max(3,H/90),dx=W*0.28,dy=gy+d.y;
-        for(const b of G.obj){b.x-=sp*dt;if(b.got)continue;const by=b.k==='bone'||b.k==='gold'?gy-H*0.06-b.h*H:gy-ps*3;
-          if(Math.abs(b.x-dx)<ps*6&&Math.abs(by-(dy-ps*4))<ps*7){
-            if(b.k==='bone'||b.k==='gold'){b.got=true;const v=b.k==='gold'?5:1;G.score+=v;G.combo++;G.best=Math.max(G.best,G.combo);Snd.coin();G.burst(b.x,by,10,['#fff','#ffe066'],160);if(v>1)G.say('GOLDEN BONE +5','#ffe066',b.x,by-30);if(G.combo%10===0)G.say(G.combo+' IN A ROW!','#ff7b1c',null,null,true);}
-            else if(d.y>-ps*2&&d.stun<=0){b.got=true;d.stun=0.7;G.combo=0;Snd.hurt();G.say(pick(['OOPS!','BONK!','Yelp!']),'#ff9f43',dx,dy-ps*12);}}
-          else if(b.k!=='bone'&&b.k!=='gold'&&!b.got&&!b.passed&&b.x<dx-ps*6){b.passed=true;G.score+=1;G.say('HOP! +1','#5ef2ff',dx,dy-ps*12);}}
-        G.obj=G.obj.filter(b=>b.x>-60&&!(b.got&&(b.k==='bone'||b.k==='gold')));},
+    return this.run({id:'dash',title:'DOG DASH!',col:'#ffb627',icon:'🦴',len:25,how:`Tap to jump with ${dn}! Tap again to jump higher. HOLD to glide! Grab the bones.`,
+      init(G){G.d={y:0,vy:0,jumps:0,stun:0};G.obj=[];G.next=2.6;G.boneT=0.4;G.x=0;G.mag=0;G.magT=7;G.glide=false;},
+      tap(G){const d=G.d;if(d.jumps<2){d.vy=-G.H*(d.jumps?1.05:1.25);d.jumps++;Snd.tone(d.jumps>1?880:660,0.08,'square',0.04,0,d.jumps>1?1320:990);}},
+      step(G,dt){const H=G.H,W=G.W,d=G.d,sp=W*(0.30+Math.min(0.12,G.t*0.006)),gy=H*0.72,ps=Math.max(3,H/72),dx=W*0.28;G.x+=sp*dt;d.stun=Math.max(0,d.stun-dt);G.mag=Math.max(0,G.mag-dt);
+        // floaty jumps; holding the screen while falling glides
+        d.vy+=H*3.2*dt;G.glide=!!G.ptr&&d.vy>0&&d.y<-2;if(G.glide)d.vy=Math.min(d.vy,H*0.28);d.y+=d.vy*dt;if(d.y>0){d.y=0;d.vy=0;d.jumps=0;}
+        // bugs: few and far apart
+        G.next-=dt;if(G.next<=0){G.next=1.7+Math.random()*1.0;G.obj.push({k:Math.random()<0.15?'glitchbug':'bug',x:W+40});}
+        // bones: singles, and arches that one jump sweeps up
+        G.boneT-=dt;if(G.boneT<=0){if(Math.random()<0.5){G.boneT=1.3;for(let i=0;i<5;i++)G.obj.push({k:'bone',x:W+40+i*W*0.045,h:0.05+Math.sin(i/4*Math.PI)*0.15});}
+          else{G.boneT=0.5+Math.random()*0.4;G.obj.push({k:Math.random()<0.1?'gold':'bone',x:W+40,h:pick([0,0.06,0.12])});}}
+        G.magT-=dt;if(G.magT<=0){G.magT=9;G.obj.push({k:'mag',x:W+40,h:0.08});}
+        const dy=gy+d.y,isB=b=>b.k==='bone'||b.k==='gold'||b.k==='mag';
+        for(const b of G.obj){b.x-=sp*dt;if(b.got)continue;
+          if(G.mag>0&&(b.k==='bone'||b.k==='gold')&&b.x>dx-ps*4&&b.x<dx+W*0.4){b.pull=true;}
+          if(b.pull){b.x+=(dx-b.x)*Math.min(1,dt*7);b.h+=((-d.y/H+0.04)-b.h)*Math.min(1,dt*7);}
+          const by=isB(b)?gy-H*0.06-b.h*H:gy-ps*3;
+          if(isB(b)?(Math.abs(b.x-dx)<ps*7&&Math.abs(by-(dy-ps*4))<ps*9):(Math.abs(b.x-dx)<ps*3.5&&d.y>-ps*1.5)){
+            if(b.k==='mag'){b.got=true;G.mag=5;Snd.gem();G.say('BONE MAGNET!','#ff4d6d',null,null,true);G.burst(b.x,by,20,['#ff4d6d','#fff','#ffe066'],220);}
+            else if(isB(b)){b.got=true;const v=b.k==='gold'?5:1;G.score+=v;G.combo++;G.best=Math.max(G.best,G.combo);Snd.tone(660+Math.min(G.combo,14)*45,0.07,'square',0.04);G.burst(b.x,by,10,['#fff','#ffe066'],160);if(v>1)G.say('GOLDEN BONE +5','#ffe066',b.x,by-30);
+              if(G.combo%10===0){G.say(G.combo+' IN A ROW!','#ff7b1c',null,null,true);G.burst(dx,dy-ps*8,40,['#ff4d6d','#ffe066','#5ef2ff','#3fdc6b'],300);Snd.gem();}}
+            else if(d.stun<=0){b.got=true;d.stun=0.35;G.combo=0;Snd.tone(300,0.12,'square',0.04,0,200);G.say(pick(['Oops!','Boing!','Wobble!']),'#ff9f43',dx,dy-ps*12);}}
+          else if(!isB(b)&&!b.got&&!b.passed&&b.x<dx-ps*4){b.passed=true;G.score+=1;G.say('HOP! +1','#5ef2ff',dx,dy-ps*12);}}
+        G.obj=G.obj.filter(b=>b.x>-60&&!(b.got&&isB(b)));},
       coins:G=>6+G.score*0.5,
-      draw(c,G,W,H){Games.sky(c,W,H,'#6ec6ff','#d8f1ff');const gy=H*0.72,ps=Math.max(3,H/90),x=G.x||0;
+      draw(c,G,W,H){Games.sky(c,W,H,'#6ec6ff','#d8f1ff');const gy=H*0.72,ps=Math.max(3,H/72),x=G.x||0;
         c.fillStyle='#ffffffcc';for(let i=0;i<5;i++){const cx=((i*W*0.31-x*0.1)%(W+200)+W+200)%(W+200)-100;c.fillRect(cx,H*(0.12+i%3*0.07),90,22);c.fillRect(cx+20,H*(0.12+i%3*0.07)-14,50,16);}
         c.fillStyle='#7ccf6a';for(let i=0;i<7;i++){const hx=((i*W*0.22-x*0.3)%(W+300)+W+300)%(W+300)-150;c.beginPath();c.arc(hx,gy,W*0.14,3.14,6.28);c.fill();}
         c.fillStyle='#4aa04a';c.fillRect(0,gy,W,H-gy);c.fillStyle='#3a8a3a';for(let i=0;i<40;i++){c.fillRect(((i*60-x)%W+W)%W,gy+8+(i%3)*14,20,4);}
-        for(const b of G.obj){if(b.got)continue;if(b.k==='bone'||b.k==='gold'){const by=gy-H*0.06-b.h*H,bob=Math.sin(G.t*6+b.x*0.02)*4;c.fillStyle=b.k==='gold'?'#ffc933':'#fff8e8';
+        for(const b of G.obj){if(b.got)continue;if(b.k==='mag'){const by=gy-H*0.06-b.h*H+Math.sin(G.t*6)*5;c.font=`${Math.round(ps*7)}px sans-serif`;c.textAlign='center';c.fillText('🧲',b.x,by+ps*2);continue;}if(b.k==='bone'||b.k==='gold'){const by=gy-H*0.06-b.h*H,bob=Math.sin(G.t*6+b.x*0.02)*4;c.fillStyle=b.k==='gold'?'#ffc933':'#fff8e8';
             c.fillRect(b.x-ps*3,by+bob-ps*0.6,ps*6,ps*1.2);c.beginPath();for(const [ox,oy] of [[-3,-0.8],[-3,0.8],[3,-0.8],[3,0.8]]){c.moveTo(b.x+ox*ps,by+bob+oy*ps);c.arc(b.x+ox*ps,by+bob+oy*ps,ps,0,6.28);}c.fill();}
           else Games.bug(c,b.x,gy-ps*3,ps*0.8,b.k==='glitchbug'?'#ff4d6d':'#3fdc6b',G.t);}
+        // JUMP! warning over a bug that's coming
+        {const d0=G.d||{y:0},dx0=W*0.28;for(const b of G.obj){if(b.got||b.passed||b.k==='bone'||b.k==='gold'||b.k==='mag')continue;const dd=b.x-dx0;if(dd>0&&dd<W*0.24&&d0.y>-ps*2){const fs=Math.round(ps*4.5);c.font=`900 ${fs}px "Pixelify Sans",monospace`;c.textAlign='center';c.lineWidth=5;c.strokeStyle='#000';const yy=gy-ps*10+Math.sin(G.t*14)*3;c.strokeText('JUMP!',b.x,yy);c.fillStyle='#ffe066';c.fillText('JUMP!',b.x,yy);c.fillText('▼',b.x,yy+fs*0.8);break;}}}
         const d=G.d||{y:0,stun:0},dx=W*0.28,rows=PETS[dog].rows,w=rows[0].length*ps,blink=d.stun>0&&((G.t*12|0)%2);
+        if(G.glide){for(let i=0;i<3;i++){c.fillStyle=pick(['#ffffff','#5ef2ff','#ffe066']);c.fillRect(dx-w/2-ps*(2+i*3),gy-rows.length*ps*0.5+d.y+(Math.random()-0.5)*ps*4,ps*1.5,ps*1.5);}}
+        if(G.mag>0){c.strokeStyle='#ff4d6d88';c.lineWidth=3;c.beginPath();c.arc(dx,gy-rows.length*ps*0.5+d.y,ps*9+Math.sin(G.t*10)*ps,0,6.28);c.stroke();}
         if(!blink){c.save();const run=G.phase==='play'&&d.y===0?Math.abs(Math.sin(G.t*14))*ps:0;drawPet(c,dog,dx-w/2,gy-rows.length*ps+d.y-run,ps,G.t);c.restore();}
         const hs=ps*0.85;drawHero(c,dx-w/2-14*hs,gy-15*hs+d.y*0.9,hs,look,G.phase!=='play'?'stand':d.y<0?'jump':((G.t*10|0)%2?'runA':'runB'),G.t);
         if(d.stun>0){c.font='700 22px sans-serif';c.textAlign='center';c.fillText('💫',dx,gy-rows.length*ps-10+d.y);}}});},
@@ -3287,7 +3301,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261007103857';
+const BUILD='20261007211052';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
