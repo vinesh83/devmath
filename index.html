@@ -3314,6 +3314,27 @@ const Intro={off:false,
   const n=w.id==='forge'?10:Explore.size();Snd.init();Intro.play(w,li,n).then(()=>_sl(w,li,Object.assign({},opt||{},{introDone:true})));};}
 
 /* =========================================================
+   3D cinematics glue: loads the 3D engine (cine3d.js) only when a movie plays,
+   and hands it Dev's current sprites (hero, dog, his mech, Glitch's mech) to turn into voxel models.
+   Falls back to the 2D intro if 3D can't run.
+   ========================================================= */
+const Cin3={off:false,loading:null,
+  load(){if(window.Cine3D)return Promise.resolve(true);if(!this.loading)this.loading=new Promise(res=>{const s=document.createElement('script');s.src='cine3d.js?v='+(typeof BUILD!=='undefined'?BUILD:'1');
+    s.onload=()=>res(!!window.Cine3D);s.onerror=()=>{this.loading=null;res(false);};document.head.appendChild(s);setTimeout(()=>res(!!window.Cine3D),15000);});return this.loading;},
+  spr(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.imageSmoothingEnabled=false;try{fn(x);}catch(e){}return {w,h,data:x.getImageData(0,0,w,h).data};},
+  sprites(){const look=heroLook(),dog=look.pet&&PETS[look.pet]&&PETS[look.pet].dog?look.pet:'ellie',p=PETS[dog],hero={};
+    for(const f of ['stand','runA','runB'])hero[f]=this.spr(16,22,x=>drawHero(x,2,4,1,look,f,0));
+    return {hero,dog:this.spr(p.rows[0].length+10,p.rows.length+10,x=>drawPet(x,dog,5,6,1,0)),mech:this.spr(30,30,x=>drawMech(x,3,2,1,mechCfg(),0,false,false)),gmech:this.spr(30,30,x=>drawMech(x,3,2,1,GLITCH_MECH,0,true,false))};},
+  sfx(n){try{({thunder:()=>Snd.boom(),slam:()=>{Snd.slam();Snd.boom();},charge:()=>Snd.charge(0.8),whoosh:()=>Snd.whoosh()})[n]();}catch(e){}},
+  async play(kind,o){if(this.off||(typeof Brawl!=='undefined'&&Brawl.off))return false;if(!(await this.load())||!window.Cine3D||!Cine3D.ok())return false;
+    const held=typeof Pause!=='undefined'&&Pause.hold&&Pause.hold();try{await Cine3D.play(kind,Object.assign({sprites:this.sprites(),sfx:n=>this.sfx(n)},o));}catch(e){return false;}finally{if(held)Pause.release();}return true;}
+};
+// world intros become 3D movies (the 2D one is the fallback)
+{const _w=Intro.world.bind(Intro);Intro.world=function(w){return Cin3.play('world',{world:w.id,title:w.name.toUpperCase(),sub:w.sub,boss:w.boss,color:w.color,onStart:()=>Intro.voice('world-'+w.id)}).then(ok=>ok?null:_w(w)).then(()=>Intro.hush());};}
+// Mech Battle opens with Glitch's mech crashing down
+{const _p=Arcade.play.bind(Arcade);Arcade.play=function(o){o=o||{};const k=o.kind;if(k==='mech'&&!(typeof Brawl!=='undefined'&&Brawl.off))return Cin3.play('mech',{}).then(()=>_p(o));return _p(o);};}
+
+/* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
    Pair once with  ...devmath/#sync=TOKEN  (or paste the token in Report)
    ========================================================= */
@@ -3438,7 +3459,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261009215558';
+const BUILD='20261009223031';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -5610,7 +5631,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
