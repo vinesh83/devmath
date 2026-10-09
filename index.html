@@ -2253,7 +2253,7 @@ const Brawl={off:false,
       foe:{x:0,y:0,vy:0,st:'walk',t:0,dur:1.4,atk:null,stun:0,hurt:0,angry:false,pref:0.38},
       bugs:[],miss:[],wave:null,fx:[],txt:[],shake:0,flash:0,flashCol:'#fff',combo:0,best:0,dmg:0,perfect:0,squashed:0,
       dog:{t:5,dash:0,hitDone:false},prot:false,sp:null,coins:0,done:false,end:null,keys:{l:0,r:0},cue:null,init:false,tips:{},mech,shots:[],canCd:0};
-    const cueWords={punch:['BLOCK!','#5ef2ff'],laser:['JUMP!','#ffe066'],slam:['JUMP!','#ffe066'],missiles:['MOVE!','#ff9f43'],bugs:['SQUASH!','#3fdc6b']};
+    const _cw0=0;const cueWords={punch:['BLOCK!','#5ef2ff'],laser:['JUMP!','#ffe066'],slam:['JUMP!','#ffe066'],missiles:['MOVE!','#ff9f43'],bugs:['SQUASH!','#3fdc6b']};
     let W=0,H=0,Y=0,hs=8,gs=11,hw=96,gw=132;
     const say=(s,col,big,x,y)=>G.txt.push({s,col:col||'#fff',big:!!big,x,y,age:0,life:big?1.2:0.8});
     const burst=(x,y,n,cols,sp)=>{for(let i=0;i<n;i++){const a=Math.random()*6.28,v=(sp||220)*(0.4+Math.random());G.fx.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,life:0.4+Math.random()*0.4,col:pick(cols)});}};
@@ -2446,7 +2446,7 @@ const Brawl={off:false,
       // Glitch
       const fxp=f.x+(f.hurt>0?(Math.random()-0.5)*10:0)+(f.st==='wind'?Math.sin(G.t*40)*3:0),fyp=Y-gw+f.y-(f.stun>0?Math.abs(Math.sin(G.t*8))*6:0);
       if(!win()||G.t<0.35){if(f.angry){c.globalAlpha=0.25+0.1*Math.sin(G.t*6);c.fillStyle='#ff4d6d';c.beginPath();c.arc(fxp,fyp+gw*0.5,gw*0.75,0,6.28);c.fill();c.globalAlpha=1;}
-        drawGlitch(c,fxp-gw/2,fyp,gs,form,G.t,f.hurt>0.1&&((G.t*20|0)%2===0));
+        {const wh=f.hurt>0.1&&((G.t*20|0)%2===0);if(G.mech){const m=gs*0.62;drawMech(c,fxp-12*m,fyp+gw-26*m,m,GLITCH_MECH,G.t,true,wh);}else drawGlitch(c,fxp-gw/2,fyp,gs,form,G.t,wh);}
         if(f.st==='wind'){c.globalAlpha=0.3+0.25*Math.sin(G.t*30);c.fillStyle='#ff4d6d';c.beginPath();c.arc(fxp,fyp+gw*0.5,gw*0.7,0,6.28);c.fill();c.globalAlpha=1;
           c.font=`900 ${Math.round(gs*6)}px "Pixelify Sans",monospace`;c.textAlign='center';c.lineWidth=6;c.strokeStyle='#000';c.strokeText('!',fxp,fyp-gs*2);c.fillStyle='#ffe066';c.fillText('!',fxp,fyp-gs*2);}
         if(f.st==='guard'){c.fillStyle='#8a94ad';c.fillRect(fxp-gw*0.62,fyp+gs,gs*2,gw*0.85);c.fillStyle='#d7deeb';c.fillRect(fxp-gw*0.62,fyp+gs,gs,gw*0.85);}
@@ -2467,7 +2467,7 @@ const Brawl={off:false,
         const cy=hy-hs*3+Math.sin(G.t*14)*3;c.strokeText(G.cue[0],h.x,cy);c.fillStyle=G.cue[1];c.fillText(G.cue[0],h.x,cy);}
       // HUD
       const bw=Math.min(W*0.5,440),bx=(W-bw)/2,by=H*0.08;c.fillStyle='#000a';c.fillRect(bx-4,by-4,bw+8,22);c.fillStyle='#3a1020';c.fillRect(bx,by,bw,14);
-      c.fillStyle=G.hp/G.max<0.34?'#ff4d6d':'#ff7b1c';c.fillRect(bx,by,bw*G.hp/G.max,14);c.font='800 14px "Pixelify Sans",monospace';c.textAlign='center';c.fillStyle='#fff';c.fillText(form.name.toUpperCase()+(f.angry?' (ANGRY!)':''),W/2,by-8);
+      c.fillStyle=G.hp/G.max<0.34?'#ff4d6d':'#ff7b1c';c.fillRect(bx,by,bw*G.hp/G.max,14);c.font='800 14px "Pixelify Sans",monospace';c.textAlign='center';c.fillStyle='#fff';c.fillText((G.mech?'GLITCH MECH':form.name.toUpperCase())+(f.angry?' (ANGRY!)':''),W/2,by-8);
       if(fight()){c.fillStyle='#ffffff22';c.fillRect(bx,by+24,bw,5);c.fillStyle='#5ef2ff';c.fillRect(bx,by+24,bw*Math.max(0,G.time)/90,5);}
       const hz=Math.max(16,Math.round(hs*2.2));c.font=`${hz}px sans-serif`;c.textAlign='left';
       for(let i=0;i<G.maxHearts;i++){c.globalAlpha=i<G.hearts?1:0.25;c.fillStyle='#ff4d6d';c.fillText('♥',14+i*(hz+4),by+hz*0.75);}c.globalAlpha=1;
@@ -3373,7 +3373,11 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
       if(!(await this.guard())){this.err='Found a backup with more progress. Restore it in Report → Coach sync.';return;}
       const days=[...new Set(Local.log.map(x=>x.day).concat(Local.sess.map(s=>s.day)))].filter(Boolean).sort().slice(-2);
       for(const d of days)await this.put(`days/${d}.json`,{day:d,attempts:Local.log.filter(x=>x.day===d),sessions:Local.sess.filter(s=>s.day===d)},true);
-      await this.put('latest/report.json',reportPayload(),true);
+      // never let an old copy (a forgotten Safari tab, another device) overwrite newer progress from his main app
+      const mine=reportPayload(),myLast=(Local.log[Local.log.length-1]||{}).ts||'';let remote=null;try{remote=await this.get('latest/report.json');}catch(e){}
+      const rLast=remote&&remote.log&&remote.log.length?remote.log[remote.log.length-1].ts||'':'';
+      if(remote&&rLast>myLast&&progressScore(remote)>progressScore(state)+10){this.stale=true;await this.put('stale/report.json',mine,true);}
+      else{this.stale=false;await this.put('latest/report.json',mine,true);}
       this.last=new Date().toISOString();lsSet('nk-sync-last',this.last);}finally{this.busy=false;}},
   block(){const st=el('p',{class:'tiny-ok'},this.on()?(this.err?'Sync problem: '+this.err:this.last?'Last sync: '+new Date(this.last).toLocaleString():'Connected. First sync coming up.'):'Not connected.');
     if(this.on()&&this.needRestore){const r=this.needRestore,n=Object.keys((r.dojo&&r.dojo.facts)||{}).length;
@@ -3395,7 +3399,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
    (On iPad, the home-screen app keeps its own storage, separate from Safari, so it must be connected on its own.) */
 const SyncBadge={el:null,
   tick(){const map=$('#scr-map');if(!map)return;if(!this.el){this.el=el('button',{class:'sync-badge',type:'button'},'⚠️ Coach sync is OFF on this copy · grown-up: tap to connect');tapify(this.el,()=>showReport());map.append(this.el);}
-    this.el.hidden=Sync.on();},
+    this.el.hidden=Sync.on()&&!Sync.stale;this.el.textContent=Sync.stale?'⚠️ This copy of the app is OUT OF DATE · use the home-screen app':'⚠️ Coach sync is OFF on this copy · grown-up: tap to connect';},
   init(){this.tick();setInterval(()=>this.tick(),5000);}};
 setTimeout(()=>{try{SyncBadge.init();}catch(e){}},1500);
 
@@ -3434,7 +3438,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261007222023';
+const BUILD='20261009215558';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4881,6 +4885,8 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
       // two digits touching each other: let the splitter handle this shape
       if(w>h*1.15){const r=HW.recognize(g.list,{allowDot:!!o.allowDot,maxLen:3});if(r&&r.text){text+=r.text;minP=Math.min(minP,r.minP);r.items.forEach(x=>items.push(Object.assign({},x,{i})));}return;}
       const img=HW.render(g.list);let pr=HW.classify28(img);pr=InkBox.mine.adjust(img,pr);let k=0;for(let j=1;j<10;j++)if(pr[j]>pr[k])k=j;
+      // a wide shape is never a 1 (his 7s have a short top bar the reader sometimes misses): take the next best digit
+      if(k===1&&w>h*0.5){let k2=-1;for(let j=0;j<10;j++)if(j!==1&&(k2<0||pr[j]>pr[k2]))k2=j;if(k2>=0)k=k2;}
       text+=String(k);minP=Math.min(minP,pr[k]);items.push({ch:String(k),p:pr[k],pr:Array.from(pr),img,box:g,i});imgs.push({ch:String(k),img});});
     return {text,items,minP,imgs};},
   // ---- benefit of the doubt: if the reader was unsure about a digit and its close second choice makes the answer right,
@@ -4891,7 +4897,8 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
         if(s2&&s2.text&&s2.text.length===2&&it.slice(0,i).map(x=>x.ch).join('')+s2.text+it.slice(i+1).map(x=>x.ch).join('')===c){state.inkStats=state.inkStats||{};state.inkStats.splits=(state.inkStats.splits||0)+1;saveState();return true;}}
       return false;}
     if(it.length!==c.length)return false;let unsure=0;
-    for(let i=0;i<c.length;i++){const x=it[i];if(x.ch===c[i])continue;if(!x.pr||x.p>=0.8)return false;const d=+c[i],sorted=x.pr.slice().sort((a,b)=>b-a);if(x.pr[d]<0.08||x.pr[d]<sorted[2])return false;unsure++;}
+    for(let i=0;i<c.length;i++){const x=it[i];if(x.ch===c[i])continue;const d=+c[i],CONF={1:7,7:1,4:9,9:4};if(x.pr&&CONF[+x.ch]===d&&x.p<0.985&&x.pr[d]>=0.005){unsure++;continue;} // look-alike pairs he mixes up
+          if(!x.pr||x.p>=0.8)return false;const sorted=x.pr.slice().sort((a,b)=>b-a);if(x.pr[d]<0.08||x.pr[d]<sorted[2])return false;unsure++;}
     if(!unsure)return false;it.forEach((x,i)=>{if(x.img)this.mine.add(c[i],x.img);});state.inkStats=state.inkStats||{};state.inkStats.doubts=(state.inkStats.doubts||0)+1;saveState();return true;},
   // ---- learns Dev's own handwriting: every correct written answer saves his digits as examples
   mine:{data:null,
