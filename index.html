@@ -731,6 +731,59 @@ html,body{touch-action:manipulation}
 .ap-btn.ap-mech{background:#1f6f9f}
 #cine>canvas:first-of-type{position:relative;z-index:1}
 #cine .cine-ui{z-index:2}
+/* ---------- Learning Lab */
+.lab-hint{justify-items:center}
+.lab-svg{width:100%;max-width:560px;height:auto;display:block}
+.lab-svg text{font:800 20px var(--f-body);text-anchor:middle;fill:#1d1f33}
+.lab-svg text.b{fill:#1f6fd1}.lab-svg text.o{fill:#e0701a;font-size:24px}
+.lab-svg text.tri{font-size:34px}.lab-svg text.tri.q{fill:#e0701a}
+.lab-svg text.n{font-size:14px;fill:#55597a}
+.lab-hop{stroke-dasharray:120;stroke-dashoffset:120;animation:labHop .45s ease-out forwards}
+@keyframes labHop{to{stroke-dashoffset:0}}
+.lab-pop{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:labPop .3s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes labPop{to{transform:scale(1)}}
+.lab-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lab-chips span{min-width:52px;padding:8px 10px;border-radius:12px;background:#5ab0ff;color:#fff;font:800 24px var(--f-body);text-align:center;transform:scale(0);animation:labPop .3s cubic-bezier(.3,1.6,.5,1) forwards}
+.lab-chips span.q{background:#ff9f43}
+.lab-split{display:grid;gap:6px;justify-items:center;font:800 26px var(--f-body);color:#1d1f33}
+.lab-split .q{color:#e0701a;font-size:20px}
+.lab-strat{display:grid;gap:8px;justify-items:center;margin:6px 0;padding:12px;border-radius:16px;background:var(--night-2);box-shadow:0 4px 0 #0005;animation:labIn .25s ease-out}
+.lab-strat b{font:800 20px var(--f-body);color:#fff}
+.lab-sbs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lab-sb{border:0;border-radius:14px;padding:10px 14px;background:#2c3a66;color:#fff;font:700 18px var(--f-body);display:flex;align-items:center;gap:6px;box-shadow:0 4px 0 #0007;cursor:pointer}
+.lab-sb:active{transform:translateY(3px);box-shadow:0 1px 0 #0007}
+.lab-sb.big{font-size:22px;padding:16px 18px;justify-content:center}
+@keyframes labIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.lab-modal{width:min(960px,100%)}
+.lab-modal .bk-say,.lab-hint .bk-say{color:#1d1f33;opacity:1}
+.lab-card .bk-box{overflow:hidden}.lab-card .bk-box *{max-width:100%}
+.lab-modal h2{margin:0}
+.lab-text{font:600 20px/1.45 var(--f-body);margin:0}
+.lab-sub{margin:0;opacity:.8;font:600 16px var(--f-body)}
+.lab-cards{display:grid;gap:12px}
+.lab-cards.n2{grid-template-columns:repeat(2,minmax(0,1fr))}.lab-cards.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:700px){.lab-cards.n2,.lab-cards.n3{grid-template-columns:1fr}}
+.lab-card{border:3px solid #ffffff22;border-radius:16px;background:#ffffff10;padding:10px;display:grid;gap:8px;align-content:start;cursor:pointer;color:#fff}
+.lab-card:active{border-color:#ffe066;transform:scale(.98)}
+.lab-card .bk-box{width:100%;box-sizing:border-box}
+.lab-cardt{font:800 18px var(--f-body);color:#ffe066}
+.lab-opts{display:grid;gap:10px}
+.lab-q{font:800 52px var(--f-body);text-align:center}
+.lab-ans{font:800 48px var(--f-body);text-align:center;background:#fff;color:#1d1f33;border-radius:14px;padding:4px 0;min-height:60px}
+.lab-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lab-k{border:0;border-radius:14px;padding:14px 0;font:800 30px var(--f-body);background:#2c3a66;color:#fff;box-shadow:0 4px 0 #0007;cursor:pointer}
+.lab-k.ok{background:#2fb35a}
+.lab-k:active{transform:translateY(3px);box-shadow:0 1px 0 #0007}
+.lab-iq{display:grid;gap:6px}
+.lab-iq b{font:700 17px/1.35 var(--f-body)}
+.lab-chiprow{display:flex;flex-wrap:wrap;gap:6px}
+.lab-chip{border:2px solid #ffffff33;border-radius:999px;padding:7px 12px;background:transparent;color:#fff;font:700 16px var(--f-body);cursor:pointer}
+.lab-chip.on{background:#ffe066;color:#1d1f33;border-color:#ffe066}
+.lab-txt{width:100%;box-sizing:border-box;border-radius:10px;border:0;padding:8px;font:600 16px var(--f-body)}
+.lab-panel{display:grid;gap:8px;padding:12px;border-radius:14px;background:#ffffff0d;border:2px dashed #ffffff26}
+.lab-panel h3{margin:0}
+.lab-row{font:600 15px/1.4 var(--f-body)}
+.lab-card [style*="--c"]{--c:22px!important}.lab-card .bk-row{flex-wrap:wrap}
 </style>
 
 <div id="app">
@@ -3092,13 +3145,13 @@ const Dojo={
           p.lat0=lat;p.inkClaim=v;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);say('Write it again, nice and clear. Or tap the keys.','info');});return;}
       if(p.inkClaim!=null&&typeof InkCheck!=='undefined')InkCheck.after(p.inkClaim,v,ok);
       // second try after a picture hint: the first try already counted, so this one only decides what he sees
-      if(p.retry){done=true;clearTimeout(tm);
+      if(p.retry){done=true;clearTimeout(tm);if(typeof Lab!=='undefined')Lab.noteRetry(f,p.hintArm,ok);
         Data.logAttempt({ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),skill:'dojo:'+sp.dojo,kind:'dojo',mode:'retry',diff:f.belt,variant:src,q:factExpr(f,flip),correct:f.ans,firstTry:false,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast:false,id:uid()});
         if(ok){Pad.right(fld);Pad.lock(fld);Snd.good();stamp('right',null,{small:true,ms:650});Battle.event('hit');const hb=card.querySelector('.bk-hint');if(hb)hb.remove();
           const sh=Blocks.show(f);if(sh)card.querySelector('.dj-expr').before(sh);say('Yes! You figured it out.','good');this.reask(p,[3]);setTimeout(()=>this.advance(p),1900);return;}
         const hb=card.querySelector('.bk-hint');if(hb)hb.remove();reveal(null,true);return;}
       done=true;clearTimeout(tm);
-      const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,p.hinted?99999:lat,src,p.k);
+      const before=sp.kind!=='sprint'&&this.rec(f).owned;const rec=sp.kind==='sprint'?this.rec(f):this.log(f,ok,p.hinted?99999:lat,src,p.k);if(sp.kind!=='sprint'&&typeof Lab!=='undefined')Lab.noteFirst(f,ok);
       const fast=ok&&!p.hinted&&lat<=this.thr(src);
       if(p.k==='teach'||p.k==='again'){const t=this.st().today[sp.dojo];t.tk++;if(ok)t.tok++;}
       if(sp.kind!=='sprint'&&!before&&rec.owned&&!dj.newOwned.includes(f.key))dj.newOwned.push(f.key);
@@ -3116,13 +3169,13 @@ const Dojo={
         if(teach&&!dj.taught.includes(f.key)){dj.taught.push(f.key);rec.teach=false;rec.taught=dayStr();this.st().today[sp.dojo].taught++;this.reask(p,[2,5]);}
         else if(p.k==='again')this.reask(p,[]);
         else if(p.hinted)this.reask(p,[3]);
-        if(sp.kind!=='sprint'&&!rec.owned&&typeof Blocks!=='undefined'){const sh=Blocks.show(f);if(sh){card.querySelector('.dj-expr').before(sh);setTimeout(()=>this.advance(p),1500);return;}}
-        setTimeout(()=>this.advance(p),fast?360:600);return;}
+        if(sp.kind!=='sprint'&&!rec.owned&&typeof Blocks!=='undefined'){const sh=Blocks.show(f);if(sh){card.querySelector('.dj-expr').before(sh);this.after(p,1500,f,lat,src,dj,sp,card);return;}}
+        this.after(p,fast?360:600,f,lat,src,dj,sp,card);return;}
       // a miss: nothing is lost. First a picture hint and another try (no answer shown). Miss again: build it, copy it, and it comes back soon.
       dj.bolt=0;dj.miss.push(f);if(Battle.miss)Battle.miss();
-      if(sp.kind!=='sprint'&&!teach&&typeof Blocks!=='undefined'){const h=Blocks.hint(f);if(h){p.retry=true;done=false;Pad.wrong(fld);
+      if(sp.kind!=='sprint'&&!teach&&typeof Blocks!=='undefined'){const LH=typeof Lab!=='undefined'?Lab.hint(f):{el:Blocks.hint(f),arm:'blocks'},h=LH&&LH.el;if(h){p.retry=true;p.hintArm=LH.arm;done=false;Pad.wrong(fld);
           setTimeout(()=>{if(run!==R||done)return;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);},450);
-          card.querySelector('.dj-expr').before(h);say('Not quite. Look at the blocks and try again.','info');
+          card.querySelector('.dj-expr').before(h);say('Not quite. Look at the picture and try again.','info');
           if((f.op==='−'||f.op==='−?')&&typeof Lesson!=='undefined'){h.append(Lesson.btn('countup','Watch: count UP'));Lesson.maybe('countup');}Snd.tone(392,0.12,'triangle',0.04);
           setActions([{label:'Show me ▸',cls:'btn-dark',onClick:()=>{if(done)return;done=true;clearTimeout(tm);h.remove();reveal(rec,true);}}]);return;}}
       reveal(rec,false);};
@@ -3189,7 +3242,7 @@ const Dojo={
         el('small',null,`Today: ${Math.floor(this.secsToday()/60)} of ${this.goalSecs()/60} minutes · about ${this.minsLeft()} to go`)));
       m.append(el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:after},'Dojo'),el('button',{class:'btn btn-green',type:'button',onclick:()=>{overlay(null);this.start(nextDid,'round');}},`Next round: ${DOJOS[nextDid].short} ▸`)));}
     else m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
-    (async()=>{const ak=sp.kind!=='sprint'?await Arcade.pick(false):null;await Battle.ko({toBrawl:ak==='battle'||ak==='mech'});if(ak)await Arcade.play({power:pw,kind:ak});for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}
+    (async()=>{if(sp.kind!=='sprint'&&typeof Lab!=='undefined')await Lab.maybePref(dj);const ak=sp.kind!=='sprint'?await Arcade.pick(false):null;await Battle.ko({toBrawl:ak==='battle'||ak==='mech'});if(ak)await Arcade.play({power:pw,kind:ak});for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}
       if(dj.tired){const T=d.tiredDays=d.tiredDays||{};T[dayStr()]=(T[dayStr()]||0)+1;const full=T[dayStr()]>=2;if(full)d.unlockDay=dayStr();saveState();
         await Talk.say([['sensei',full?'Two tough rounds means your brain is full for today, {name}. Training counts as done. Go have fun!':'Your brain did a LOT of work, {name}. Even black belts rest. Let’s recharge.']]);
         await ScreenTime.brk({secs:full?60:120,tired:true,title:'Recharge time! 🔋',msg:'Breaks help your brain lock in what you learned.'});}
@@ -3255,20 +3308,163 @@ const FactMix={
 function renderDFact(p,a){const f=p.f,card=$('#card');
   card.append(cardHead('Dojo Flash ⚡'),el('div',{class:'expr',style:'font-size:56px;margin:4px 0'},f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f)+' ='));
   const fld=Pad.make({allowDot:false,max:4});card.append(el('div',{class:'ans-row'},fld.el));Pad.focus(fld);Scratch.reset(null);say('Dojo flash! A quick fact.','');
-  const t0=Date.now();let tries=0,logged=false;
+  const t0=Date.now();let tries=0,logged=false,arm=null;
   const submit=()=>{let v=Pad.val(fld);if(v==null||fld.locked)return;if(v!==f.ans&&fld.src==='ink'&&typeof InkBox!=='undefined'&&InkBox.doubt(f.ans)){Pad.set(fld,String(f.ans));v=f.ans;}
     tries++;a.tries.push({a:v,ms:Date.now()-a.t0});
-    if(!logged){logged=true;try{Dojo.log(f,v===f.ans,(ANS.firstInput||Date.now())-t0,fld.src||'key','mix');saveState();}catch(e){}}
+    if(!logged){logged=true;try{Dojo.log(f,v===f.ans,(ANS.firstInput||Date.now())-t0,fld.src||'key','mix');if(typeof Lab!=='undefined')Lab.noteFirst(f,v===f.ans);saveState();}catch(e){}}
+    if(tries===2&&arm&&typeof Lab!=='undefined')Lab.noteRetry(f,arm,v===f.ans);
     if(v===f.ans){Pad.right(fld);Pad.lock(fld);const h=card.querySelector('.bk-hint');if(h)h.remove();complete(p,{solved:true,firstTry:tries===1,tries});return;}
     Pad.wrong(fld);a.errors=(a.errors||[]).concat([{a:v,tags:[]}]);
     // first miss: a block picture and another try (no answer shown)
-    if(tries===1&&typeof Blocks!=='undefined'){const h=Blocks.hint(f);if(h){card.querySelector('.expr').before(h);say('Not quite. Look at the blocks and try again.','info');
+    if(tries===1&&typeof Blocks!=='undefined'){const LH=typeof Lab!=='undefined'?Lab.hint(f):{el:Blocks.hint(f),arm:'blocks'},h=LH&&LH.el;if(h){arm=LH.arm;card.querySelector('.expr').before(h);say('Not quite. Look at the picture and try again.','info');
         setTimeout(()=>{if(fld.locked)return;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);},450);return;}}
     const h=card.querySelector('.bk-hint');if(h)h.remove();Pad.set(fld,f.ans);Pad.lock(fld);
     card.append(el('div',{class:'reveal'},el('h4',null,factExpr(f)+' = '+f.ans),el('div',null,factTip(f))));
     setActions([{label:'Got it ▸',cls:'btn-blue',primary:true,onClick:()=>complete(p,{solved:false,firstTry:false,revealed:true,tries})}]);};
   fld.onChange=()=>{clearTimeout(fld._t);if(fld.src!=='ink'||!fld.val.length||fld.locked)return;fld._t=setTimeout(()=>{if(fld.locked||(typeof InkBox!=='undefined'&&InkBox.drawing))return;submit();},fld.val.length>=String(f.ans).length?700:1800);};
   setActions([{label:'Submit',cls:'btn-green',primary:true,onClick:submit}]);}
+
+/* =========================================================
+   Learning Lab: builds a model of how Dev learns.
+   1. Hint experiments: on a miss, the game rotates WHICH picture hint he gets (blocks, number line, ten-frame,
+      fact family, skip counting, split-it). It scores each one by (a) did his retry work, and (b) does he still
+      know the fact on a later day. Over time it favors what works for him (a "multi-armed bandit").
+   2. Strategy check-ins: now and then after a right answer, "How did you get it?" (knew it / counted / trick / guessed).
+   3. "Which made more sense?": sometimes after a round, two hint pictures side by side; he picks.
+   4. Brain Lab: a 10-minute session a grown-up starts from the Report: strategy inventory, explanation showdown,
+      a small learn-and-test experiment, and a short interview.
+   Everything is stored in state.lab and synced with the coach report.
+   ========================================================= */
+const Lab={
+  st(){const L=state.lab=state.lab||{v:1,arms:{},pend:{},strat:[],pref:[],sessions:[],retry:[]};L.arms=L.arms||{};L.pend=L.pend||{};L.strat=L.strat||[];L.pref=L.pref||[];L.sessions=L.sessions||[];L.retry=L.retry||[];return L;},
+  ARMS:{'+':['blocks','line','tenframe'],'−':['blocks','line','family'],'×':['blocks','skip','split'],'÷':['blocks','family'],'+?':['blocks','line','family'],'−?':['blocks','family']},
+  NAMES:{blocks:'Blocks',line:'Number line',tenframe:'Ten-frame',family:'Fact family',skip:'Skip counting',split:'Split it'},
+  ok(arm,f){const {op,a,b}=f;if(arm==='tenframe'){const hi=Math.max(a,b),lo=Math.min(a,b);return op==='+'&&hi<10&&hi+lo>10;}
+    if(arm==='split'){return op==='×'&&[a,b].some(n=>n>=6&&n<=9||n===4||n===8);}
+    if(arm==='line'){const span=op==='+'?Math.min(a,b):op==='−'?b>0?a-b:0:op==='+?'?b-a:a-b;return span>0&&span<=12;}
+    return true;},
+  // ---------- Thompson sampling over hint types
+  gam(k){if(k<1){return this.gam(k+1)*Math.pow(Math.random(),1/k);}const d=k-1/3,c=1/Math.sqrt(9*d);for(;;){let x,v;do{x=this.norm();v=1+c*x;}while(v<=0);v=v*v*v;const u=Math.random();if(u<1-0.0331*x*x*x*x||Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;}},
+  norm(){const u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);},
+  beta(a,b){const x=this.gam(a),y=this.gam(b);return x/(x+y);},
+  arm(op,arm){const A=this.st().arms;A[op]=A[op]||{};return A[op][arm]=A[op][arm]||{n:0,ra:1,rb:1,ta:1,tb:1};},
+  choose(f){const op=f.op,cands=(this.ARMS[op]||['blocks']).filter(a=>this.ok(a,f));if(!cands.length)return 'blocks';
+    const least=Math.min(...cands.map(a=>this.arm(op,a).n));if(least<4)return pick(cands.filter(a=>this.arm(op,a).n===least)); // try each a few times first
+    let best=cands[0],bs=-1;for(const a of cands){const s=this.arm(op,a),v=0.4*this.beta(s.ra,s.rb)+0.6*this.beta(s.ta,s.tb);if(v>bs){bs=v;best=a;}}return best;},
+  hint(f){const arm=this.choose(f);let el=null;try{el=this.render(arm,f);}catch(e){el=null;}if(!el){el=Blocks.hint(f);return el?{el,arm:'blocks'}:null;}return {el,arm};},
+  noteRetry(f,arm,ok){if(!arm)return;const s=this.arm(f.op,arm);s.n++;if(ok)s.ra++;else s.rb++;const L=this.st();L.pend[f.key]={arm,op:f.op,day:dayStr()};
+    L.retry=L.retry.concat([{t:new Date().toISOString(),key:f.key,op:f.op,arm,ok}]).slice(-300);saveState();},
+  // the next first try on a LATER day tells us if the hint stuck
+  noteFirst(f,ok){const L=this.st(),p=L.pend[f.key];if(!p||p.day===dayStr())return;const s=this.arm(p.op,p.arm);if(ok)s.ta++;else s.tb++;delete L.pend[f.key];saveState();},
+  // ---------- the hint pictures (never show the answer)
+  box(svgOrEl,text){return el('div',{class:'bk-box bk-hint lab-hint'},svgOrEl,text?el('p',{class:'bk-say'},text):null);},
+  svg(w,h){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox',`0 0 ${w} ${h}`);s.setAttribute('class','lab-svg');return s;},
+  add(s,tag,at,txt){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;s.append(e);return e;},
+  render(arm,f){const {op,a,b}=f;
+    if(arm==='blocks')return Blocks.hint(f);
+    if(arm==='line'){let start,end,txt;if(op==='+'){const hi=Math.max(a,b),lo=Math.min(a,b);start=hi;end=hi+lo;txt=`Start at ${hi}. Hop ${lo} time${lo===1?'':'s'}. Where do you land?`;}
+        else if(op==='−'){start=b;end=a;txt=`Start at ${b}. Hop up to ${a}. How many hops?`;}else if(op==='+?'){start=a;end=b;txt=`Start at ${a}. Hop up to ${b}. How many hops?`;}else{start=b;end=a;txt=`Start at ${b}. Hop up to ${a}. How many hops?`;}
+      const lo=Math.min(start,end)-1,hi=Math.max(start,end)+1,n=hi-lo,cw=Math.min(40,520/n),W=n*cw+40,s=this.svg(W,96),X=v=>20+(v-lo)*cw,hideEnd=op==='+';
+      this.add(s,'line',{x1:X(lo),y1:70,x2:X(hi),y2:70,stroke:'#1d1f33','stroke-width':3});
+      for(let v=lo;v<=hi;v++){this.add(s,'line',{x1:X(v),y1:63,x2:X(v),y2:77,stroke:'#1d1f33','stroke-width':v===start||v===end?3:1.5});
+        if(v===start)this.add(s,'text',{x:X(v),y:93,class:'n b'},String(v));else if(v===end)this.add(s,'text',{x:X(v),y:93,class:'n o'},hideEnd?'?':String(v));}
+      const dir=end>start?1:-1;for(let i=0;i<Math.abs(end-start);i++){const x0=X(start+i*dir),x1=X(start+(i+1)*dir);
+        this.add(s,'path',{d:`M${x0} 63 Q ${(x0+x1)/2} ${30} ${x1} 63`,fill:'none',stroke:'#ff9f43','stroke-width':3,class:'lab-hop',style:`animation-delay:${0.3+i*0.28}s`});}
+      this.add(s,'circle',{cx:X(start),cy:70,r:7,fill:'#5ab0ff'});return this.box(s,txt);}
+    if(arm==='tenframe'){const hi=Math.max(a,b),lo=Math.min(a,b),mv=10-hi,rest=lo-mv,cs=26,s=this.svg(10*cs+20,2*cs+30);
+      for(let r=0;r<2;r++)for(let c=0;c<10;c++){const x=10+c*cs,y=10+r*(cs+8);this.add(s,'rect',{x,y,width:cs-4,height:cs-4,rx:4,fill:'#fff',stroke:'#c9c3b0'});
+        const fill=r===0?(c<hi?'#5ab0ff':'#ff9f43'):(c<rest?'#ff9f43':null);if(fill)this.add(s,'circle',{cx:x+cs/2-2,cy:y+cs/2-2,r:cs/2-6,fill,class:'lab-pop',style:`animation-delay:${(r*10+c)*0.04}s`});}
+      return this.box(s,`Fill the first ten (${hi} + ${mv}). Then how many more?`);}
+    if(arm==='family'){let top,l,txt;if(op==='−'){top=a;l=b;txt=`Think addition: ${b} + ? = ${a}`;}else if(op==='÷'){top=a;l=b;txt=`Think multiply: ${b} × ? = ${a}`;}else if(op==='+?'){top=b;l=a;txt=`Think: ${a} and what make ${b}?`;}else{top=a;l=b;txt=`Think: ${b} + ? = ${a}`;}
+      const s=this.svg(220,150);this.add(s,'path',{d:'M110 18 L200 130 L20 130 Z',fill:'#fff6e0',stroke:'#ffb627','stroke-width':4,'stroke-linejoin':'round'});
+      this.add(s,'text',{x:110,y:62,class:'tri'},String(top));this.add(s,'text',{x:58,y:120,class:'tri'},String(l));this.add(s,'text',{x:162,y:120,class:'tri q'},'?');
+      this.add(s,'text',{x:110,y:146,class:'n'},op==='÷'||op==='×'?'× and ÷ family':'+ and − family');return this.box(s,txt);}
+    if(arm==='skip'){const P=Blocks.mulPlan(a,b),row=el('div',{class:'lab-chips'});for(let i=1;i<P.rows;i++)row.append(el('span',{style:`animation-delay:${i*0.25}s`},String(P.by*i)));row.append(el('span',{class:'q',style:`animation-delay:${P.rows*0.25}s`},'?'));
+      return this.box(row,`Count by ${P.by}s, ${P.rows} times.`);}
+    if(arm==='split'){const n=[a,b].find(x=>x>=6&&x<=9),o=n?(n===a?b:a):null;
+      if(n){const r=n-5,lines=el('div',{class:'lab-split'},el('div',null,`5 × ${o} = ${5*o}`),el('div',null,`${r} × ${o} = ${r*o}`),el('div',{class:'q'},'Put them together!'));return this.box(lines,`Split ${n} into 5 and ${r}.`);}
+      const d=[a,b].find(x=>x===4||x===8),od=d===a?b:a;const lines=el('div',{class:'lab-split'},el('div',null,`2 × ${od} = ${2*od}`),el('div',{class:'q'},d===4?'Double it!':'Double it, then double again!'));return this.box(lines,`${d} is ${d===4?'2 doubled':'2 doubled, doubled'}.`);}
+    return null;},
+  // ---------- strategy check-ins
+  wantStrat(sp,dj){if(sp.kind==='sprint'||dj.tired||this.st().off)return false;if((dj.stratN||0)>=3)return false;return Math.random()<0.22;},
+  askStrat(card,f,lat,src,dj){return new Promise(res=>{dj.stratN=(dj.stratN||0)+1;const L=this.st();let done=false;
+    const fin=s=>{if(done)return;done=true;clearTimeout(tm);box.remove();if(s){L.strat=L.strat.concat([{t:new Date().toISOString(),day:dayStr(),key:f.key,op:f.op,s,lat,src}]).slice(-500);saveState();if(s!=='skip')Snd.tap();}res();};
+    const opt=(s,ic,txt)=>{const b=el('button',{class:'lab-sb',type:'button'},el('span',null,ic),txt);tapify(b,()=>fin(s));return b;};
+    const box=el('div',{class:'lab-strat'},el('b',null,'How did you get it?'),el('div',{class:'lab-sbs'},opt('knew','⚡','I just knew it'),opt('counted','🖐️','I counted'),opt('trick','🧠','I used a trick'),opt('guess','🎲','I guessed')));
+    (card.querySelector('.dj-expr')||card).after(box);const tm=setTimeout(()=>fin('skip'),7000);});},
+  // ---------- "Which made more sense?" (at most twice a day)
+  maybePref(dj){const L=this.st(),d=dayStr(),today=L.pref.filter(x=>x.day===d).length;if(today>=2||!dj.miss||!dj.miss.length||Math.random()<0.4)return Promise.resolve();
+    const big=dj.miss.filter(x=>Math.max(x.a,x.b)>=5),f=big[big.length-1];if(!f)return Promise.resolve();const arms=shuffle((this.ARMS[f.op]||[]).filter(a=>this.ok(a,f)));if(arms.length<2)return Promise.resolve();
+    return this.compare(f,arms.slice(0,2),'Which picture makes more sense?').then(ch=>{if(ch){L.pref=L.pref.concat([{t:new Date().toISOString(),day:d,key:f.key,op:f.op,arms:arms.slice(0,2),choice:ch,ctx:'round'}]).slice(-200);saveState();}});},
+  compare(f,arms,q,extra){return new Promise(res=>{const cards=arms.map(a=>{let v=null;try{v=this.render(a,f);}catch(e){}const c=el('button',{class:'lab-card',type:'button'},el('div',{class:'lab-cardt'},this.NAMES[a]),v||el('div',null,'?'));tapify(c,()=>{overlay(null);Snd.tap();res(a);});return c;});
+    const both=el('button',{class:'btn btn-dark',type:'button'},extra&&extra.bothLabel||'They’re the same to me');tapify(both,()=>{overlay(null);res('same');});
+    overlay(el('div',{class:'modal lab-modal'},el('h2',null,q),el('p',{class:'lab-sub'},`${factExpr(f)} · tap the one you like best`),el('div',{class:'lab-cards n'+cards.length},...cards),el('div',{class:'btns'},both)));});},
+
+  // ---------- Brain Lab (about 10 minutes, a grown-up starts it)
+  async brainLab(){const L=this.st(),S={t:new Date().toISOString(),day:dayStr(),inventory:[],showdown:[],experiment:[],interview:{}};const held=typeof Pause!=='undefined'&&Pause.hold&&Pause.hold();
+    try{
+    await this.screen('🧪 Brain Lab','Today YOU help design Number Knight. I’ll show you different ways to think about math, and you tell me which ones make sense. There are no wrong answers. About 10 minutes.','Let’s go ▸');
+    // Part 1: strategy inventory
+    await this.screen('Part 1 · Quick facts','Answer each one, then tell me how you got it. Go at your own speed.','Start ▸');
+    const all=[];for(const did of ['pm','tm'])for(const f of Dojo.facts(did)){const r=Dojo.st().facts[f.key];all.push({f,owned:!!(r&&r.owned),seen:!!(r&&r.n)});}
+    const pickN=(arr,n)=>shuffle(arr).slice(0,n);const inv=pickN(all.filter(x=>x.owned),4).concat(pickN(all.filter(x=>x.seen&&!x.owned),3)).concat(pickN(all.filter(x=>!x.seen&&x.f.op!=='÷'),1));
+    for(const x of shuffle(inv)){const r=await this.askFact(x.f,'Part 1');const s=await this.choice('How did you get it?',[['knew','⚡ I just knew it'],['counted','🖐️ I counted'],['trick','🧠 I used a trick'],['guess','🎲 I guessed']]);
+      S.inventory.push({key:x.f.key,op:x.f.op,owned:x.owned,ans:r.v,ok:r.ok,ms:r.ms,strat:s});}
+    // Part 2: explanation showdown
+    await this.screen('Part 2 · Explanation showdown','I’ll show you different ways to picture a problem. Pick the one that makes the most sense, then the one that looks the most fun.','Show me ▸');
+    const sample={'−':{op:'−',a:13,b:8,ans:5,key:'13-8'},'+':{op:'+',a:8,b:7,ans:15,key:'7+8'},'×':{op:'×',a:7,b:6,ans:42,key:'6x7'}};
+    for(const op of ['−','+','×']){const f=sample[op],arms=(this.ARMS[op]).filter(a=>this.ok(a,f));const sense=await this.compare(f,arms,'Which one makes the MOST sense?');const fun=await this.compare(f,arms,'Which one looks the most FUN?');S.showdown.push({op,arms,sense,fun});}
+    // Part 3: learn-and-test (a tiny experiment): 4 new facts, two taught one way and two another way, then a quiz
+    const pool=all.filter(x=>!x.owned&&x.f.op==='×');const pool2=pool.length>=4?pool:all.filter(x=>!x.owned&&x.f.op==='−');const four=pickN(pool2.length>=4?pool2:all.filter(x=>!x.owned),4).map(x=>x.f);
+    if(four.length===4){const op=four[0].op,arms=shuffle((this.ARMS[op]||['blocks']).filter(a=>four.every(f=>a==='blocks'||this.ok(a,f)))).slice(0,2);
+      if(arms.length===2){await this.screen('Part 3 · Learn it, then try it','I’ll teach you 4 facts, two different ways. Then a quick quiz to see which way stuck. No pressure!','Teach me ▸');
+        const plan=four.map((f,i)=>({f,arm:arms[i%2]}));for(const p of plan)await this.teach(p.f,p.arm);
+        await this.screen('Brain shake!','Stand up, wiggle your arms, and take three big breaths. Then tap Ready.','Ready ▸',8000);
+        for(const p of shuffle(plan)){const r=await this.askFact(p.f,'Part 3 quiz');S.experiment.push({key:p.f.key,op:p.f.op,arm:p.arm,ok:r.ok,ms:r.ms});L.pend[p.f.key]={arm:p.arm,op:p.f.op,day:dayStr()};}}}
+    // Part 4: grown-up questions
+    S.interview=await this.interview();
+    L.sessions=L.sessions.concat([S]).slice(-12);state.coins+=30;saveState();if(typeof Sync!=='undefined'&&Sync.kick)Sync.kick(true);
+    await this.screen('🧪 Thanks, game designer!','Your answers help Number Knight fit the way YOUR brain works. +30 coins!','Done ✓');Snd.fanfare();
+    }catch(e){}finally{overlay(null);if(held)Pause.release();}},
+  screen(title,text,btn,wait){return new Promise(res=>{const b=el('button',{class:'btn btn-green',type:'button'},btn||'Next ▸');if(wait){b.disabled=true;setTimeout(()=>{b.disabled=false;},wait);}tapify(b,()=>{if(b.disabled)return;Snd.tap();res();});
+    overlay(el('div',{class:'modal lab-modal'},el('h2',null,title),el('p',{class:'lab-text'},text),el('div',{class:'btns'},b)));});},
+  choice(q,opts){return new Promise(res=>{overlay(el('div',{class:'modal lab-modal'},el('h2',null,q),el('div',{class:'lab-opts'},...opts.map(([k,t])=>{const b=el('button',{class:'lab-sb big',type:'button'},t);tapify(b,()=>{Snd.tap();res(k);});return b;}))));});},
+  askFact(f,label){return new Promise(res=>{let v='';const t0=Date.now(),disp=el('div',{class:'lab-ans'},'?');
+    const keys=el('div',{class:'lab-keys'},...[1,2,3,4,5,6,7,8,9,'⌫',0,'OK'].map(k=>{const b=el('button',{class:'lab-k'+(k==='OK'?' ok':''),type:'button'},String(k));
+      tapify(b,()=>{if(k==='⌫')v=v.slice(0,-1);else if(k==='OK'){if(!v)return;const n=+v;res({v:n,ok:n===f.ans,ms:Date.now()-t0});return;}else if(v.length<4)v+=k;disp.textContent=v||'?';Snd.tap();});return b;}));
+    overlay(el('div',{class:'modal lab-modal'},el('p',{class:'lab-sub'},label),el('div',{class:'lab-q'},(f.op==='+?'||f.op==='−?'?factExpr(f).replace('?','▢'):factExpr(f)+' =')),disp,keys));});},
+  teach(f,arm){return new Promise(res=>{let v=null;try{v=arm==='blocks'?Blocks.show(f):this.render(arm,f);}catch(e){}const b=el('button',{class:'btn btn-green',type:'button',disabled:true},'Got it ▸');setTimeout(()=>{b.disabled=false;},4000);
+    tapify(b,()=>{if(b.disabled)return;Snd.tap();res();});
+    overlay(el('div',{class:'modal lab-modal'},el('p',{class:'lab-sub'},'Learn this one: '+this.NAMES[arm]),el('div',{class:'lab-q'},factExpr(f)+' = '+f.ans),v,el('div',{class:'btns'},b)));});},
+  interview(){return new Promise(res=>{const A={};const chips=(k,opts,multi)=>el('div',{class:'lab-chiprow'},...opts.map(o=>{const b=el('button',{class:'lab-chip',type:'button'},o);tapify(b,()=>{if(multi){A[k]=A[k]||[];const i=A[k].indexOf(o);if(i<0)A[k].push(o);else A[k].splice(i,1);b.classList.toggle('on');}else{A[k]=o;b.parentNode.querySelectorAll('.lab-chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');}});return b;}));
+    const txt=k=>{const t=el('textarea',{class:'lab-txt',rows:2,placeholder:'Type what he says (optional)'});t.addEventListener('input',()=>{A[k]=t.value;});return t;};
+    const q=(s,ctl)=>el('div',{class:'lab-iq'},el('b',null,s),ctl);
+    const done=el('button',{class:'btn btn-green',type:'button'},'Save answers ✓');tapify(done,()=>res(A));
+    overlay(el('div',{class:'modal lab-modal lab-interview'},el('h2',null,'Part 4 · Grown-up: read these to him'),el('p',{class:'lab-sub'},'Tap or type his answers. Skip anything. Takes about 3 minutes.'),
+      q('1. “Explain how you would solve 13 − 8.”',txt('explain13m8')),
+      q('2. “When you get stuck, what helps the most?” (tap all he says)',chips('stuckHelps',['A picture','A hint','Trying again','A break','Someone explaining','Watching a video'],true)),
+      q('3. “What part of math feels hardest right now?”',txt('hardest')),
+      q('4. “What part feels easiest?”',txt('easiest')),
+      q('5. “How do you feel when you get one wrong?”',chips('wrongFeel',['😀 It’s fine','😐 Meh','😟 Worried','😡 Mad'])),
+      q('6. “What’s your favorite part of Number Knight?” (tap all)',chips('favorite',['Battles','Mech battles','Mini-games','Animations','Movies','Shop','Dojo belts','Lessons'],true)),
+      q('7. “Anything you wish the game did?”',txt('wish')),el('div',{class:'btns'},done)));});},
+
+  // ---------- parent panel: what the lab has learned so far
+  panel(){const L=this.st(),rows=[];const pct=(a,b)=>b?Math.round(100*a/b)+'%':'–';
+    for(const op in L.arms){const arms=L.arms[op];const items=Object.entries(arms).filter(([a,s])=>s.n>0);if(!items.length)continue;
+      items.sort((x,y)=>((y[1].ra/(y[1].ra+y[1].rb))-(x[1].ra/(x[1].ra+x[1].rb))));
+      rows.push(el('div',{class:'lab-row'},el('b',null,op+' facts: '),items.map(([a,s])=>`${this.NAMES[a]} ${pct(s.ra-1,s.n)} retry (${s.n})${s.ta+s.tb>2?`, ${pct(s.ta-1,s.ta+s.tb-2)} next day`:''}`).join(' · ')));}
+    const S=L.strat.filter(x=>x.s!=='skip'),cnt=k=>S.filter(x=>x.s===k).length;
+    if(S.length)rows.push(el('div',{class:'lab-row'},el('b',null,'How he solves right answers: '),`⚡ knew it ${pct(cnt('knew'),S.length)} · 🖐️ counted ${pct(cnt('counted'),S.length)} · 🧠 trick ${pct(cnt('trick'),S.length)} · 🎲 guessed ${pct(cnt('guess'),S.length)} (${S.length} answers)`));
+    if(L.pref.length){const c={};L.pref.forEach(p=>{if(p.choice!=='same')c[p.choice]=(c[p.choice]||0)+1;});rows.push(el('div',{class:'lab-row'},el('b',null,'He picked as clearest: '),Object.entries(c).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`${this.NAMES[a]} ×${n}`).join(' · ')||'–'));}
+    const go=el('button',{class:'btn btn-blue',type:'button'},'🧪 Start Brain Lab (10 min)');tapify(go,()=>{overlay(null);setTimeout(()=>this.brainLab(),50);});
+    return el('div',{class:'lab-panel'},el('h3',null,'How Dev learns (Learning Lab)'),rows.length?rows:el('p',{class:'lab-sub'},'Collecting data. Hint experiments and check-ins run quietly as he plays.'),
+      el('p',{class:'lab-sub'},`Brain Lab sessions: ${L.sessions.length}${L.sessions.length?' · last '+L.sessions[L.sessions.length-1].day:''}`),go);}
+};
+// after a right Dojo answer: sometimes a quick "How did you get it?" before moving on
+Dojo.after=function(p,ms,f,lat,src,dj,sp,card){if(typeof Lab!=='undefined'&&Lab.wantStrat(sp,dj))Lab.askStrat(card,f,lat,src,dj).then(()=>this.advance(p));else setTimeout(()=>this.advance(p),ms);};
+// the parent report gets the Learning Lab panel and the Brain Lab button
+{const _r=showReport;showReport=function(){_r.apply(this,arguments);try{const m=document.querySelector('#overlay .modal.report');if(m){const pnl=Lab.panel(),g=m.querySelector('.statgrid'),btns=[...m.children].filter(x=>x.classList.contains('btns')).pop();if(g)g.after(pnl);else if(btns)btns.before(pnl);else m.append(pnl);}}catch(e){}};}
 
 /* =========================================================
    Explore: levels sized to how much hard work he has already done today, so he can explore more without burning out.
@@ -3402,7 +3598,7 @@ function reportPayload(){const L=Local.log;
   return {app:'number-knight',v:2,generated:new Date().toISOString(),hero:state.hero&&state.hero.name,coins:state.coins,streak:state.streak,totals:state.totals,
     skills:state.skills,methods:state.methods,facts:state.facts,prog:state.prog,packsDone:state.packsDone,
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
-    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
+    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,lab:state.lab||null,squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
     // full copy of his progress so a deleted or new install can be restored (the grown-up PIN stays off the backup)
     backup:Object.assign(JSON.parse(JSON.stringify(state)),{parentPin:undefined})};}
 // how much progress a state (or a report) holds; used so a fresh install never overwrites a richer backup
@@ -3519,7 +3715,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261010165347';
+const BUILD='20261010173136';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -5691,7 +5887,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Lab,showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
