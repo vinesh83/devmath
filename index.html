@@ -2503,7 +2503,8 @@ const Brawl={off:false,
       document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);G.unbind=()=>{document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku);};
       if(typeof window!=='undefined')Brawl.G=G;}})
       .then(async()=>{if(G.unbind)G.unbind();
-        if(G.phase==='win'&&G.done){if(typeof Inter!=='undefined')await Inter.play();Snd.fanfare();
+        if(G.phase==='win'&&G.done&&(boss||mech)&&typeof Cin3!=='undefined'&&await Cin3.play('victory',{mech,world:(typeof run!=='undefined'&&run&&run.spec&&run.spec.world)||null,sub:`+${G.coins} coins · Glitch defeated ${BS.wins} time${BS.wins===1?'':'s'}!`})){}
+        else if(G.phase==='win'&&G.done){if(typeof Inter!=='undefined')await Inter.play();Snd.fanfare();
           await Cine.play(2.2,(c,W,H,t)=>{const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1a0f2e');g.addColorStop(1,'#3a1630');c.fillStyle=g;c.fillRect(0,0,W,H);
             for(let i=0;i<40;i++){c.fillStyle=['#ffe066','#ff4d6d','#5ef2ff','#3fdc6b'][i%4];c.fillRect((i*97+t*60*(1+i%3))%W,(i*53+t*120*(1+i%2))%H,6,6);}
             const s=Math.max(4,Math.floor(H/40));if(mech)drawMech(c,W/2-12*s*0.62,H*0.5-6*s,s*0.62,mechCfg(),t,false,false);else drawHero(c,W/2-6*s,H*0.5,s,look,(t*4|0)%2?'runA':'stand',t);
@@ -2724,7 +2725,7 @@ const Blocks={
    ========================================================= */
 const Lesson={off:false,
   // recorded narration (audio/<lesson>-<step>.mp3) and each clip's length in seconds; the iPad voice is only a fallback
-  CLIPS:{"countup": [2.61, 3.2, 2.96, 2.91, 7.51, 9.16, 1.85], "borrow": [3.8, 6.01, 6.0, 5.9, 4.73, 7.04, 7.8, 8.39, 7.2, 6.3, 4.38]},audio:null,
+  CLIPS:{"countup": [2.77, 3.11, 2.45, 2.6, 7.08, 8.62, 2.45], "borrow": [3.67, 7.15, 6.14, 6.34, 5.12, 6.93, 9.49, 10.01, 7.94, 6.21, 4.71]},audio:null,
   au(){if(!this.audio){this.audio=new Audio();this.audio.preload='auto';}return this.audio;},
   // iPad only lets sound play after a tap: unlock the narration player on his first tap anywhere
   unlock(){const go=()=>{document.removeEventListener('pointerdown',go,true);try{const a=this.au();a.muted=true;a.src='audio/countup-0.mp3';const p=a.play();if(p&&p.then)p.then(()=>{a.pause();a.muted=false;}).catch(()=>{a.muted=false;});else a.muted=false;}catch(e){}};document.addEventListener('pointerdown',go,true);},
@@ -2789,44 +2790,44 @@ const Lesson={off:false,
       const hopX=(nl,pts,k)=>{const n=pts.length-1,q=k*n,i=Math.min(n-1,Math.floor(q)),f=q-i,xa=nl.X(pts[i]),xb=nl.X(pts[i+1]);return {x:xa+(xb-xa)*f,lift:Math.sin(f*Math.PI)*60,i,f};};
       const line=(c,W,H,lo,hi,expr)=>{L.T(c,expr,W/2,H*0.2,Math.round(Math.min(W*0.08,H*0.11)),'#ffe066');return L.numberLine(c,W,H,lo,hi);};
       return [
-        {t:3,say:'Here is a trick for subtracting. Count UP!',draw:(c,W,H,k)=>L.title(c,W,H,k,'Count UP to subtract','Count the jumps, not the numbers')},
+        {t:3,say:"Here's an easier way to subtract. Count up.",draw:(c,W,H,k)=>L.title(c,W,H,k,'Count UP to subtract','Count the jumps, not the numbers')},
         {t:4,say:'Seven minus four. Start at the smaller number, four.',draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,0,10,'7 − 4 = ?');c.fillStyle='#5ab0ff';c.beginPath();c.arc(nl.X(4),nl.y,12,0,6.28);c.fill();L.dogAt(c,o.dog,nl.X(4),nl.y-16,ds(W,H));}},
-        {t:4.5,say:'Hop up to seven. One. Two. Three.',draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,0,10,'7 − 4 = ?'),pts=[4,5,6,7];const P=hopX(nl,pts,Math.min(1,k*1.15));
+        {t:4.5,say:"Now hop up to seven. One, two, three.",draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,0,10,'7 − 4 = ?'),pts=[4,5,6,7];const P=hopX(nl,pts,Math.min(1,k*1.15));
           for(let j=0;j<3;j++)L.arc(c,nl.X(pts[j]),nl.X(pts[j+1]),nl.y,j<P.i?1:j===P.i?P.f:0,'#ffb627',String(j+1));
           c.fillStyle='#ff4d6d';c.beginPath();c.arc(nl.X(7),nl.y,12,0,6.28);c.fill();L.dogAt(c,o.dog,P.x,nl.y-16-P.lift,ds(W,H));}},
-        {t:3.5,say:'Three jumps! So seven minus four is three.',draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,0,10,'7 − 4 = 3');for(let j=0;j<3;j++)L.arc(c,nl.X(4+j),nl.X(5+j),nl.y,1,'#3fdc6b',String(j+1));L.dogAt(c,o.dog,nl.X(7),nl.y-16,ds(W,H));}},
-        {t:6,say:'Watch out! Do not count the number you start on. Seven, six, five, four is four numbers, but only three jumps.',cap:'Watch out! 7, 6, 5, 4 is FOUR numbers… but only THREE jumps.',
+        {t:3.5,say:"Three jumps, so seven minus four is three.",draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,0,10,'7 − 4 = 3');for(let j=0;j<3;j++)L.arc(c,nl.X(4+j),nl.X(5+j),nl.y,1,'#3fdc6b',String(j+1));L.dogAt(c,o.dog,nl.X(7),nl.y-16,ds(W,H));}},
+        {t:6,say:"Careful. Don't count the number you start on. Seven, six, five, four is four numbers, but it's only three jumps.",cap:'Watch out! 7, 6, 5, 4 is FOUR numbers… but only THREE jumps.',
           draw:(c,W,H,k)=>{const nl=line(c,W,H,0,10,'Don’t count where you start!');[7,6,5,4].forEach((v,j)=>{if(k>j*0.18){c.fillStyle=j===3?'#ff4d6d':'#ffe066';c.beginPath();c.arc(nl.X(v),nl.y-50,22,0,6.28);c.fill();L.T(c,String(j+1),nl.X(v),nl.y-50,24,'#1d1f33');}});
             if(k>0.8){c.strokeStyle='#ff4d6d';c.lineWidth=6;const x=nl.X(4);c.beginPath();c.moveTo(x-22,nl.y-72);c.lineTo(x+22,nl.y-28);c.moveTo(x+22,nl.y-72);c.lineTo(x-22,nl.y-28);c.stroke();}}},
-        {t:7,say:'Bigger one. Twelve minus nine. Start at nine. Hop to ten: that is one. Then ten to twelve: two more. One plus two is three.',cap:'12 − 9: start at 9. Hop to 10 (1). Then 10 to 12 (2 more). 1 + 2 = 3.',
+        {t:7,say:"A bigger one. Twelve minus nine. Start at nine. Nine to ten is one jump. Ten to twelve is two more. One plus two is three.",cap:'12 − 9: start at 9. Hop to 10 (1). Then 10 to 12 (2 more). 1 + 2 = 3.',
           draw:(c,W,H,k,t,o)=>{const nl=line(c,W,H,8,13,'12 − 9 = ?');const a=Math.min(1,k/0.35),b=Math.min(1,Math.max(0,(k-0.4)/0.35));
             L.arc(c,nl.X(9),nl.X(10),nl.y,a,'#5ef2ff','1');L.arc(c,nl.X(10),nl.X(12),nl.y,b,'#ffb627','2');
             const x=b>0?nl.X(10)+(nl.X(12)-nl.X(10))*b:nl.X(9)+(nl.X(10)-nl.X(9))*a,lift=b>0&&b<1?Math.sin(b*Math.PI)*80:a<1?Math.sin(a*Math.PI)*50:0;L.dogAt(c,o.dog,x,nl.y-16-lift,ds(W,H));
             if(k>0.85)L.T(c,'1 + 2 = 3',W/2,H*0.36,Math.round(Math.min(W*0.06,H*0.08)),'#3fdc6b');}},
-        {t:3.5,say:'Count the jumps, not the numbers!',draw:(c,W,H,k,t,o)=>{L.title(c,W,H,k,'Count the JUMPS!','Start at the small number. Hop up to the big one.');L.dogAt(c,o.dog,W/2,H*0.7-Math.abs(Math.sin(t*6))*30,ds(W,H)+1);}}];},
+        {t:3.5,say:"Remember: count the jumps, not the numbers.",draw:(c,W,H,k,t,o)=>{L.title(c,W,H,k,'Count the JUMPS!','Start at the small number. Hop up to the big one.');L.dogAt(c,o.dog,W/2,H*0.7-Math.abs(Math.sin(t*6))*30,ds(W,H)+1);}}];},
 
     borrow(){const L=Lesson;
       const rod=(c,x,y,s,k)=>{for(let i=0;i<10;i++){const tx=x+(k>0?(i%5)*s*1.15*k:0),ty=y+(k>0?Math.floor(i/5)*s*1.15*k:i*s*1.05)-(k>0?0:0);c.fillStyle='#5ab0ff';c.fillRect(tx,ty,s,s);}};
       return [
-        {t:3.5,say:'Let us look at three sneaky borrowing mistakes, and how to beat them.',draw:(c,W,H,k)=>L.title(c,W,H,k,'Borrowing','3 sneaky mistakes, and how to beat them')},
-        {t:5,say:'Fifty two minus twenty seven. Start with the ones. Two minus seven? Two is smaller than seven.',cap:'52 − 27. Start with the ones: 2 − 7? 2 is smaller than 7!',draw:(c,W,H,k)=>{L.stack(c,W,H,'52','27',{hi:0});}},
-        {t:6,say:'Mistake one: flipping it to seven minus two. You cannot flip! The top number always goes first.',cap:'Mistake 1: flipping it to 7 − 2. You can’t flip! The TOP number goes first.',
+        {t:3.5,say:"Here are three common borrowing mistakes, and how to fix each one.",draw:(c,W,H,k)=>L.title(c,W,H,k,'Borrowing','3 sneaky mistakes, and how to beat them')},
+        {t:5,say:"Fifty-two minus twenty-seven. Start with the ones. Two minus seven doesn't work, because two is smaller than seven.",cap:'52 − 27. Start with the ones: 2 − 7? 2 is smaller than 7!',draw:(c,W,H,k)=>{L.stack(c,W,H,'52','27',{hi:0});}},
+        {t:6,say:"Mistake one is flipping it to seven minus two. You can't flip it. The top number always goes first.",cap:'Mistake 1: flipping it to 7 − 2. You can’t flip! The TOP number goes first.',
           draw:(c,W,H,k)=>{const g=L.stack(c,W,H,'52','27',{hi:0,ans:k>0.35?'35':'',ansCol:'#ff4d6d',x:k>0.55});if(k>0.15)L.T(c,'7 − 2 = 5 ?',W*0.18,g.y2,Math.round(g.fs*0.5),'#ff9f43');L.T(c,'MISTAKE 1',W/2,H*0.1,Math.round(g.fs*0.5),'#ff4d6d');}},
-        {t:6.5,say:'Do it right. Borrow a ten. Five tens becomes four tens. Two ones becomes twelve ones.',cap:'The right way: borrow a ten. 5 tens → 4 tens. 2 ones → 12 ones.',
+        {t:6.5,say:"Here's the right way. Borrow a ten. Five tens becomes four tens, and two ones becomes twelve ones.",cap:'The right way: borrow a ten. 5 tens → 4 tens. 2 ones → 12 ones.',
           draw:(c,W,H,k)=>{const g=L.stack(c,W,H,'52','27',{hi:0,cross:k>0.25?{1:'4',0:k>0.6?'12':undefined}:null});
             const s=Math.max(8,Math.round(g.fs*0.22)),mv=Math.min(1,Math.max(0,(k-0.25)/0.4)),x=W*0.1+mv*W*0.05;rod(c,x,g.y1-s*3,s,mv>0.9?1:0);L.T(c,mv>0.9?'10 ones':'1 ten',x+s*3,g.y1-s*5,Math.round(s*1.6),'#5ab0ff');}},
-        {t:5.5,say:'Twelve minus seven is five. Four minus two is two. Twenty five!',cap:'12 − 7 = 5. 4 − 2 = 2. The answer is 25!',draw:(c,W,H,k)=>{L.stack(c,W,H,'52','27',{cross:{1:'4',0:'12'},ans:k>0.5?'25':k>0.2?'5':'',ok:k>0.75});}},
-        {t:6.5,say:'Mistake two: borrowing, but forgetting to make the tens one smaller. When you borrow, cross it out and write one less.',cap:'Mistake 2: borrowing but forgetting to make the tens ONE LESS. Cross it out, write one less!',
+        {t:5.5,say:"Twelve minus seven is five. Four minus two is two. The answer is twenty-five.",cap:'12 − 7 = 5. 4 − 2 = 2. The answer is 25!',draw:(c,W,H,k)=>{L.stack(c,W,H,'52','27',{cross:{1:'4',0:'12'},ans:k>0.5?'25':k>0.2?'5':'',ok:k>0.75});}},
+        {t:6.5,say:"Mistake two is borrowing, but forgetting to make the tens one smaller. When you borrow, cross it out and write one less.",cap:'Mistake 2: borrowing but forgetting to make the tens ONE LESS. Cross it out, write one less!',
           draw:(c,W,H,k)=>{const g=L.stack(c,W,H,'52','27',{cross:{0:'12'},hi:1,ans:k>0.3?'35':'',ansCol:'#ff4d6d',x:k>0.5});L.T(c,'MISTAKE 2',W/2,H*0.1,Math.round(g.fs*0.5),'#ff4d6d');if(k>0.6)L.T(c,'5 should be 4!',W*0.18,g.y1,Math.round(g.fs*0.45),'#ffb627');}},
-        {t:5.5,say:'Mistake three: borrowing across a zero. Three oh two minus one forty seven. The tens have zero, so you cannot borrow there.',cap:'Mistake 3: borrowing across a ZERO. 302 − 147: the tens have 0. Nothing to borrow there!',
+        {t:5.5,say:"Mistake three happens with a zero. Three hundred two minus one hundred forty-seven. The tens place has a zero, so there's nothing to borrow there.",cap:'Mistake 3: borrowing across a ZERO. 302 − 147: the tens have 0. Nothing to borrow there!',
           draw:(c,W,H,k)=>{const g=L.stack(c,W,H,'302','147',{hi:k<0.5?0:1});L.T(c,'MISTAKE 3',W/2,H*0.1,Math.round(g.fs*0.5),'#ff4d6d');}},
-        {t:9,say:'Go next door to the hundreds. Three becomes two. The zero becomes ten. Now borrow from that ten. It becomes nine, and the two becomes twelve.',cap:'Go next door: 3 → 2, and the 0 → 10. Now borrow from that ten: 10 → 9, and 2 → 12.',
+        {t:9,say:"So go next door to the hundreds. Three becomes two, and the zero becomes ten. Then borrow from that ten. It becomes nine, and the two becomes twelve.",cap:'Go next door: 3 → 2, and the 0 → 10. Now borrow from that ten: 10 → 9, and 2 → 12.',
           draw:(c,W,H,k)=>{const cr={};if(k>0.15)cr[2]='2';if(k>0.35)cr[1]=k>0.6?'9':'10';if(k>0.7)cr[0]='12';L.stack(c,W,H,'302','147',{cross:cr,hi:k<0.35?2:k<0.6?1:0});}},
-        {t:6.5,say:'Twelve minus seven is five. Nine minus four is five. Two minus one is one. One hundred fifty five.',cap:'12 − 7 = 5. 9 − 4 = 5. 2 − 1 = 1. The answer is 155.',
+        {t:6.5,say:"Twelve minus seven is five. Nine minus four is five. Two minus one is one. The answer is one hundred fifty-five.",cap:'12 − 7 = 5. 9 − 4 = 5. 2 − 1 = 1. The answer is 155.',
           draw:(c,W,H,k)=>{L.stack(c,W,H,'302','147',{cross:{2:'2',1:'9',0:'12'},ans:k>0.6?'155':k>0.35?'55':k>0.12?'5':'',ok:k>0.8});}},
-        {t:6.5,say:'Always check by adding back. One fifty five plus one forty seven is three oh two. It matches!',cap:'Check by adding back: 155 + 147 = 302. It matches! ✓',
+        {t:6.5,say:"Check it by adding back. One fifty-five plus one forty-seven is three hundred two. It matches.",cap:'Check by adding back: 155 + 147 = 302. It matches! ✓',
           draw:(c,W,H,k)=>{L.stack(c,W,H,'155','147',{op:'+',ans:k>0.45?'302':'',ansCol:'#5ef2ff',ok:k>0.65});L.T(c,'CHECK IT',W/2,H*0.1,34,'#5ef2ff');}},
-        {t:5,say:'Top number first. Cross it out and write one less. Zeros pass it along.',draw:(c,W,H,k)=>{const fs=Math.round(Math.min(W*0.045,H*0.065));
+        {t:5,say:"Top number first. Cross out and write one less. And zeros pass it along.",draw:(c,W,H,k)=>{const fs=Math.round(Math.min(W*0.045,H*0.065));
           ['1. Top number goes first','2. Cross out, write one less','3. Zeros pass it along','4. Check by adding back'].forEach((s,i)=>{c.globalAlpha=Math.min(1,Math.max(0,(k-i*0.15)*4));L.T(c,s,W/2,H*0.22+i*fs*1.6,fs,i===3?'#5ef2ff':'#ffe066');});c.globalAlpha=1;}}];}
   }
 };
@@ -3280,7 +3281,7 @@ const Intro={off:false,
     o.globalCompositeOperation='source-atop';o.fillStyle='#0b0b14';o.fillRect(0,0,oc.width,oc.height);c.drawImage(oc,x-2,y-2);
     c.fillStyle='#ff2d4d';c.fillRect(x+s*3,y+s*4,s*1.6,s*1.2);c.fillRect(x+s*7.4,y+s*4,s*1.6,s*1.2);},
   // first visit to a world: about 8 seconds, narrated
-  world(w){const th=this.THEME[w.id]||this.THEME.canyon,key='world-'+w.id,D=Math.max(8,(this.DUR[key]||7)+1.2);this.voice(key);const S={};
+  world(w){const th=this.THEME[w.id]||this.THEME.canyon,key='world-'+w.id,D=Math.max(8,(this.DUR[key]||7)+1.2);const S={};
     return Cine.play(D,(c,W,H,t)=>{const pan=t*W*0.12,gy=this.scene(c,W,H,th,t,pan),s=Math.max(3,Math.round(Math.min(W,H)/62));
       const hx=Math.min(W*0.3,-W*0.2+t*W*0.22);this.heroes(c,W,gy,hx,t,hx<W*0.3,s);
       // the boss looms on the right
@@ -3293,7 +3294,7 @@ const Intro={off:false,
       const k=Math.min(1,t/0.5);c.globalAlpha=k;Cine.title(c,W,H,t,w.name.toUpperCase(),w.color,w.sub,H*0.2);c.globalAlpha=1;
       if(t>D-0.3){c.globalAlpha=(t-(D-0.3))/0.3;c.fillStyle='#000';c.fillRect(0,0,W,H);c.globalAlpha=1;}},{skip:true}).then(()=>this.hush());},
   // every level: about 3 seconds
-  level(w,li,n){const th=this.THEME[w.id]||this.THEME.canyon,key='level-'+(li+1),D=Math.max(3,(this.DUR[key]||2)+0.9),ent=pick(['run','parachute','portal','zip']);this.voice(key);
+  level(w,li,n){const th=this.THEME[w.id]||this.THEME.canyon,key='level-'+(li+1),D=Math.max(3,(this.DUR[key]||2)+0.9),ent=pick(['run','parachute','portal','zip']);
     const sub=(n?`${n} problem${n===1?'':'s'}`:'')+(li===3?' · find the bugs!':'')+(typeof FactMix!=='undefined'&&FactMix.on()?' + Dojo Flash':'');
     return Cine.play(D,(c,W,H,t)=>{const gy=this.scene(c,W,H,th,t,t*W*0.05),s=Math.max(3,Math.round(Math.min(W,H)/62));let x=W*0.32,y=0;
       if(ent==='run')x=Math.min(W*0.32,-W*0.1+t*W*0.5);
@@ -3331,17 +3332,20 @@ const Cin3={off:false,loading:null,mus:null,
   sfx(n){try{({roar:()=>{Snd.tone(70,1.1,'sawtooth',0.09,0,45);Snd.noise(0.9,0.12,0,'lowpass',500);},thunder:()=>Snd.boom(),slam:()=>{Snd.slam();Snd.boom();},charge:()=>Snd.charge(0.8),whoosh:()=>Snd.whoosh()})[n]();}catch(e){}},
   async play(kind,o){if(this.off||(typeof Brawl!=='undefined'&&Brawl.off))return false;if(!(await this.load())||!window.Cine3D||!Cine3D.ok())return false;
     const held=typeof Pause!=='undefined'&&Pause.hold&&Pause.hold(),mus=this.music(),song=typeof Music!=='undefined'?Music.song:null;
-    await this.ready(mus,'audio/cine-'+(kind==='mech'?'mech':'world')+'.mp3');if(typeof Music!=='undefined')Music.stop();
+    await this.ready(mus,'audio/cine-'+kind+'.mp3');if(typeof Music!=='undefined')Music.stop();
     const start=o.onStart;o.onStart=()=>{try{if(!state.mute){mus.currentTime=0;mus.volume=1;const p=mus.play();if(p&&p.catch)p.catch(()=>{});}}catch(e){}if(start)start();};
     o.onEnd=()=>{try{mus.pause();}catch(e){}};
     try{await Cine3D.play(kind,Object.assign({sprites:this.sprites(),sfx:n=>this.sfx(n)},o));}catch(e){return false;}finally{try{mus.pause();}catch(e){}if(held)Pause.release();}return true;}
 };
 // world intros become 3D movies (the 2D one is the fallback)
-{const _w=Intro.world.bind(Intro);Intro.world=function(w){return Cin3.play('world',{world:w.id,title:w.name.toUpperCase(),sub:w.sub,boss:w.boss,color:w.color,onStart:()=>Intro.voice('world-'+w.id)}).then(ok=>ok?null:_w(w)).then(()=>Intro.hush());};}
+{const _w=Intro.world.bind(Intro);Intro.world=function(w){return Cin3.play('world',{world:w.id,title:w.name.toUpperCase(),sub:w.sub,boss:w.boss,color:w.color,onStart:()=>{}}).then(ok=>ok?null:_w(w)).then(()=>Intro.hush());};}
 // Mech Battle opens with Glitch's mech crashing down
 {const _p=Arcade.play.bind(Arcade);Arcade.play=function(o){o=o||{};const k=o.kind;if(k==='mech'&&!(typeof Brawl!=='undefined'&&Brawl.off))return Cin3.play('mech',{}).then(()=>_p(o));return _p(o);};}
 
 setTimeout(()=>{try{Cin3.music();}catch(e){}},1200);
+
+// earning a belt: the 3D belt ceremony plays before the Dojo's belt card
+{const _c=Dojo.ceremony.bind(Dojo);Dojo.ceremony=function(did,i){const B=BELTS[i];return Cin3.play('belt',{beltColor:B[1],title:B[0].toUpperCase()+' BELT!',sub:DOJOS[did].name}).then(()=>_c(did,i));};}
 
 /* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
@@ -3468,7 +3472,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261010035115';
+const BUILD='20261010044450';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
