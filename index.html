@@ -3143,7 +3143,7 @@ const Dojo={
       if(src==='ink'&&!p.inkDoubt&&!p.inkAsked&&sp.kind!=='sprint'&&typeof InkCheck!=='undefined'&&InkCheck.unsure(v)&&InkCheck.left(dj)){p.inkAsked=true;asking=true;clearTimeout(tm);
         InkCheck.ask(v,dj).then(keep=>{asking=false;if(run!==R||done)return;if(keep){p.inkKept=true;go();return;}
           p.lat0=lat;p.inkClaim=v;Pad.set(fld,'');fld.src=null;if(typeof InkBox!=='undefined')InkBox.clear();Pad.focus(fld);say('Write it again, nice and clear. Or tap the keys.','info');});return;}
-      if(p.inkClaim!=null&&typeof InkCheck!=='undefined')InkCheck.after(p.inkClaim,v,ok);
+      if(p.inkClaim!=null&&!p.inkAfter&&typeof InkCheck!=='undefined'){p.inkAfter=true;InkCheck.after(p.inkClaim,v,ok);}
       // second try after a picture hint: the first try already counted, so this one only decides what he sees
       if(p.retry){done=true;clearTimeout(tm);if(typeof Lab!=='undefined')Lab.noteRetry(f,p.hintArm,ok);
         Data.logAttempt({ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),skill:'dojo:'+sp.dojo,kind:'dojo',mode:'retry',diff:f.belt,variant:src,q:factExpr(f,flip),correct:f.ans,firstTry:false,solved:ok,ms:Date.now()-t0,lat,errors:ok?[]:[{a:v,tags:[]}],fast:false,id:uid()});
@@ -3715,7 +3715,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261010173136';
+const BUILD='20261010190042';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
