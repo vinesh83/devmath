@@ -1920,6 +1920,7 @@ const Talk={el:null,popEl:null,open:false,lastPop:0,runPops:0,probPop:null,check
   onMap(){setTimeout(()=>{if($('#scr-map').hidden||this.open||!$('#overlay').hidden||!$('#cine').hidden||!state.hero)return;const N=this.st();
       if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}
       if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}
+      if(Dojo.timesFirst())return;
       if(cfg.message&&N.msg!==cfg.message){N.msg=cfg.message;saveState();this.say([['knight','A message from HQ, {name}!'],['knight',cfg.message]]);return;}
       const d=dayStr();if(N.day!==d){N.day=d;saveState();const f=questFocus()[0],who=SKILL_NPC[f]||'hoot';
         if(SKILL_TIPS[f])this.pop(this.met(who)?who:'knight',pick(SKILL_TIPS[f]),{anchor:document.querySelector('.ow-hud'),below:true});}},500);},
@@ -3029,6 +3030,10 @@ const Dojo={
   cur(did){for(let i=0;i<8;i++)if(!this.belt(did,i).earned)return i;return 8;},
   black(did){return this.cur(did)>=8;},
   doneToday(did){return this.st().today[did].rounds>0;},
+  // once a day, the first map visit drops him straight into a Times round (a grown-up unlock skips it)
+  timesFirst(){const d=this.st(),day=dayStr();if(d.unlockDay===day||d.tmAuto===day||this.doneToday('tm')||this.black('tm'))return false;
+    Talk.say([['sensei',pick(['Times first today, {name}! One round, then the rest.','Warm-up time: one Times round. You\u2019ve got this.'])]])
+      .then(()=>{if($('#scr-map').hidden||!$('#overlay').hidden)return;d.tmAuto=day;saveState();this.start('tm','round');});return true;},
   KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
@@ -3715,7 +3720,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261010190042';
+const BUILD='20261011003556';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
