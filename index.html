@@ -506,7 +506,7 @@ table.dt th{background:var(--paper-2)}
 .dj-watch b{color:#ffe066}
 /* drill card */
 #scr-level.dojo .scratch-wrap,#scr-level.dojo .sc-grip{display:none}
-#scr-level.dojo .card{flex:1 1 auto;display:flex;flex-direction:column;gap:10px}
+#scr-level.dojo .card{flex:1 1 auto!important;max-height:none!important;display:flex;flex-direction:column;gap:10px}
 .dj-top{display:flex;gap:14px;align-items:center;font-weight:700;color:#5d6385}
 .dj-tag{background:var(--bc);color:#1d1f33;padding:3px 10px;border-radius:8px;font-size:13px;letter-spacing:1px;box-shadow:inset 0 0 0 2px #0002}
 .dj-bolt{margin-left:auto;color:#b8860b}
@@ -1920,7 +1920,6 @@ const Talk={el:null,popEl:null,open:false,lastPop:0,runPops:0,probPop:null,check
   onMap(){setTimeout(()=>{if($('#scr-map').hidden||this.open||!$('#overlay').hidden||!$('#cine').hidden||!state.hero)return;const N=this.st();
       if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}
       if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}
-      if(Dojo.timesFirst())return;
       if(cfg.message&&N.msg!==cfg.message){N.msg=cfg.message;saveState();this.say([['knight','A message from HQ, {name}!'],['knight',cfg.message]]);return;}
       const d=dayStr();if(N.day!==d){N.day=d;saveState();const f=questFocus()[0],who=SKILL_NPC[f]||'hoot';
         if(SKILL_TIPS[f])this.pop(this.met(who)?who:'knight',pick(SKILL_TIPS[f]),{anchor:document.querySelector('.ow-hud'),below:true});}},500);},
@@ -3030,10 +3029,6 @@ const Dojo={
   cur(did){for(let i=0;i<8;i++)if(!this.belt(did,i).earned)return i;return 8;},
   black(did){return this.cur(did)>=8;},
   doneToday(did){return this.st().today[did].rounds>0;},
-  // once a day, the first map visit drops him straight into a Times round (a grown-up unlock skips it)
-  timesFirst(){const d=this.st(),day=dayStr();if(d.unlockDay===day||d.tmAuto===day||this.doneToday('tm')||this.black('tm'))return false;
-    Talk.say([['sensei',pick(['Times first today, {name}! One round, then the rest.','Warm-up time: one Times round. You\u2019ve got this.'])]])
-      .then(()=>{if($('#scr-map').hidden||!$('#overlay').hidden)return;d.tmAuto=day;saveState();this.start('tm','round');});return true;},
   KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
@@ -3125,7 +3120,7 @@ const Dojo={
   advance(p){if(run&&run.queue[run.idx]===p){if(p.t0&&run.spec.mode==='dojo'){const tt=this.st().today[run.spec.dojo];tt.secs=(tt.secs||0)+Math.min(45,(Date.now()-p.t0)/1000);p.t0=0;}run.idx++;this.next();}},
   next(){const sp=run.spec,dj=run.dj;if(run.idx>=run.queue.length||(sp.kind==='sprint'&&Date.now()>=dj.end))return this.finish();
     const p=run.queue[run.idx],f=p.f;if(sp.kind!=='sprint')updateTop();
-    Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card dj-card';requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
+    Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card dj-card';card.style.flex='';card.style.maxHeight='';requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
     const flip=Math.random()<0.5,fld=Pad.make({allowDot:false,max:4,ph:'?'}),len=String(f.ans).length,teach=p.k==='teach';
     const N=sp.kind==='sprint'?null:run.queue.length;
     card.append(el('div',{class:'dj-top'},el('span',{class:'dj-tag',style:'--bc:'+BELTS[sp.belt][1]},teach?'NEW FACT':sp.kind==='sprint'?'SPRINT':'TRAINING'),
@@ -3720,7 +3715,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261011003556';
+const BUILD='20261011194500';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
