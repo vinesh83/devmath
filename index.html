@@ -3160,7 +3160,7 @@ const Dojo={
       run.results[run.idx]={skill:'dojo',firstTry:ok,solved:ok,fast,ms:lat};
       // brain getting tired? (3 misses in the last 6, or answers slowing to more than double his early pace) End the round early and recharge.
       if(sp.kind!=='sprint'&&!dj.tired&&run.idx>=5){const rs=run.results.filter(Boolean),miss=rs.slice(-6).filter(r=>!r.firstTry).length,L=rs.map(r=>r.ms).filter(x=>x&&x<20000);
-        if(miss>=3||(L.length>=12&&med(L.slice(-5))>Math.max(6000,med(L.slice(0,8))*2.2))){dj.tired=true;run.queue.length=run.idx+1;Battle.setTotal(run.queue.length);}}
+        if(miss>=3||(miss>=2&&L.length>=12&&med(L.slice(-5))>Math.max(6000,med(L.slice(0,8))*2.2))){dj.tired=true;run.queue.length=run.idx+1;Battle.setTotal(run.queue.length);}}
       // learn his handwriting from answers he got right (the reading matched what he meant)
       if(ok&&src==='ink'&&InkBox.lastR&&InkBox.lastR.imgs&&InkBox.lastR.text===String(v))InkBox.lastR.imgs.forEach(x=>InkBox.mine.add(x.ch,x.img));
       if(ok){Pad.right(fld);Pad.lock(fld);dj.ok++;if(fast){dj.fast++;dj.bolt++;this.st().bolts++;dj.boltBest=Math.max(dj.boltBest,dj.bolt);}else dj.bolt=0;
@@ -3244,8 +3244,9 @@ const Dojo={
     else m.append(el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:after},'Back to the Dojo')));
     (async()=>{if(sp.kind!=='sprint'&&typeof Lab!=='undefined')await Lab.maybePref(dj);const ak=sp.kind!=='sprint'?await Arcade.pick(false):null;await Battle.ko({toBrawl:ak==='battle'||ak==='mech'});if(ak)await Arcade.play({power:pw,kind:ak});for(const i of newBelts.slice(0,1)){await this.ceremony(did,i);await openChest('great');}
       if(dj.tired){const T=d.tiredDays=d.tiredDays||{};T[dayStr()]=(T[dayStr()]||0)+1;const full=T[dayStr()]>=2;if(full)d.unlockDay=dayStr();saveState();
-        await Talk.say([['sensei',full?'Two tough rounds means your brain is full for today, {name}. Training counts as done. Go have fun!':'Your brain did a LOT of work, {name}. Even black belts rest. Let’s recharge.']]);
-        await ScreenTime.brk({secs:full?60:120,tired:true,title:'Recharge time! 🔋',msg:'Breaks help your brain lock in what you learned.'});}
+        if(full)await Talk.say([['sensei','Two tough rounds means your brain is full for today, {name}. Training counts as done. Go have fun!']]);
+        if(ScreenTime.gapOk()){if(!full)await Talk.say([['sensei','Your brain did a LOT of work, {name}. Even black belts rest. Let’s recharge.']]);
+          await ScreenTime.brk({secs:60,tired:true,title:'Recharge time! 🔋',msg:'Breaks help your brain lock in what you learned.'});}}
       else if(ScreenTime.breakDue())await ScreenTime.brk({secs:60});if(!newBelts.length)(diamond||beat)?Snd.reveal('epic'):Snd.fanfare();overlay(m);})();},
   mood(){const d=this.st();if(d.mood[dayStr()])return;const pickM=k=>{d.mood[dayStr()]=k;SESSION.dojoMood=k;saveState();Data.saveSession();overlay(null);Snd.tap();};
     overlay(el('div',{class:'modal'},el('h2',null,'How did training feel today?'),el('p',null,'Just for your coach. There’s no wrong answer.'),
@@ -3715,7 +3716,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261011194500';
+const BUILD='20261013224641';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -3879,8 +3880,10 @@ const ScreenTime={warned:null,
       el('p',null,`You played ${this.fmt(D.total)} today, with ${this.fmt(D.learn)} of training. Great work, ${(state.hero&&state.hero.name)||'hero'}!`),
       el('p',null,'Glitch will be waiting tomorrow. Go rest those hero brains.'),
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>showReport())},'Grown-up settings'),el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{const {s,d}=this.st();s.extra=s.extra||{};s.extra[d]=(s.extra[d]||0)+15;saveState();this.paint();})},'Grown-up: +15 minutes'))));},
-  // a movement break is due after 8 minutes of training
-  breakDue(){const {D}=this.st();return (D.since||0)>=((typeof cfg!=='undefined'&&cfg&&cfg.breakEvery)||8)*60;},
+  // a movement break is due after 15 minutes of training
+  breakDue(){const {D}=this.st();return (D.since||0)>=((typeof cfg!=='undefined'&&cfg&&cfg.breakEvery)||15)*60;},
+  // a tired or tough-one break waits until 8 minutes of training have passed since the last break
+  gapOk(){const {D}=this.st();return (D.since||0)>=480;},
   // Recharge: a short break that stops every clock. The button unlocks when the countdown ends.
   brk(o){o=o||{};const secs=o.secs||60,{D}=this.st();D.breaks=(D.breaks||0)+1;D.since=0;if(o.tired)D.tired=(D.tired||0)+1;saveState();
     this.onBreak=true;const held=typeof Pause!=='undefined'&&Pause.hold();
@@ -5452,7 +5455,7 @@ function chooseVariant(skill){const vs=VARIANTS[skill];if(!vs)return null;const 
 
 let ATT=null;
 function nextProblem(){if(run.idx>=run.queue.length)return finishRun();
-  if(typeof ScreenTime!=='undefined'&&run.spec.mode!=='dojo'&&run.breakIdx!==run.idx&&run.idx>0){const rs=run.results.filter(Boolean),last=run.results[run.idx-1],rev=rs.slice(-3).filter(r=>!r.solved).length,tough=!!last&&(last.ms>180000||rev>=2);
+  if(typeof ScreenTime!=='undefined'&&run.spec.mode!=='dojo'&&run.breakIdx!==run.idx&&run.idx>0){const rs=run.results.filter(Boolean),last=run.results[run.idx-1],rev=rs.slice(-3).filter(r=>!r.solved).length,tough=!!last&&rev>=2&&ScreenTime.gapOk();
     if(tough||ScreenTime.breakDue()){run.breakIdx=run.idx;const R0=run;ScreenTime.brk(tough?{secs:90,tired:true,title:'Tough one! Recharge time 🔋',msg:'That was hard work. A quick break, then the next one.'}:{secs:60}).then(()=>{if(run===R0&&!$('#scr-level').hidden)nextProblem();});return;}}
   if(typeof Inter!=='undefined'&&run.spec.mode!=='dojo'&&run.idx>0&&run.interIdx!==run.idx&&Inter.every()>0){const lr=run.results[run.idx-1];if(lr&&lr.solved){run.interIdx=run.idx;const R1=run;Inter.play().then(()=>{if(run===R1&&!$('#scr-level').hidden)nextProblem();});return;}}const p=run.queue[run.idx];updateTop();
   Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card';card.scrollTop=0;requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
@@ -5887,7 +5890,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Lab,showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Lab,nextProblem:()=>nextProblem(),showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
