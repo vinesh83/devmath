@@ -1,0 +1,20 @@
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+ const pg=await b.newPage({viewport:{width:1180,height:820},hasTouch:true});const errs=[];pg.on('pageerror',e=>errs.push(e.message));const W=ms=>pg.waitForTimeout(ms);const ev=(f,a)=>pg.evaluate(f,a);
+ await pg.goto('http://localhost:8765/');await W(400);await pg.fill('#ob-name','Dev');await pg.click('text=Start the adventure');await W(1500);
+ await ev(()=>{const N=window.__nk;Object.keys(N.NPCS).forEach(k=>N.Talk.st().met[k]=1);document.querySelector('#talk').hidden=true;N.Talk.open=false;N.Talk.chain=Promise.resolve();N.Dojo.st().strictAnnounced='x';N.Brawl.off=true;N.state.cineEvery=0;document.querySelectorAll('#overlay').forEach(o=>o.hidden=true);setInterval(()=>{N.Pause.last=Date.now();},500);});
+ await ev(()=>{const N=window.__nk;N.Dojo.start('pm','round');N.run.queue.forEach(q=>{if(q.f)q.f=Object.assign({},q.f,{ans:10});});});await W(1500);await ev(()=>{const N=window.__nk;N.Pad.key('1');N.Pad.key('0');});await W(2500);
+ const line=async pts=>{await pg.mouse.move(pts[0][0],pts[0][1]);await pg.mouse.down();for(const p of pts.slice(1))await pg.mouse.move(p[0],p[1],{steps:3});await pg.mouse.up();};
+ const ell=(cx,cy,rx,ry)=>Array.from({length:25},(_,k)=>{const a=-Math.PI/2+k/24*2*Math.PI;return [cx+Math.cos(a)*rx,cy+Math.sin(a)*ry];});
+ const box=()=>ev(()=>{const c=document.querySelector('.dj-ink canvas').getBoundingClientRect();return {x:c.left,y:c.top};});
+ const done=()=>ev(()=>{const N=window.__nk;return N.run.results.filter(Boolean).length;});
+ const timeIt=async(label,draw)=>{const R=await box();const n0=await done();
+   await pg.screenshot({path:'sp/t36-'+label.slice(0,4)+'.png'});await draw(R);console.log('dbg',await ev(()=>{const N=window.__nk,I=N.InkBox.active;return {strokes:I.strokes.length,target:!!I.target,locked:!!(I.target&&I.target.locked),same:N.Pad.active===I.target,val:N.Pad.active&&N.Pad.active.val,results:N.run.results.filter(Boolean).length,idx:N.run.idx};}));const t0=Date.now();let t=null;for(let i=0;i<60;i++){if(await done()>n0||await ev(()=>!!document.querySelector('.ink-check'))){t=Date.now()-t0;break;}await W(50);}
+   console.log(label,'kind',await ev(()=>window.__nk.run.queue[window.__nk.run.idx].k),'->',t,'ms','read',await ev(()=>document.querySelector('.dj-ink .ink-read')&&document.querySelector('.dj-ink .ink-read').textContent),'modal',await ev(()=>!!document.querySelector('.ink-check')));
+   await ev(()=>{const b=[...document.querySelectorAll('.ink-check button')].find(x=>/Yes/.test(x.textContent));if(b)b.click();});await W(600);
+   await ev(()=>{const b=[...document.querySelectorAll('#actions button')].find(x=>/Skip/.test(x.textContent));if(b)b.click();});await W(1200);};
+ await ev(()=>{const N=window.__nk;N.Pad.key('1');N.Pad.key('0');});await W(2000);
+ await timeIt('10 written quickly',async R=>{await line([[R.x+150,R.y+120],[R.x+152,R.y+300]]);await line(ell(R.x+230,R.y+210,35,85));});
+ await timeIt('10 with 0.7s pause between digits',async R=>{await line([[R.x+150,R.y+120],[R.x+152,R.y+300]]);await W(700);await line(ell(R.x+230,R.y+210,35,85));});
+ await timeIt('just "1" (short answer)',async R=>{await line([[R.x+150,R.y+120],[R.x+152,R.y+300]]);});
+ console.log('errors',errs);await b.close();})();

@@ -1,0 +1,8 @@
+const { chromium } = require('/opt/node-tools/node_modules/playwright');const fs=require('fs');
+(async()=>{const [kind,world]=[process.argv[2],process.argv[3]],dir=`frames/c3-${kind}-${world}`;fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});
+ const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+ const pg=await b.newPage({viewport:{width:1280,height:720}});await pg.goto('http://localhost:8765/');await pg.waitForTimeout(400);await pg.fill('#ob-name','Dev');await pg.click('text=Start the adventure');await pg.waitForTimeout(1000);
+ const D=await pg.evaluate(async([kind,world])=>{const N=window.__nk;N.state.hero.pet='golden';await N.Cin3.load();const w=N.WORLDS.find(x=>x.id===world)||N.WORLDS[0];window.__sfx=[];window.__t=0;
+   const ex=kind==='belt'?{title:'YELLOW BELT!',sub:'Plus-Minus Dojo',beltColor:'#ffd23f'}:kind==='victory'?{title:'VICTORY!',sub:'+45 coins · Glitch defeated 15 times!'}:{title:w.name.toUpperCase(),sub:w.sub};Cine3D.play(kind,Object.assign({manual:true,sprites:N.Cin3.sprites(),world:w.id,boss:w.boss,color:w.color,sfx:n=>window.__sfx.push([n,window.__t])},ex));return {mech:31,world:30,victory:16,belt:15}[kind];},[kind,world]);
+ const FPS=30,n=Math.ceil(D*FPS);for(let i=0;i<n;i++){const d=await pg.evaluate(([t,dt])=>{window.__t=t;Cine3D._step(t,dt);return Cine3D._frame(0.9);},[(i+1)/FPS,1/FPS]);fs.writeFileSync(`${dir}/f${String(i).padStart(5,'0')}.jpg`,Buffer.from(d,'base64'));}
+ const sfx=await pg.evaluate(()=>window.__sfx);fs.writeFileSync(`${dir}/sfx.json`,JSON.stringify(sfx));console.log(kind,world,'frames',n,'sfx',JSON.stringify(sfx));await b.close();})();

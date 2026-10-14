@@ -1,0 +1,15 @@
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+ const pg=await b.newPage({viewport:{width:1180,height:820},hasTouch:true});const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+ await pg.goto('http://localhost:8765/');await pg.waitForTimeout(400);await pg.fill('#ob-name','Dev');await pg.click('text=Start the adventure');await pg.waitForTimeout(1200);
+ const r=await pg.evaluate(()=>{const I=window.__nk.InkBox,pr=(top,p,alt,pa)=>{const a=Array(10).fill((1-p-pa)/8);a[top]=p;a[alt]=pa;return a;};
+   const img=new Float32Array(784);const mk=(chs)=>({items:chs.map(([ch,p,alt,pa])=>({ch,p,pr:pr(+ch,p,alt,pa),img})),text:chs.map(x=>x[0]).join('')});
+   const n0=I.mine&&I.mine.n?I.mine.n():null;const out={};
+   I.lastR=mk([['1',0.5,4,0.35],['6',0.55,0,0.3]]);out.unsure_16_for_40=I.doubt(40);
+   I.lastR=mk([['1',0.95,4,0.03],['6',0.95,0,0.03]]);out.sure_16_for_40=I.doubt(40);
+   I.lastR=mk([['1',0.5,4,0.35]]);out.len_mismatch=I.doubt(40);
+   I.lastR=mk([['1',0.5,7,0.35],['6',0.55,8,0.3]]);out.alt_wrong=I.doubt(40);
+   I.lastR=mk([['4',0.97,1,0.01],['6',0.6,0,0.3]]);out.one_digit_unsure=I.doubt(40);
+   I.lastR=mk([['4',0.97,1,0.01],['0',0.97,6,0.01]]);out.already_right=I.doubt(40);
+   out.doubts=window.__nk.state.inkStats&&window.__nk.state.inkStats.doubts;return out;});
+ console.log(JSON.stringify(r),errs);await b.close();})();

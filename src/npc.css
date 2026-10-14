@@ -1,0 +1,39 @@
+/* ---------- allies: RPG dialogue */
+#talk{position:absolute;inset:0;z-index:30;background:linear-gradient(#0b0d1f00 30%,#0b0d1fcc);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  padding:16px 16px max(16px,env(safe-area-inset-bottom));cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+#talk[hidden]{display:none}
+.talk-box{--nc:#5ef2ff;position:relative;width:min(760px,100%);display:flex;gap:16px;align-items:flex-start;background:#14183a;border:4px solid var(--nc);border-radius:18px;
+  padding:16px 18px 18px;box-shadow:0 0 0 4px #0b0d1f,0 10px 0 #0008,0 0 30px color-mix(in srgb,var(--nc) 35%,transparent);animation:talkUp .28s cubic-bezier(.2,1.4,.5,1)}
+.talk-pt{flex:none;width:108px;height:108px;border-radius:12px;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--nc) 30%,#1d2250),#0e1130);border:3px solid var(--nc);image-rendering:pixelated}
+.talk-body{flex:1;min-width:0}
+.talk-name{font-family:var(--f-display);font-size:24px;color:var(--nc);line-height:1.1;margin-bottom:6px}
+.talk-name small{display:block;font-family:var(--f-body);font-size:13px;color:#aab1d6;letter-spacing:.3px}
+.talk-text{font-size:21px;line-height:1.4;color:#fff;min-height:3.6em;overflow-wrap:anywhere}
+.talk-more{position:absolute;right:16px;bottom:8px;color:var(--nc);font-size:16px;animation:talkBob .7s steps(2) infinite}
+.talk-more[hidden]{display:none}
+.talk-skip{position:absolute;top:-46px;right:0;background:#0b0d1fcc;color:#cfd5ff;border:2px solid #3a4180;border-radius:12px;padding:8px 14px;font:600 15px var(--f-body);cursor:pointer}
+.talk-new{font-family:var(--f-display);font-size:26px;color:#ffe066;text-shadow:0 3px 0 #b8860b,0 0 18px #ffe06699;margin-bottom:12px;letter-spacing:1px;animation:allyNew .9s cubic-bezier(.2,1.6,.4,1)}
+.talk-new[hidden]{display:none}
+@keyframes talkUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes talkBob{50%{transform:translateY(4px)}}
+@keyframes allyNew{0%{transform:scale(.2) rotate(-8deg);opacity:0}60%{transform:scale(1.2) rotate(3deg);opacity:1}100%{transform:none}}
+/* quick advice bubble */
+.tpop{--nc:#5ef2ff;position:absolute;z-index:15;display:flex;gap:10px;align-items:center;background:#14183af2;border:3px solid var(--nc);border-radius:14px;padding:6px 12px 6px 6px;
+  box-shadow:0 6px 0 #0008;cursor:pointer;min-width:min(300px,calc(100% - 16px))}
+.tpop[hidden]{display:none}
+.tpop.in{animation:popIn .32s cubic-bezier(.2,1.5,.5,1)}
+.tpop canvas{flex:none;width:64px;height:64px;border-radius:10px;background:#0e1130;image-rendering:pixelated}
+.tpop b{display:block;font-family:var(--f-display);color:var(--nc);font-size:16px;line-height:1.1}
+.tpop span{display:block;font-size:16px;line-height:1.3;color:#fff}
+@keyframes popIn{from{transform:translateX(-30px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+/* allies book */
+.allies{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ally{--nc:#5ef2ff;display:grid;justify-items:center;gap:4px;background:#14183a;border:3px solid var(--nc);border-radius:14px;padding:10px 8px;color:#fff;cursor:pointer;font:inherit}
+.ally canvas{width:72px;height:72px;image-rendering:pixelated}
+.ally b{font-family:var(--f-display);font-size:17px;color:var(--nc)}
+.ally span{font-size:12px;color:#aab1d6;text-align:center}
+.ally.locked{border-color:#2b2f55;cursor:default}
+.ally.locked b{color:#5d6385}
+@media (max-width:600px){.talk-pt{width:76px;height:76px}.talk-text{font-size:18px}.talk-name{font-size:20px}.talk-box{gap:10px;padding:12px}}
+@media (prefers-reduced-motion:reduce){.talk-box,.tpop.in,.talk-new,.talk-more{animation:none}}
+@media (max-width:480px){.talk-new{align-self:flex-start;font-size:19px}.talk-skip{padding:6px 10px;font-size:13px;top:-40px}}
