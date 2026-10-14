@@ -784,6 +784,69 @@ html,body{touch-action:manipulation}
 .lab-panel h3{margin:0}
 .lab-row{font:600 15px/1.4 var(--f-body)}
 .lab-card [style*="--c"]{--c:22px!important}.lab-card .bk-row{flex-wrap:wrap}
+/* ---------- Slip finder */
+.slip-box{display:grid;gap:10px;margin:10px 0 4px;padding:12px;border-radius:16px;background:#fff7e6;border:3px solid #ffb627;animation:labIn .25s ease-out;color:#1d1f33}
+.sl-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.sl-vis{display:grid;justify-items:center;gap:2px}
+.slip-stack{font-size:30px;margin:0}
+.slip-stack .c.glow{background:#ffe066;border-radius:6px;box-shadow:0 0 0 3px #ffb627;animation:slGlow 1.2s ease-in-out infinite}
+.slip-stack .c.yours{color:#7a2bd6}
+.slip-stack .c.yours.glow{color:#b3122f}
+.slip-stack .c.sl-arrow{font-size:.7em;color:#e0701a;line-height:1;animation:slBob .8s ease-in-out infinite}
+.slip-stack .gdot::after{color:#e0701a;text-shadow:0 0 6px #ffb627}
+.slip-stack .gdot-raw{color:#e0701a;animation:slGlow 1.2s ease-in-out infinite}
+@keyframes slGlow{50%{box-shadow:0 0 0 5px #ffd166,0 0 14px #ffb627}}
+@keyframes slBob{50%{transform:translateY(-4px)}}
+.sl-here{font:800 16px var(--f-body);color:#e0701a}
+.sl-playwrap{min-width:210px;min-height:120px;display:grid;place-items:center;background:#1f2347;border-radius:14px;padding:8px 12px;color:#fff}
+.sl-play{display:grid;gap:6px;justify-items:center}
+.sl-d{display:inline-block;font:800 30px var(--f-math)}
+.sl-small{font:700 12px var(--f-body);opacity:.75}
+.sl-chip{font:800 16px var(--f-body);background:#ffb627;color:#1d1f33;border-radius:999px;padding:2px 8px;opacity:0;animation:slPop .35s ease-out forwards}
+.sl-col{display:flex;align-items:flex-end;gap:10px;position:relative}
+.sl-nb{display:grid;justify-items:center;gap:2px}
+.sl-stackc{display:grid;justify-items:center;position:relative}
+.sl-top{position:relative;height:1.2em;min-width:1.4em;display:grid;place-items:center}
+.sl-top .sl-d{grid-area:1/1}
+.sl-old{animation:slOut .3s ease-in forwards;animation-play-state:running}
+.sl-top .sl-old{animation-delay:1.4s}
+.sl-new{opacity:0;color:#ffe066;animation:slIn .35s ease-out forwards}
+.sl-strike{text-decoration:line-through;text-decoration-color:#ff6b6b}
+.sl-line{width:100%;border-top:3px solid #fff;margin-top:2px}
+.sl-fly{position:absolute;left:0;top:-6px;animation:slFly 1s ease-in-out forwards}
+.sl-rise{animation:slRise .9s ease-out forwards;margin-bottom:2px}
+.sl-from{align-self:center}
+.sl-op{display:grid;place-items:center;min-height:70px}
+.sl-bigop{font-size:54px;color:#ffe066;animation:slPulse .7s ease-in-out 3}
+.sl-swap{position:relative;display:grid;place-items:center;font-size:.8em}
+.sl-swap .slip-stack{font-size:24px;color:#fff}
+.sl-swap .slip-stack .rule{border-color:#fff}
+.sl-before{grid-area:1/1;animation:slOut .4s ease-in 1.2s forwards}
+.sl-after{grid-area:1/1;opacity:0;animation:slIn .4s ease-out 1.5s forwards}
+.sl-swap .sl-after:only-child{animation-delay:.3s}
+.sl-count{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:260px}
+.sl-pop{opacity:0;font-size:22px;background:#3a4180;border-radius:8px;padding:2px 8px;animation:slPop .3s ease-out forwards}
+.sl-part{font-size:18px}
+.sl-cap{font:800 16px var(--f-body);color:#ffe066;opacity:0;animation:slIn .4s ease-out forwards;text-align:center}
+@keyframes slPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes slIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes slOut{to{opacity:0;transform:translateY(-6px)}}
+@keyframes slFly{0%{opacity:1;transform:translate(-10px,0)}70%{opacity:1;transform:translate(46px,-4px)}100%{opacity:0;transform:translate(52px,0)}}
+@keyframes slRise{from{opacity:0;transform:translate(26px,26px)}to{opacity:1;transform:none}}
+@keyframes slPulse{50%{transform:scale(1.35)}}
+.sl-tip{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sl-tip .dog-ic{width:64px;height:64px;image-rendering:pixelated;flex:none}
+.sl-bub{position:relative;display:flex;align-items:center;gap:8px;background:#fff;border:3px solid #1d1f33;border-radius:16px;padding:8px 14px;font:800 22px/1.25 var(--f-body);color:#1d1f33;flex:1 1 220px}
+.sl-bub::before{content:'';position:absolute;left:-12px;top:50%;margin-top:-8px;border:8px solid transparent;border-right-color:#1d1f33}
+.sl-ic{font-size:26px}
+.sl-btns{display:flex;gap:6px}
+.sl-btn{border:0;border-radius:12px;padding:8px 12px;background:#2c3a66;color:#fff;font:700 15px var(--f-body);box-shadow:0 3px 0 #0006;cursor:pointer}
+.sl-help{display:grid;gap:8px;justify-items:start}
+.sl-ht{font:800 18px var(--f-body)}
+.sl-hc{font:700 17px/1.35 var(--f-body);color:#3a3d5c}
+.sl-q{display:flex;align-items:center;gap:10px;font:800 30px var(--f-math)}
+.sl-drill{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;border-radius:12px;background:#e8f6ff;border:2px solid #5ab0ff;font:700 15px var(--f-body);color:#1d1f33}
+.sl-drill b{font-size:17px}
 </style>
 
 <div id="app">
@@ -1920,7 +1983,6 @@ const Talk={el:null,popEl:null,open:false,lastPop:0,runPops:0,probPop:null,check
   onMap(){setTimeout(()=>{if($('#scr-map').hidden||this.open||!$('#overlay').hidden||!$('#cine').hidden||!state.hero)return;const N=this.st();
       if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}
       if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}
-      if(Dojo.timesFirst())return;
       if(cfg.message&&N.msg!==cfg.message){N.msg=cfg.message;saveState();this.say([['knight','A message from HQ, {name}!'],['knight',cfg.message]]);return;}
       const d=dayStr();if(N.day!==d){N.day=d;saveState();const f=questFocus()[0],who=SKILL_NPC[f]||'hoot';
         if(SKILL_TIPS[f])this.pop(this.met(who)?who:'knight',pick(SKILL_TIPS[f]),{anchor:document.querySelector('.ow-hud'),below:true});}},500);},
@@ -3030,12 +3092,6 @@ const Dojo={
   cur(did){for(let i=0;i<8;i++)if(!this.belt(did,i).earned)return i;return 8;},
   black(did){return this.cur(did)>=8;},
   doneToday(did){return this.st().today[did].rounds>0;},
-  // Times comes first each day: until a Times round is done, the map sends him there once and the Dojo won't start Plus-Minus
-  // (a grown-up unlock, or a Times black belt, turns this off)
-  timesDue(){const d=this.st();return d.unlockDay!==dayStr()&&!this.doneToday('tm')&&!this.black('tm');},
-  timesFirst(){const d=this.st(),day=dayStr();if(!this.timesDue()||d.tmAuto===day)return false;
-    Talk.say([['sensei',pick(['Times first today, {name}! One round, then the rest.','Warm-up time: one Times round. You\u2019ve got this.'])]])
-      .then(()=>{if($('#scr-map').hidden||!$('#overlay').hidden)return;d.tmAuto=day;saveState();this.start('tm','round');});return true;},
   KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
@@ -3114,8 +3170,7 @@ const Dojo={
       sb?el('small',null,`Sprint best: ${sb} in 1 minute`):null);},
   sprintPool(did){const F=this.st().facts;return this.facts(did).filter(f=>F[f.key]&&(F[f.key].owned||(F[f.key].credits>=1&&F[f.key].ok/Math.max(1,F[f.key].n)>=0.9)));},
   // ---------- a run
-  start(did,kind){if(did==='pm'&&this.timesDue()){Talk.say([['sensei','Times first, {name}! Then Plus-Minus is all yours.']]).then(()=>this.start('tm','round'));return;}
-    const d=this.st(),ci=Math.min(this.cur(did),7),B=BELTS[ci],black=this.black(did);
+  start(did,kind){const d=this.st(),ci=Math.min(this.cur(did),7),B=BELTS[ci],black=this.black(did);
     const items=kind==='sprint'?shuffle(this.sprintPool(did)).concat(shuffle(this.sprintPool(did))).map(f=>({f,kind:'sprint'})):this.buildRound(did,{review:black});
     if(!items.length){Talk.say([['sensei','Nothing to train right now. Come back tomorrow!']]);return;}
     const title=kind==='sprint'?`${DOJOS[did].short} · 1-minute sprint`:`${DOJOS[did].short} Dojo · ${black?'Review':B[0]+' Belt'}`;
@@ -3476,6 +3531,166 @@ Dojo.after=function(p,ms,f,lat,src,dj,sp,card){if(typeof Lab!=='undefined'&&Lab.
 {const _r=showReport;showReport=function(){_r.apply(this,arguments);try{const m=document.querySelector('#overlay .modal.report');if(m){const pnl=Lab.panel(),g=m.querySelector('.statgrid'),btns=[...m.children].filter(x=>x.classList.contains('btns')).pop();if(g)g.after(pnl);else if(btns)btns.before(pnl);else m.append(pnl);}}catch(e){}};}
 
 /* =========================================================
+   Slip finder: when he misses a long problem, show him WHERE (the column glows, "Check here!") and WHAT
+   (one short tip), with Ellie saying it out loud and a 3-second replay of the fix. The right digit is never shown.
+   Miss 2: redo just that one column. Miss 3: the worked answer (as before).
+   A slip that comes back twice in a day earns a 2-problem mini-drill at the start of his next level.
+   Every event goes to state.slipLog so the coach reports can see what helps.
+   ========================================================= */
+const Slip={
+  TIPS:{
+    borrow:{ic:'🔁',t:'Top number smaller? Borrow first.',name:'borrowing',voice:'borrow'},
+    borrowed:{ic:'✏️',t:'You borrowed here. Make it one less.',name:'borrowing',voice:'borrowed'},
+    carry:{ic:'⬆️',t:'Don’t forget the carried 1.',name:'carrying',voice:'carry'},
+    minus:{ic:'➖',t:'It’s minus. Take away.',name:'minus signs',voice:'minus'},
+    plus:{ic:'➕',t:'It’s plus. Add them up.',name:'plus signs',voice:'plus'},
+    dots:{ic:'📍',t:'Line up the dots first.',name:'lining up decimals',voice:'dots'},
+    place:{ic:'📏',t:'Ones under ones. Line them up.',name:'lining up places',voice:'place'},
+    digits:{ic:'🔢',t:'Count your digits.',name:'digit count',voice:'digits-more'},
+    boxes:{ic:'🧱',t:'Add all the boxes together.',name:'adding area boxes',voice:'boxes'},
+    column:{ic:'🔍',t:'Check this column again.',name:'column slips',voice:'column'}},
+  box:null,cur:null,field:null,
+
+  // ---------- what went wrong, and where (columns counted from the right, 0 = rightmost digit)
+  analyze(P,v,ctx){ctx=ctx||{};const dp=P.dp||0,S=x=>Math.round(Number(x)*Math.pow(10,dp));const ans=S(v),c=S(P.answer),nums=P.nums.map(s=>toInt(s,dp));
+    const A=String(Math.abs(ans)),C=String(Math.abs(c));
+    if(ctx.area&&!ctx.noWhole&&nums.some(x=>ans===c-x))return{type:'boxes',glow:'ans'};
+    if(!ctx.noWhole&&nums.length===2){const [a,b]=nums;if(P.op==='−'&&ans===a+b)return{type:'minus',glow:'op'};if(P.op==='+'&&ans===Math.abs(a-b))return{type:'plus',glow:'op'};}
+    if(!ctx.noWhole&&dp>0&&(eqNum(v,rightAligned(P))||[10,100,0.1,0.01].some(m=>eqNum(v*m,P.answer))))return{type:'dots',glow:'dot'};
+    if(!ctx.noWhole&&dp===0&&nums.length===2){const [a,b]=nums;if(String(a).length!==String(b).length){const alt=P.op==='−'?[a-b*10,a-Math.floor(b/10)]:[a+b*10,a+Math.floor(b/10)];if(alt.includes(ans))return{type:'place',glow:'ones'};}}
+    if(A.length!==C.length)return dp>0&&!ctx.noWhole?{type:'dots',glow:'dot'}:{type:'digits',glow:'ans',more:A.length>C.length};
+    let col=-1;for(let i=0;i<C.length;i++){if(A[A.length-1-i]!==C[C.length-1-i]){col=i;break;}}
+    if(col<0)return{type:'column',col:0};
+    const dig=(x,i)=>Math.floor(Math.abs(x)/Math.pow(10,i))%10,h=dig(ans,col);
+    if(P.op==='−'&&nums.length===2){const [a,b]=nums;let br=0;for(let i=0;i<col;i++){const t=dig(a,i)-br;br=t<dig(b,i)?1:0;}
+      const t=dig(a,col),bb=dig(b,col),need=t-br<bb,info={col,op:'−',top:t,bot:bb,bin:br,need};
+      if(br&&t>=bb&&h===t-bb)return{type:'borrowed',...info};
+      if(need&&(h===bb-(t-br)||h===Math.abs(t-bb)))return{type:'borrow',...info};
+      if(br&&h===(t>=bb?t-bb:t+10-bb))return{type:'borrowed',...info};
+      if(!br&&h===(t+bb)%10)return{type:'minus',...info};
+      return{type:'column',...info};}
+    if(P.op==='+'){let cy=0;for(let i=0;i<col;i++){const s=nums.reduce((u,x)=>u+dig(x,i),0)+cy;cy=Math.floor(s/10);}
+      const ds=nums.map(x=>dig(x,col)),s=ds.reduce((u,d)=>u+d,0),info={col,op:'+',ds,cin:cy};
+      if(cy&&h===s%10)return{type:'carry',...info};
+      if(nums.length===2&&!cy&&h===Math.abs(ds[0]-ds[1]))return{type:'plus',...info};
+      return{type:'column',...info};}
+    return{type:'column',col};},
+  tip(an){const T=this.TIPS[an.type]||this.TIPS.column;if(an.type==='digits')return{...T,t:an.more?'Count your digits. One too many?':'Count your digits. One missing?',voice:an.more?'digits-more':'digits-less'};return T;},
+  key(an){if(an.type==='borrow'||an.type==='borrowed')return an.type==='borrowed'?'sub0':'sub';if(an.type==='carry')return 'add';
+    if(an.type==='minus')return 'sub';if(an.type==='plus')return 'add';if(an.type==='dots')return 'dec';if(an.type==='place')return 'addlen';if(an.type==='boxes')return 'area';
+    if(an.type==='column')return an.op==='−'?'sub':an.op==='+'?'add':null;return null;},
+
+  // ---------- the stacked problem, with one spot glowing
+  stack(P,v,o){o=o||{};const dp=P.dp||0,lay=stackLayout(P,v!=null?[v]:[]),cols=lay.W+1;
+    const g=el('div',{class:'stack slip-stack',style:`grid-template-columns:repeat(${cols},1em)`});
+    const glowCol=fr=>o.col!=null&&fr===o.col;
+    const row=(str,cls,op,ghostN)=>{const off=cols-str.length;for(let i=0;i<cols;i++){const fr=cols-1-i;
+        if(i<off){g.append(el('span',{class:'c'+(i===0&&op&&o.glowOp?' glow':'')+(glowCol(fr)?' glow':'')},i===0&&op?op:''));continue;}
+        const j=i-off;let k='c'+(cls?' '+cls:'');if(ghostN&&j>=str.length-ghostN)k+=' ghost';const ip=fr-dp;
+        if(dp>0&&fr===dp)k+=' dt'+(o.glowDot?' gdot':'');else if(ip>0&&ip%3===0)k+=' cm';if(glowCol(fr))k+=' glow';if(o.glowOnes&&fr===dp)k+=' glow';
+        g.append(el('span',{class:k},str[j]));}};
+    lay.rows.forEach((r,i)=>row(r,'',i===lay.rows.length-1?P.op:null,o.ghost?lay.ghost[i]:0));
+    g.append(el('span',{class:'rule'}));
+    if(v!=null)row(lay.extras[0],'yours'+(o.glowAns?' glow':''));
+    if(o.col!=null)for(let i=0;i<cols;i++)g.append(el('span',{class:'c sl-arrow'},cols-1-i===o.col?'▲':''));
+    return g;},
+  // how he likely stacked a decimal problem: flush right, so the dots don't line up
+  raw(P){const W=Math.max(...P.nums.map(s=>s.length))+1,g=el('div',{class:'stack slip-stack',style:`grid-template-columns:repeat(${W},.62em)`});
+    P.nums.forEach((s,r)=>{const str=(r===P.nums.length-1?P.op:' ')+s.padStart(W-1,' ');for(const ch of str)g.append(el('span',{class:'c'+(ch==='.'?' gdot-raw':'')},ch==='.'?'•':ch.trim()));});
+    return g;},
+
+  // ---------- 3-second replays (CSS animations; "Watch again" rebuilds them)
+  replay(an,P){const R=el('div',{class:'sl-play'});const cap=t=>el('div',{class:'sl-cap',style:'animation-delay:2.2s'},t);const d=(x,cls,delay)=>el('span',{class:'sl-d '+(cls||''),style:delay!=null?`animation-delay:${delay}s`:''},String(x));
+    const ty=an.type;
+    if(ty==='borrow'||(ty==='column'&&an.op==='−'&&an.need)){const top=an.top-an.bin+10;
+      R.append(el('div',{class:'sl-col'},el('div',{class:'sl-nb'},d('next door','sl-small'),d('−1','sl-chip sl-minus1',0.3)),el('div',{class:'sl-stackc'},el('div',{class:'sl-top'},d(an.top-an.bin,'sl-old',0),d(top,'sl-new',1.4)),d(an.bot,'sl-bot'),el('div',{class:'sl-line'})),d('+10','sl-chip sl-fly',0.6)),cap(`${top} − ${an.bot} = ?`));}
+    else if(ty==='borrowed'){const now=an.top-1+(an.need?10:0);
+      R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},el('div',{class:'sl-top'},d(an.top,'sl-old sl-strike',0),d(an.top-1,'sl-new',1.0)),d(an.bot,'sl-bot'),el('div',{class:'sl-line'})),d('lent 1','sl-chip sl-minus1',0.3)),cap(an.need?`It lent 1, then borrows: ${now} − ${an.bot}`:`It lent 1: ${now} − ${an.bot} = ?`));}
+    else if(ty==='carry'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},d('1','sl-chip sl-rise',0.4),...an.ds.map(x=>d(x,'sl-bot')),el('div',{class:'sl-line'})),d('from the right','sl-small sl-from')),cap(`${an.ds.join(' + ')} + 1 = ?`));}
+    else if(ty==='minus'||ty==='plus'){R.append(el('div',{class:'sl-op'},d(ty==='minus'?'−':'+','sl-bigop',0)),cap(ty==='minus'?'Minus means take away.':'Plus means add.'));}
+    else if(ty==='dots'){const before=this.raw(P),after=this.stack(P,null,{ghost:true,glowDot:true});before.classList.add('sl-before');after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},before,after),cap('Dots in a line. Fill gaps with 0.'));}
+    else if(ty==='place'){const after=this.stack(P,null,{glowOnes:true});after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},after),cap('Ones under ones!'));}
+    else if(ty==='digits'){const lay=stackLayout(P,[]);const n=String(Math.abs(Math.round(Number(an.v)*Math.pow(10,P.dp||0)))).length,top=lay.rows[0].length;
+      R.append(el('div',{class:'sl-count'},...Array.from({length:n},(_,i)=>d(i+1,'sl-pop',0.25*i))),cap(P.op==='−'?`Yours: ${n} digits. Top number: ${top}.`:`Yours: ${n} digits. Biggest: ${Math.max(...lay.rows.map(r=>r.length))}.`));}
+    else if(ty==='boxes'){R.append(el('div',{class:'sl-count'},...P.nums.map((x,i)=>d(fmt(Number(x)),'sl-pop sl-part',0.35*i))),cap(`${P.nums.length} boxes → add all ${P.nums.length}!`));}
+    else{R.append(el('div',{class:'sl-op'},d('🔍','sl-bigop',0)),cap('Right to left, one column at a time.'));}
+    return R;},
+
+  voice(id){if(state.mute||!id)return;try{const a=typeof Lesson!=='undefined'&&Lesson.au?Lesson.au():new Audio();if(window.speechSynthesis)speechSynthesis.cancel();a.muted=false;a.src='audio/slip-'+id+'.mp3';a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}},
+  pet(){return (state.hero&&state.hero.pet&&typeof PETS!=='undefined'&&PETS[state.hero.pet])?state.hero.pet:'ellie';},
+  clear(){if(this.field){Pad.fields=Pad.fields.filter(f=>f!==this.field);this.field=null;}if(this.box){this.box.remove();this.box=null;}},
+  log(e){const L=state.slipLog=state.slipLog||[];e=Object.assign({t:new Date().toISOString(),day:dayStr()},e);L.push(e);if(L.length>400)L.splice(0,L.length-400);saveState();return e;},
+  // the next submit on the same problem tells us if the help worked
+  after(ok){const c=this.cur;if(c&&c.ev&&c.ev.ok==null&&run&&c.idx===run.idx){c.ev.ok=!!ok;saveState();if(ok){this.clear();this.voice('found');say('You found the slip! 🐾','good');}}},
+
+  // ---------- miss 1: glow + tip (+ Ellie, voice, replay). Miss 2: fix that one column.
+  show(sl,v,tries,o){try{const P=sl.P,ctx={area:!!sl.area};let an=this.analyze(P,v,ctx);an.v=v;this.clear();
+      if(tries===2&&(an.type==='boxes'||an.type==='minus'||an.type==='plus')&&an.col==null){const a2=this.analyze(P,v,{noWhole:true});if(a2.col!=null){a2.v=v;an=a2;}}
+      const T=this.tip(an),card=$('#card');const box=this.box=el('div',{class:'slip-box'});
+      const ev=this.log({kind:'help',skill:ATT&&ATT.skill,q:P.nums.join(` ${P.op} `),type:an.type,place:an.col!=null?placeName(an.col,P.dp||0):null,try:tries,ok:null,rp:0});
+      this.cur={idx:run&&run.idx,ev,an};
+      if(tries===1){
+        const so={col:an.col,glowOp:an.glow==='op',glowDot:an.glow==='dot',glowAns:an.glow==='ans',glowOnes:an.glow==='ones'};
+        const vis=an.type==='dots'?this.raw(P):this.stack(P,v,so);
+        const play=el('div',{class:'sl-playwrap'});const runPlay=()=>{play.innerHTML='';play.append(this.replay(an,P));};runPlay();
+        const again=el('button',{class:'sl-btn',type:'button'},'▶ Watch again');tapify(again,()=>{ev.rp++;saveState();runPlay();});
+        const hear=el('button',{class:'sl-btn',type:'button'},'🔊');tapify(hear,()=>this.voice(T.voice));
+        box.append(el('div',{class:'sl-row'},el('div',{class:'sl-vis'},vis,an.col!=null||an.glow?el('div',{class:'sl-here'},an.type==='dots'?'Look at the dots!':'Check here!'):null),play),
+          el('div',{class:'sl-tip'},dogIcon(this.pet(),120),el('div',{class:'sl-bub'},el('span',{class:'sl-ic'},T.ic),el('b',null,T.t)),el('div',{class:'sl-btns'},hear,again)));
+        this.voice(T.voice);say('Ellie sniffed out the slip! Look where it glows.','warn');this.count(an,P);}
+      else{const h=this.helper(an,P,o);if(!h)return false;box.append(h);this.voice('fixcol');}
+      const anchor=card.querySelector('.ans-row')||card.querySelector('.partials');if(anchor&&anchor.parentNode===card)anchor.after(box);else card.append(box);
+      // a short card (big scratch paper) grows while the slip box is open; the next problem restores his paper size
+      requestAnimationFrame(()=>{try{const L=$('.left');if(L&&getComputedStyle(L).flexDirection!=='row'){const lh=L.getBoundingClientRect().height,want=Math.min(lh-140,Math.max(card.getBoundingClientRect().height,box.getBoundingClientRect().height+150));
+        if(want>card.getBoundingClientRect().height+4)card.style.flex=`0 0 ${Math.round(want)}px`;}box.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}});
+      return true;}catch(e){console.warn('slip',e);this.clear();return false;}},
+  helper(an,P,o){const dp=P.dp||0,wrap=el('div',{class:'sl-help'});
+    if(an.type==='dots'||an.type==='place'){wrap.append(el('div',{class:'sl-ht'},'Here it is lined up the right way:'),this.stack(P,null,{ghost:true,glowDot:an.type==='dots',glowOnes:an.type==='place'}),el('div',{class:'sl-hc'},'Now solve it again from the right.'));
+      say('Lined up for you. Try again!','info');this.cur.ev.helper='shown';return wrap;}
+    if(an.type==='digits'){wrap.append(el('div',{class:'sl-ht'},'🔢 Count the places:'),this.stack(P,an.v,{glowAns:true}),
+        el('div',{class:'sl-hc'},P.op==='−'?'Minus makes it smaller. The answer can’t be longer than the top number.':'Adding makes at most one extra digit.'));
+      say('Count the digits, then try again.','info');this.cur.ev.helper='shown';return wrap;}
+    if(an.col==null)return null;
+    let q,want,cue;
+    if(an.op==='−'){const top=an.top-an.bin+(an.need?10:0);q=`${top} − ${an.bot}`;want=top-an.bot;
+      cue=an.need?`Top is smaller, so borrow: ${an.top-an.bin} becomes ${top}.`:an.bin?`This one lent 1 away, so ${an.top} becomes ${an.top-1}.`:'Top minus bottom.';}
+    else if(an.op==='+'){const parts=an.ds.slice();if(an.cin)parts.push(an.cin);q=parts.join(' + ');want=parts.reduce((u,x)=>u+x,0);cue=an.cin?'Count the carried 1 too.':'Add the column.';}
+    else return null;
+    const f=Pad.make({sm:true,allowDot:false,max:2,ph:'?'});this.field=f;const res=el('div',{class:'sl-hc'});let tries=0;
+    f.onChange=()=>{if(f.locked||f.val.length<String(want).length)return;tries++;const x=Pad.val(f);
+      if(x===want){Pad.right(f);Pad.lock(f);Snd.coin();this.cur.ev.helper=tries===1?'right':'right2';saveState();
+        res.textContent=want>=10?`Yes! Write the ${want%10} and carry the 1. Now fix the whole answer.`:`Yes! Write ${want} there. Now fix the whole answer.`;
+        setTimeout(()=>{if(o&&o.field&&!o.field.locked)Pad.focus(o.field);},700);}
+      else{Pad.wrong(f);setTimeout(()=>Pad.set(f,''),350);if(tries>=2){Pad.set(f,String(want));Pad.lock(f);this.cur.ev.helper='shown';saveState();res.textContent=`It’s ${want}. Write that digit, then fix the whole answer.`;setTimeout(()=>{if(o&&o.field)Pad.focus(o.field);},900);}}};
+    wrap.append(el('div',{class:'sl-ht'},`🔧 Fix just the ${placeName(an.col,dp)} column`),this.stack(P,an.v,{col:an.col}),el('div',{class:'sl-hc'},cue),el('div',{class:'sl-q'},el('span',null,q+' ='),f.el),res);
+    say('Let’s fix just this one column.','info');setTimeout(()=>Pad.focus(f),50);return wrap;},
+
+  // ---------- the same slip twice in a day: a 2-problem mini-drill opens his next level
+  count(an,P){const k=this.key(an);if(!k)return;const d=dayStr();const S=state.slipDay=state.slipDay&&state.slipDay.day===d?state.slipDay:{day:d,c:{},drilled:[],next:null};
+    S.c[k]=(S.c[k]||0)+1;if(S.c[k]>=2&&!S.drilled.includes(k)&&!S.next)S.next=k;saveState();},
+  NAMES:{sub:'borrowing',sub0:'borrowing across a zero',add:'carrying',dec:'lining up decimals',addlen:'lining up places',area:'adding the area boxes'},
+  drillProblem(k){const subRegroups=(a,b)=>{let br=0,n=0;for(let i=0;i<String(a).length;i++){const t=Math.floor(a/Math.pow(10,i))%10-br,bb=Math.floor(b/Math.pow(10,i))%10;br=t<bb?1:0;n+=br;}return n;};
+    const addCarries2=(a,b)=>{let c=0,n=0;for(let i=0;i<6;i++){const s=Math.floor(a/Math.pow(10,i))%10+Math.floor(b/Math.pow(10,i))%10+c;c=s>=10?1:0;n+=c;}return n;};
+    let p=null;
+    if(k==='sub'){for(let t=0;t<300;t++){const a=rint(300,999),b=rint(101,a-50);const r=subRegroups(a,b);if(r>=1&&r<=2){p=mkArith('sub','−',[String(a),String(b)],0,2);break;}}}
+    else if(k==='sub0'){const h=rint(3,9),a=h*100+rint(0,4),b=rint(1,h-1)*100+rint(1,9)*10+rint(5,9);p=mkArith('sub','−',[String(a),String(b)],0,2);}
+    else if(k==='add'){for(let t=0;t<300;t++){const a=rint(150,899),b=rint(150,899);if(addCarries2(a,b)>=2){p=mkArith('add','+',[String(a),String(b)],0,2);break;}}}
+    else if(k==='dec'){const op=Math.random()<0.5?'+':'−';const a=rint(41,89)/10;const b=(rint(11,Math.floor(a*10)-6)/10+rint(1,9)/100).toFixed(2);
+      p=mkArith(op==='+'?'dec_add':'dec_sub',op,[a.toFixed(1),b],2,2);p.stacked=false;}
+    else if(k==='addlen'){const a=rint(1200,9800),b=rint(12,98);p=mkArith('add','+',[String(a),String(b)],0,2);p.stacked=false;}
+    else if(k==='area'){p=makeProblem('area:2');}
+    if(p)p.drill=k;return p;},
+  drillMix(probs,spec){const S=state.slipDay;if(!S||S.day!==dayStr()||!S.next)return probs;const k=S.next;S.next=null;S.drilled.push(k);
+    const add=[this.drillProblem(k),this.drillProblem(k)].filter(Boolean);if(!add.length){saveState();return probs;}
+    this.log({kind:'drill',key:k,n:add.length,mode:spec&&spec.mode});return add.concat(probs);},
+  banner(p){const card=$('#card');if(!card)return;card.prepend(el('div',{class:'sl-drill'},el('span',null,'🎯'),el('b',null,`Quick practice: ${this.NAMES[p.drill]||'slips'}`),el('span',null,'Ellie picked this one for you.')));}
+};
+// mini-drill problems get a banner; every problem change clears the slip box and logs drill results
+{const _ra=renderArith;renderArith=function(p,a){_ra.apply(this,arguments);if(p&&p.drill)Slip.banner(p);};
+ const _rr=renderArea;renderArea=function(p,a){_rr.apply(this,arguments);if(p&&p.drill)Slip.banner(p);};
+ const _c=complete;complete=function(p,res){try{Slip.clear();Slip.cur=null;if(p&&p.drill)Slip.log({kind:'drillDone',key:p.drill,firstTry:!!(res&&res.firstTry),solved:!!(res&&res.solved)});}catch(e){}return _c.apply(this,arguments);};}
+
+/* =========================================================
    Explore: levels sized to how much hard work he has already done today, so he can explore more without burning out.
    Intro: a narrated movie the first time he enters each world, and a short "LEVEL 3!" intro every time a level starts.
    ========================================================= */
@@ -3607,7 +3822,7 @@ function reportPayload(){const L=Local.log;
   return {app:'number-knight',v:2,generated:new Date().toISOString(),hero:state.hero&&state.hero.name,coins:state.coins,streak:state.streak,totals:state.totals,
     skills:state.skills,methods:state.methods,facts:state.facts,prog:state.prog,packsDone:state.packsDone,
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
-    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,lab:state.lab||null,squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
+    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,lab:state.lab||null,slips:(state.slipLog||[]).slice(-200),squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
     // full copy of his progress so a deleted or new install can be restored (the grown-up PIN stays off the backup)
     backup:Object.assign(JSON.parse(JSON.stringify(state)),{parentPin:undefined})};}
 // how much progress a state (or a report) holds; used so a fresh install never overwrites a richer backup
@@ -3724,7 +3939,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261014003149';
+const BUILD='20261014181229';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -5441,7 +5656,7 @@ function startQuest(){if(!Dojo.gateOk()){Dojo.blocked();return;}const f=questFoc
   startRun({title:'Today’s Quest',mode:'quest',color:'#ffc933',problems:probs});}
 function startPack(p){if(!Dojo.gateOk()){Dojo.blocked();return;}const probs=(p.items||[]).map(packProblem).filter(Boolean);if(!probs.length)return;
   startRun({title:p.title||'Homework Remix',mode:'pack',packId:p.id,color:'#ff6fb5',problems:probs});}
-function startRun(spec){$('#scr-level').classList.remove('dojo');if(typeof FactMix!=='undefined'&&FactMix.on()&&(spec.mode==='level'||spec.mode==='quest')&&!spec.boss&&!spec.packId)spec.problems=FactMix.mix(spec.problems,spec.mode);run={spec,queue:spec.problems,idx:0,results:[],coins:0,twins:0,start:Date.now()};
+function startRun(spec){$('#scr-level').classList.remove('dojo');if(typeof FactMix!=='undefined'&&FactMix.on()&&(spec.mode==='level'||spec.mode==='quest')&&!spec.boss&&!spec.packId)spec.problems=FactMix.mix(spec.problems,spec.mode);if(typeof Slip!=='undefined'&&(spec.mode==='level'||spec.mode==='quest')&&!spec.boss&&!spec.packId)spec.problems=Slip.drillMix(spec.problems,spec);run={spec,queue:spec.problems,idx:0,results:[],coins:0,twins:0,start:Date.now()};
   $('#lv-title').textContent=spec.title;show('scr-level');
   Battle.setup({total:run.queue.length,mech:!!spec.mech,color:spec.color});Music.play(spec.mech?'boss':'battle');updateTop();
   {const go=()=>{if(!state.howtoSeen){showHowTo(()=>nextProblem());}else nextProblem();};const pr=Talk.onRunStart(spec);if(pr)pr.then(go);else go();}}
@@ -5567,16 +5782,17 @@ function answerFlow(o){const st={tries:0,wrongAtCheck:false,checkedSince:false};
       openCheck(o.quick,v,o,res=>{a.checks=(a.checks||[]);a.checks.push({ans:v,flag:res.flagged,said:res.said||null,real:wrong,required:true});if(res.flagged&&wrong)st.wrongAtCheck=true;});
       say('Quick check before it counts: does your answer make sense?','info');return;}
     if(st.tries===0&&a.confidence==null&&o.check&&Math.random()<0.25){a.confidence=await askConfidence();}
-    st.tries++;a.tries.push({a:v,ms:Date.now()-a.t0,chk:st.checkedSince});st.checkedSince=false;
+    st.tries++;a.tries.push({a:v,ms:Date.now()-a.t0,chk:st.checkedSince});st.checkedSince=false;if(o.slip&&typeof Slip!=='undefined')Slip.after(eqNum(v,o.correct));
     if(eqNum(v,o.correct)){closeCheck();Pad.right(o.field);Pad.lock(o.field);o.onDone({solved:true,firstTry:st.tries===1,selfCatch:st.tries===1&&st.wrongAtCheck,tries:st.tries});return;}
-    Pad.wrong(o.field);Battle.event(a.tries[a.tries.length-1].chk?'block':'hurt');stamp(a.tries[a.tries.length-1].chk?'block':'wrong',a.tries[a.tries.length-1].chk?'No power lost':'Try again');const dg=o.diag?o.diag(v):{tags:['other'],places:[]};a.errors=(a.errors||[]);a.errors.push({a:v,tags:dg.tags,places:dg.places});Talk.onWrong({skill:a.skill,kind:a.kind,tags:dg.tags,tries:st.tries,checked:a.tries[a.tries.length-1].chk});
+    Pad.wrong(o.field);Battle.event(a.tries[a.tries.length-1].chk?'block':'hurt');stamp(a.tries[a.tries.length-1].chk?'block':'wrong',a.tries[a.tries.length-1].chk?'No power lost':'Try again');const dg=o.diag?o.diag(v):{tags:['other'],places:[]};a.errors=(a.errors||[]);a.errors.push({a:v,tags:dg.tags,places:dg.places});if(!(o.slip&&st.tries<=2))Talk.onWrong({skill:a.skill,kind:a.kind,tags:dg.tags,tries:st.tries,checked:a.tries[a.tries.length-1].chk});
     if(o.onWrong&&o.onWrong(st.tries,v))return;
     if(o.lesson&&typeof Lesson!=='undefined'){if(!st.lessonBtn){st.lessonBtn=Lesson.btn(o.lesson);$('#card').append(st.lessonBtn);}Lesson.maybe(o.lesson);}
+    if(o.slip&&st.tries<=2&&typeof Slip!=='undefined'&&Slip.show(o.slip,v,st.tries,o))return;
     const spot=st.tries===1&&a.checkUsed&&!o.noPlaceHint&&dg.places&&dg.places[0]&&typeof DogPower!=='undefined'&&DogPower.has('dalmatian');
     if(spot){say(`Spot it! Look again at the ${dg.places[0]} place.`,'warn');DogPower.pop('dalmatian',`Check the ${dg.places[0]} place!`,{force:true});}
     else if(st.tries===1)say('Shield up! Not quite yet. Tap Check It to hunt for the slip.','warn');
     else if(st.tries===2){const pl=dg.places&&dg.places[0];say(pl&&!o.noPlaceHint?`Getting close. Look hard at the ${pl} place.`:'Try once more. Go one step at a time.','warn');}
-    else{closeCheck();Pad.lock(o.field);say('Let’s look at it together.','info');const node=o.reveal?o.reveal(v):el('div',null,'The answer is '+fmt(o.correct));
+    else{closeCheck();if(typeof Slip!=='undefined')Slip.clear();Pad.lock(o.field);say('Let’s look at it together.','info');const node=o.reveal?o.reveal(v):el('div',null,'The answer is '+fmt(o.correct));
       $('#card').append(el('div',{class:'reveal'},el('h4',null,'Here’s how it works'),node));$('#card').scrollTop=1e6;
       setActions([{label:'Got it ▸',cls:'btn-blue',primary:true,onClick:()=>o.onDone({solved:false,firstTry:false,revealed:true,tries:st.tries})}]);}}
   return st;}
@@ -5655,7 +5871,7 @@ function renderArith(p,a){const card=$('#card');const isDec=p.dp>0;const method=
   const f=Pad.make({});card.append(el('div',{class:'ans-row'},el('span',null,'Answer'),f.el));Pad.focus(f);
   Scratch.reset(p.stacked?drawStackOnGrid(p):null);
   say(p.stacked?'Work it on the paper. Regroup marks go above the top number.':'Write it stacked on the grid, one digit per box.','');
-  answerFlow({field:f,correct:p.answer,check:checkFor(p,p.checkMethod),quick:!isDec&&Math.max(...p.nums.map(Number))>=1000?estimateArith(p):null,lesson:p.op==='−'?'borrow':null,diag:v=>diagArith(p,v),reveal:v=>revealArith(p,v),onDone:res=>complete(p,res)});}
+  answerFlow({field:f,correct:p.answer,check:checkFor(p,p.checkMethod),quick:!isDec&&Math.max(...p.nums.map(Number))>=1000?estimateArith(p):null,lesson:p.op==='−'?'borrow':null,slip:{P:p},diag:v=>diagArith(p,v),reveal:v=>revealArith(p,v),onDone:res=>complete(p,res)});}
 
 /* ---------- facts */
 const FACT_TIPS={9:'Nines: do 10 times the number, then take away one group.',8:'Eights: double, double, double. 8 × 7 → 14, 28, 56.',7:'Sevens: split it. 7 × n = 5 × n plus 2 × n.',6:'Sixes: 5 × n plus one more group.',4:'Fours: double it, then double again.',3:'Threes: 2 × n plus one more group.'};
@@ -5677,7 +5893,7 @@ function renderArea(p,a){const card=$('#card');card.classList.add('tall');const 
   const finalFlow=(f,extraBtn)=>answerFlow({field:f,correct:p.answer,check:checkFor(p),noPlaceHint:false,diag:v=>{const parts=allPartials(p);const tags=[];
       parts.forEach((x,i)=>{if(eqNum(v,p.answer-x))tags.push('missingPartial');if(x>=100&&eqNum(v,p.answer-x+x/10))tags.push('placeValuePartial');});
       const places=diffPlaces(v,p.answer,0);if(!tags.length)tags.push(places.length===1?'oneColumnSlip':'other');return{tags,places};},
-    reveal:()=>areaGrid(p,true).node,extraBtn,onDone:res=>complete(p,res)});
+    reveal:()=>areaGrid(p,true).node,extraBtn,slip:p.probe?null:{P:{op:'+',nums:allPartials(p).map(String),dp:0,answer:p.answer},area:true},onDone:res=>complete(p,res)});
   if(p.probe){card.append(el('div',{class:'prompt'},'Solve it any way you like on the paper.'));const f=Pad.make({allowDot:false});card.append(el('div',{class:'ans-row'},el('span',null,'Answer'),f.el));Pad.focus(f);
     finalFlow(f,{label:'Show the area model',cls:'btn-dark',onClick:()=>{a.modelUsed=true;card.querySelector('.ans-row').before(areaGrid(p,true).node);}});return;}
   const go=()=>{const G=areaGrid(p,false);card.append(G.node);const seq=G.fields;let i=0;
@@ -5898,7 +6114,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Lab,nextProblem:()=>nextProblem(),showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Slip,Lab,nextProblem:()=>nextProblem(),showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
