@@ -1,0 +1,1433 @@
+{
+ "style": "Chunky voxel-block 3D animation: every character and object is built from small glossy cubes, like a toy video game cutscene. Smooth cinematic camera, soft bloom, warm rim light, playful and exciting mood for kids. No text, no letters, no numbers on screen.",
+ "shots": [
+  {
+   "id": "l1a",
+   "world": "castle",
+   "veo": "std",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -2.2,
+     "z": 0.8,
+     "rot": 0.6
+    },
+    {
+     "k": "dog",
+     "x": -3.1,
+     "z": 1.5,
+     "rot": 0.4
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": 2.2,
+     "z": 0.8,
+     "rot": -0.6
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": -1.3,
+     "z": -1.5,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 1.4,
+     "z": -1.5,
+     "rot": -0.3
+    }
+   ],
+   "props": [
+    {
+     "type": "gem",
+     "layout": "pile",
+     "n": 12,
+     "at": [
+      0,
+      0
+     ],
+     "r": 0.8,
+     "h": 0.5,
+     "s": 1.5
+    },
+    {
+     "type": "chest",
+     "at": [
+      0,
+      -0.9
+     ],
+     "layout": "row",
+     "n": 1
+    }
+   ],
+   "lights": [
+    {
+     "col": "#9fe8ff",
+     "i": 7,
+     "d": 7,
+     "x": 0,
+     "y": 1.6,
+     "z": 0.6
+    }
+   ],
+   "sparkle": [
+    0,
+    0,
+    1.6
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.6,
+     7.5
+    ],
+    "to": [
+     0,
+     1.9,
+     5.4
+    ],
+    "at": [
+     0,
+     0.9,
+     0
+    ],
+    "at2": [
+     0,
+     0.8,
+     0
+    ],
+    "fov": 40
+   },
+   "prompt": "A wooden treasure chest in a moonlit castle courtyard bursts open and a pile of glowing crystals spills out with a flash of light. The blocky hero in a wizard hat and his three blocky knight friends lean in amazed, and the little white dog with a wizard hat hops and wags its tail. Slow camera push-in. Magical sparkle sounds and a happy dog bark.",
+   "D": 9.093
+  },
+  {
+   "id": "l1b",
+   "world": "castle",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -2.4,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": -0.8,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": 0.8,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 2.4,
+     "z": 0.2
+    },
+    {
+     "k": "dog",
+     "x": -3.6,
+     "z": 0.9,
+     "rot": 0.4
+    }
+   ],
+   "props": [
+    {
+     "type": "gem",
+     "layout": "groups",
+     "per": 3,
+     "groups": [
+      [
+       -2.4,
+       1.1
+      ],
+      [
+       -0.8,
+       1.1
+      ],
+      [
+       0.8,
+       1.1
+      ],
+      [
+       2.4,
+       1.1
+      ]
+     ],
+     "s": 1.3
+    }
+   ],
+   "lights": [
+    {
+     "col": "#ffe9b0",
+     "i": 5,
+     "d": 8,
+     "x": 0,
+     "y": 2.2,
+     "z": 2
+    }
+   ],
+   "sparkle": [
+    0,
+    1.1,
+    5
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.2,
+     7.2
+    ],
+    "to": [
+     0,
+     2.0,
+     6.2
+    ],
+    "at": [
+     0,
+     1.0,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "Four blocky knights stand in a row, each with an equal little pile of three glowing crystals at their feet. They pick up their crystals and cheer, raising them high, while the little white dog spins happily. Gentle camera drift. Cheering and sparkle sounds.",
+   "D": 6.5
+  },
+  {
+   "id": "l1c",
+   "world": "castle",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": 0,
+     "z": 0.6
+    },
+    {
+     "k": "dog",
+     "x": -1.1,
+     "z": 1.1,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": -1.9,
+     "z": -0.6,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": 1.6,
+     "z": -0.6,
+     "rot": -0.3
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 2.6,
+     "z": -1.4,
+     "rot": -0.4
+    }
+   ],
+   "props": [
+    {
+     "type": "banner",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      0,
+      -2.2
+     ],
+     "gap": 4.4,
+     "col": "#9b6bff"
+    },
+    {
+     "type": "gem",
+     "layout": "pile",
+     "n": 6,
+     "at": [
+      0.9,
+      1.3
+     ],
+     "r": 0.4,
+     "h": 0.25
+    }
+   ],
+   "sparkle": [
+    0,
+    0.8,
+    3
+   ],
+   "cam": {
+    "from": [
+     0,
+     0.9,
+     4.6
+    ],
+    "to": [
+     0.6,
+     1.0,
+     3.9
+    ],
+    "at": [
+     0,
+     1.3,
+     0
+    ],
+    "fov": 44
+   },
+   "prompt": "Low hero shot: the blocky wizard-hat hero raises one glowing crystal toward the night sky; it flashes brightly and fireworks burst over the castle. His knight friends cheer and the little dog jumps. Triumphant, joyful. Firework and cheer sounds.",
+   "D": 6.5
+  },
+  {
+   "id": "l2a",
+   "world": "tower",
+   "veo": "std",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -2.3,
+     "z": 1.0,
+     "rot": 0.7
+    },
+    {
+     "k": "dog",
+     "x": -3.2,
+     "z": 1.7,
+     "rot": 0.5
+    }
+   ],
+   "props": [
+    {
+     "type": "shield",
+     "layout": "grid",
+     "rows": 3,
+     "cols": 4,
+     "at": [
+      0.9,
+      -0.4
+     ],
+     "y": 0.9,
+     "gap": 0.95,
+     "col": "#5ef2ff"
+    }
+   ],
+   "sparkle": [
+    0.9,
+    -0.4,
+    4
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.2,
+     7.6
+    ],
+    "to": [
+     -0.2,
+     2.0,
+     6.4
+    ],
+    "at": [
+     0.3,
+     1.8,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "In a sunny meadow by a tall stone tower, the blocky wizard-hat hero raises a hand and twelve floating metal shields arranged in three neat rows of four glow blue, swirl around once in a magic spiral, then snap back into their neat rows. The little dog watches in awe. Magic chime sounds.",
+   "D": 7.838
+  },
+  {
+   "id": "l2b",
+   "world": "tower",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -2.5,
+     "z": 1.2,
+     "rot": 0.7
+    },
+    {
+     "k": "dog",
+     "x": -3.3,
+     "z": 1.8,
+     "rot": 0.6
+    }
+   ],
+   "props": [
+    {
+     "type": "rune",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      0.4,
+      0
+     ],
+     "y": -0.1,
+     "r": 1.5,
+     "sides": 3,
+     "col": "#ffb627",
+     "w": 0.3
+    },
+    {
+     "type": "gem",
+     "layout": "row",
+     "n": 3,
+     "at": [
+      0.4,
+      0.4
+     ],
+     "gap": 1.5,
+     "col": "#ffe066",
+     "s": 1.2
+    }
+   ],
+   "sparkle": [
+    0.4,
+    0,
+    3
+   ],
+   "cam": {
+    "from": [
+     0,
+     4.6,
+     6.2
+    ],
+    "to": [
+     0,
+     4.0,
+     5.2
+    ],
+    "at": [
+     0.2,
+     0,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "A glowing golden triangle of light pulses on the grass. Three golden orbs rise from its corners and orbit each other, then settle back into the corners. The blocky hero and the little dog watch, amazed. Soft magical hum.",
+   "D": 6.5
+  },
+  {
+   "id": "l2c",
+   "world": "tower",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": 0,
+     "z": 0.6
+    },
+    {
+     "k": "dog",
+     "x": -1.0,
+     "z": 1.1,
+     "rot": 0.3
+    }
+   ],
+   "props": [
+    {
+     "type": "shield",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      1.6,
+      0.2
+     ],
+     "y": 0.3,
+     "gap": 0.9,
+     "col": "#5ef2ff"
+    }
+   ],
+   "cam": {
+    "from": [
+     0.2,
+     1.3,
+     5.0
+    ],
+    "to": [
+     0.6,
+     1.2,
+     4.2
+    ],
+    "at": [
+     0,
+     1.2,
+     0
+    ],
+    "fov": 44
+   },
+   "prompt": "The blocky wizard-hat hero waves goodbye at the camera and does a little victory hop; the dog barks and spins. Bright sunny day, leaves drifting. Cheerful.",
+   "D": 6.5
+  },
+  {
+   "id": "l3a",
+   "world": "canyon",
+   "veo": "std",
+   "chars": [
+    {
+     "k": "gmech",
+     "x": 0,
+     "z": -5.2,
+     "s": 0.8
+    },
+    {
+     "k": "hero",
+     "x": -2.4,
+     "z": 1.6,
+     "rot": 0.4
+    },
+    {
+     "k": "dog",
+     "x": -3.3,
+     "z": 2.2,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": 2.3,
+     "z": 1.6,
+     "rot": -0.4
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": -1.4,
+     "z": 2.4,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 1.3,
+     "z": 2.4,
+     "rot": -0.3
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "layout": "pile",
+     "n": 8,
+     "at": [
+      0,
+      -0.8
+     ],
+     "r": 0.7,
+     "h": 0.5
+    },
+    {
+     "type": "coin",
+     "layout": "pile",
+     "n": 4,
+     "at": [
+      0.9,
+      -0.2
+     ],
+     "r": 0.35,
+     "h": 0.1
+    }
+   ],
+   "lights": [
+    {
+     "col": "#ffd27a",
+     "i": 6,
+     "d": 7,
+     "x": 0,
+     "y": 1.5,
+     "z": 0.5
+    }
+   ],
+   "sparkle": [
+    0,
+    -0.6,
+    2.2
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.6,
+     9.0
+    ],
+    "to": [
+     0,
+     2.2,
+     7.4
+    ],
+    "at": [
+     0,
+     1.8,
+     -1.2
+    ],
+    "fov": 42
+   },
+   "prompt": "In a sunny red-rock canyon, a giant blocky robot guards a heap of shiny gold bars and coins. The four small blocky knights and the little dog step forward bravely. The robot's eyes glow, it looks down at them, then powers down and sits, letting them reach the gold. Dramatic then funny. Heavy robot servo sounds.",
+   "D": 10.454
+  },
+  {
+   "id": "l3b",
+   "world": "canyon",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -2.4,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": -0.8,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": 0.8,
+     "z": 0.2
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 2.4,
+     "z": 0.2
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "layout": "groups",
+     "per": 2,
+     "groups": [
+      [
+       -2.4,
+       1.1
+      ],
+      [
+       -0.8,
+       1.1
+      ],
+      [
+       0.8,
+       1.1
+      ],
+      [
+       2.4,
+       1.1
+      ]
+     ],
+     "gap": 0.0
+    },
+    {
+     "type": "coin",
+     "layout": "groups",
+     "per": 1,
+     "groups": [
+      [
+       -2.4,
+       1.6
+      ],
+      [
+       -0.8,
+       1.6
+      ],
+      [
+       0.8,
+       1.6
+      ],
+      [
+       2.4,
+       1.6
+      ]
+     ]
+    }
+   ],
+   "sparkle": [
+    0,
+    1.2,
+    5
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.0,
+     6.6
+    ],
+    "to": [
+     0,
+     1.9,
+     5.8
+    ],
+    "at": [
+     0,
+     0.9,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "Four blocky knights stand in a row in a sunny canyon, each with two gold bars and one gold coin in front of them. They each pick up their gold and show it off proudly, then high-five. Coin clink sounds.",
+   "D": 6.5
+  },
+  {
+   "id": "l3c",
+   "world": "canyon",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": 0,
+     "z": 0.6
+    },
+    {
+     "k": "dog",
+     "x": -1.0,
+     "z": 1.1,
+     "rot": 0.3
+    },
+    {
+     "k": "gmech",
+     "x": 3.2,
+     "z": -6.5,
+     "rot": -0.4,
+     "s": 0.8
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "layout": "pile",
+     "n": 2,
+     "at": [
+      1.1,
+      0.8
+     ],
+     "r": 0.3,
+     "h": 0.2
+    }
+   ],
+   "cam": {
+    "from": [
+     0.2,
+     1.1,
+     4.8
+    ],
+    "to": [
+     0.5,
+     1.1,
+     4.0
+    ],
+    "at": [
+     0,
+     1.3,
+     -0.5
+    ],
+    "fov": 44
+   },
+   "prompt": "The blocky wizard-hat hero gives a thumbs-up to the camera while the giant robot behind him waves a huge hand. The little dog wags its tail. Warm sunset light in the canyon. Upbeat.",
+   "D": 6.5
+  },
+  {
+   "id": "l4a",
+   "world": "forge",
+   "veo": "std",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -1.4,
+     "z": 0.6,
+     "rot": 0.8
+    },
+    {
+     "k": "dog",
+     "x": -2.3,
+     "z": 1.3,
+     "rot": 0.6
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": 2.2,
+     "z": -0.9,
+     "rot": -0.6
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 1.2,
+     "z": -1.7,
+     "rot": -0.4
+    }
+   ],
+   "props": [
+    {
+     "type": "anvil",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      0.3,
+      0
+     ],
+     "y": -0.2
+    },
+    {
+     "type": "bar",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      0.3,
+      0
+     ],
+     "y": 0.92
+    }
+   ],
+   "lights": [
+    {
+     "col": "#ff9a4a",
+     "i": 10,
+     "d": 7,
+     "x": 0.4,
+     "y": 2.2,
+     "z": 1
+    }
+   ],
+   "sparkle": [
+    0.3,
+    0.2,
+    1.5
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.0,
+     5.6
+    ],
+    "to": [
+     0.3,
+     1.7,
+     4.6
+    ],
+    "at": [
+     0.3,
+     1.1,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "Inside a glowing lava forge, a single gold bar rests on an iron anvil. The blocky hero lifts a big hammer and brings it down on the bar with a mighty clang; the bar bursts into ten shiny gold coins that bounce across the anvil in a shower of orange sparks. Slow-motion at the impact. Clang and coin sounds.",
+   "D": 7.864
+  },
+  {
+   "id": "l4b",
+   "world": "forge",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "dog",
+     "x": -0.9,
+     "z": -0.4,
+     "rot": 0.6
+    }
+   ],
+   "props": [
+    {
+     "type": "anvil",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      0.3,
+      0
+     ],
+     "y": -0.2
+    },
+    {
+     "type": "coin",
+     "layout": "pile",
+     "n": 10,
+     "at": [
+      0.3,
+      0
+     ],
+     "y": 0.9,
+     "r": 0.5,
+     "h": 0.1
+    }
+   ],
+   "lights": [
+    {
+     "col": "#ff9a4a",
+     "i": 10,
+     "d": 6,
+     "x": 0.4,
+     "y": 2,
+     "z": 1
+    }
+   ],
+   "sparkle": [
+    0.3,
+    0,
+    1.2
+   ],
+   "cam": {
+    "from": [
+     0.8,
+     1.6,
+     3.0
+    ],
+    "to": [
+     0.5,
+     1.5,
+     2.6
+    ],
+    "at": [
+     0.3,
+     1.0,
+     0
+    ],
+    "fov": 40
+   },
+   "prompt": "Close-up of ten shiny gold coins scattered on an iron anvil in a glowing forge, orange sparks drifting in slow motion. The little white dog peeks in from the side, eyes wide, and sniffs a coin. Crackling fire and coin jingles.",
+   "D": 6.5
+  },
+  {
+   "id": "l4c",
+   "world": "forge",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -1.6,
+     "z": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": 0,
+     "z": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": 1.6,
+     "z": 0.3
+    },
+    {
+     "k": "dog",
+     "x": -2.7,
+     "z": 1.0,
+     "rot": 0.4
+    }
+   ],
+   "props": [
+    {
+     "type": "bar",
+     "layout": "groups",
+     "per": 2,
+     "groups": [
+      [
+       -1.6,
+       1.1
+      ],
+      [
+       0,
+       1.1
+      ],
+      [
+       1.6,
+       1.1
+      ]
+     ]
+    },
+    {
+     "type": "coin",
+     "layout": "groups",
+     "per": 4,
+     "gap": 0.26,
+     "groups": [
+      [
+       -1.6,
+       1.6
+      ],
+      [
+       0,
+       1.6
+      ],
+      [
+       1.6,
+       1.6
+      ]
+     ]
+    }
+   ],
+   "sparkle": [
+    0,
+    1.3,
+    4
+   ],
+   "cam": {
+    "from": [
+     0,
+     1.9,
+     6.0
+    ],
+    "to": [
+     0,
+     1.8,
+     5.2
+    ],
+    "at": [
+     0,
+     0.9,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "Three blocky knights in a fiery forge each hold up their equal share of two gold bars and four coins, grinning, as sparks float around them. The little dog barks happily. Triumphant forge sounds.",
+   "D": 6.5
+  },
+  {
+   "id": "l5a",
+   "world": "tower",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "dog",
+     "x": -1.6,
+     "z": 0.6,
+     "rot": 0.5
+    },
+    {
+     "k": "dog",
+     "x": 1.6,
+     "z": 0.6,
+     "rot": -0.5,
+     "tint": "#c68642",
+     "tintK": 0.55,
+     "s": 0.85
+    },
+    {
+     "k": "dog",
+     "x": 0,
+     "z": -0.6,
+     "tint": "#5a3a1a",
+     "tintK": 0.55,
+     "s": 0.85
+    }
+   ],
+   "props": [
+    {
+     "type": "bone",
+     "layout": "pile",
+     "n": 14,
+     "at": [
+      0,
+      0.8
+     ],
+     "r": 0.7,
+     "h": 0.35,
+     "s": 1.2
+    }
+   ],
+   "sparkle": [
+    0,
+    0.8,
+    2
+   ],
+   "cam": {
+    "from": [
+     0,
+     1.9,
+     6.0
+    ],
+    "to": [
+     0,
+     1.6,
+     5.0
+    ],
+    "at": [
+     0,
+     0.5,
+     0.3
+    ],
+    "fov": 42
+   },
+   "prompt": "In a sunny meadow, three blocky puppies sit around a pile of white bones, tails wagging. The white dog with the wizard hat puts a paw on the pile protectively and looks at the camera with a funny surprised face. Playful barks.",
+   "D": 8.5
+  },
+  {
+   "id": "l5b",
+   "world": "tower",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "dog",
+     "x": -1.8,
+     "z": 0.2,
+     "rot": 0.3
+    },
+    {
+     "k": "dog",
+     "x": 1.8,
+     "z": 0.2,
+     "rot": -0.3,
+     "tint": "#c68642",
+     "tintK": 0.55,
+     "s": 0.85
+    },
+    {
+     "k": "dog",
+     "x": 0,
+     "z": -0.8,
+     "tint": "#5a3a1a",
+     "tintK": 0.55,
+     "s": 0.85
+    }
+   ],
+   "props": [
+    {
+     "type": "bone",
+     "layout": "groups",
+     "per": 4,
+     "gap": 0.3,
+     "groups": [
+      [
+       -1.8,
+       1.0
+      ],
+      [
+       1.8,
+       1.0
+      ],
+      [
+       0,
+       0.0
+      ]
+     ],
+     "s": 1.1
+    },
+    {
+     "type": "bone",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      0,
+      1.6
+     ],
+     "gap": 0.5,
+     "s": 1.1
+    }
+   ],
+   "cam": {
+    "from": [
+     0,
+     2.4,
+     5.6
+    ],
+    "to": [
+     0,
+     2.1,
+     4.9
+    ],
+    "at": [
+     0,
+     0.4,
+     0.4
+    ],
+    "fov": 42
+   },
+   "prompt": "Three blocky puppies each have their own little pile of four bones. Two extra bones lie in the middle. The white dog with the wizard hat glances left, glances right, then sneakily grabs the two leftover bones and tiptoes away as the other puppies tilt their heads. Comedic, sneaky music sting.",
+   "D": 6.5
+  },
+  {
+   "id": "l5c",
+   "world": "tower",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "dog",
+     "x": 0,
+     "z": 0.6
+    },
+    {
+     "k": "hero",
+     "x": -1.3,
+     "z": 0.0,
+     "rot": 0.3
+    }
+   ],
+   "props": [
+    {
+     "type": "bone",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      0.1,
+      1.2
+     ],
+     "gap": 0.45,
+     "s": 1.1
+    }
+   ],
+   "cam": {
+    "from": [
+     0.2,
+     1.0,
+     3.8
+    ],
+    "to": [
+     0.4,
+     0.9,
+     3.2
+    ],
+    "at": [
+     0,
+     0.6,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "The white dog with the wizard hat happily munches a bone and wags its tail while the blocky hero laughs and pats its head. Sunny, cozy, funny.",
+   "D": 6.5
+  },
+  {
+   "id": "l6a",
+   "world": "castle",
+   "veo": "std",
+   "chars": [
+    {
+     "k": "hero",
+     "x": 0,
+     "z": 0
+    }
+   ],
+   "props": [
+    {
+     "type": "rune",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      -1.5,
+      0.3
+     ],
+     "y": -0.1,
+     "r": 0.45,
+     "w": 0.2,
+     "sides": 32,
+     "col": "#3fa7ff"
+    },
+    {
+     "type": "rune",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      -0.55,
+      1.3
+     ],
+     "y": -0.1,
+     "r": 0.45,
+     "w": 0.2,
+     "sides": 32,
+     "col": "#3fbf5f"
+    },
+    {
+     "type": "rune",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      0.55,
+      1.3
+     ],
+     "y": -0.1,
+     "r": 0.45,
+     "w": 0.2,
+     "sides": 32,
+     "col": "#ffd23f"
+    },
+    {
+     "type": "rune",
+     "layout": "row",
+     "n": 1,
+     "at": [
+      1.5,
+      0.3
+     ],
+     "y": -0.1,
+     "r": 0.45,
+     "w": 0.2,
+     "sides": 32,
+     "col": "#ff4d6d"
+    },
+    {
+     "type": "banner",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      0,
+      -1.6
+     ],
+     "gap": 3.6,
+     "col": "#9b6bff"
+    }
+   ],
+   "sparkle": [
+    0,
+    0.8,
+    3
+   ],
+   "cam": {
+    "from": [
+     0,
+     3.2,
+     7.4
+    ],
+    "to": [
+     0,
+     2.2,
+     5.0
+    ],
+    "at": [
+     0,
+     0.8,
+     0.4
+    ],
+    "fov": 42
+   },
+   "prompt": "In a torch-lit castle courtyard at night, the blocky wizard-hat hero stands at the center of four rune circles. One by one the circles light up, blue, then green, then gold, then red, each with a burst of light and a rising chime, as the camera slowly pushes in. Epic, ceremonial.",
+   "D": 10.326
+  },
+  {
+   "id": "l6b",
+   "world": "castle",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": -1.5,
+     "z": 0.3,
+     "rot": 0.9
+    },
+    {
+     "k": "glitch",
+     "x": 1.9,
+     "y": 0.8,
+     "z": 0.0,
+     "rot": -0.9
+    }
+   ],
+   "sparkle": [
+    0.2,
+    0.3,
+    2
+   ],
+   "cam": {
+    "from": [
+     0.6,
+     1.6,
+     5.4
+    ],
+    "to": [
+     0.2,
+     1.5,
+     4.5
+    ],
+    "at": [
+     0.2,
+     1.2,
+     0
+    ],
+    "fov": 42
+   },
+   "prompt": "The blocky hero performs a fast four-hit combo against a glitchy floating pixel creature: four bright slashes of light, blue, green, gold and red. On the last hit the creature bursts into a cloud of tiny glowing cubes. Action-packed with whoosh and impact sounds.",
+   "D": 6.975
+  },
+  {
+   "id": "l6c",
+   "world": "castle",
+   "veo": "fast",
+   "chars": [
+    {
+     "k": "hero",
+     "x": 0,
+     "z": 0.6
+    },
+    {
+     "k": "dog",
+     "x": -1.1,
+     "z": 1.1,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 0,
+     "x": -2.0,
+     "z": -0.4,
+     "rot": 0.3
+    },
+    {
+     "k": "knight",
+     "f": 1,
+     "x": 1.8,
+     "z": -0.4,
+     "rot": -0.3
+    },
+    {
+     "k": "knight",
+     "f": 2,
+     "x": 0.8,
+     "z": -1.4,
+     "rot": -0.2
+    }
+   ],
+   "props": [
+    {
+     "type": "banner",
+     "layout": "row",
+     "n": 2,
+     "at": [
+      0,
+      -2.4
+     ],
+     "gap": 5,
+     "col": "#e0457b"
+    }
+   ],
+   "sparkle": [
+    0,
+    0.6,
+    4
+   ],
+   "cam": {
+    "from": [
+     0,
+     1.2,
+     5.4
+    ],
+    "to": [
+     0.4,
+     1.3,
+     4.4
+    ],
+    "at": [
+     0,
+     1.3,
+     0
+    ],
+    "fov": 44
+   },
+   "prompt": "The blocky hero and his three knight friends cheer and jump together while fireworks explode over the castle; the little dog runs in a happy circle. Big celebratory finale.",
+   "D": 7.204
+  }
+ ]
+}

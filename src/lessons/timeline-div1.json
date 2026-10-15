@@ -1,0 +1,301 @@
+{
+ "id": "div1",
+ "title": "Fair Shares",
+ "num": 1,
+ "D": 60.889,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l1a",
+   "title": true,
+   "theme": "div1",
+   "q": null,
+   "cues": [
+    2.2,
+    7.435
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Glitch's crystal vault just cracked open! Twelve power crystals spill out.",
+     "t": 2.2,
+     "d": 4.885
+    },
+    {
+     "spk": "E",
+     "text": "Woof! Shiny!",
+     "t": 7.435,
+     "d": 0.858
+    }
+   ],
+   "D": 9.093,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "deal",
+   "p": {
+    "item": "gem",
+    "n": 12,
+    "k": 4,
+    "eq": "12 ÷ 4 = 3",
+    "labels": [
+     "12 crystals",
+     "4 knights",
+     "3 each"
+    ]
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div1",
+   "q": null,
+   "cues": [
+    0.4,
+    5.913,
+    8.674,
+    13.035
+   ],
+   "dealAt": 1.2000000000000002,
+   "dealEnd": 5.713,
+   "endDeal": 5.7869166666666665,
+   "eqAt": 8.674,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Four knights want fair shares. Deal them out, one at a time, round and round.",
+     "t": 0.4,
+     "d": 5.163
+    },
+    {
+     "spk": "N",
+     "text": "Every knight gets three. That's fair!",
+     "t": 5.913,
+     "d": 2.411
+    },
+    {
+     "spk": "N",
+     "text": "We write it like this: twelve divided by four equals three.",
+     "t": 8.674,
+     "d": 4.011
+    },
+    {
+     "spk": "E",
+     "text": "Division means splitting into equal groups!",
+     "t": 13.035,
+     "d": 2.183
+    }
+   ],
+   "D": 16.418,
+   "start": 9.093
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l1b",
+   "title": false,
+   "theme": "div1",
+   "q": null,
+   "cues": [
+    0.5
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Fair shares make happy knights.",
+     "t": 0.5,
+     "d": 1.899
+    }
+   ],
+   "D": 6.5,
+   "start": 25.511
+  },
+  {
+   "type": "math",
+   "scene": "bags",
+   "p": {
+    "item": "gem",
+    "n": 12,
+    "m": 3,
+    "eq": "12 ÷ 3 = 4"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div1",
+   "q": null,
+   "cues": [
+    0.4,
+    5.337
+   ],
+   "fillAt": 1.9,
+   "eqAt": 6.140000000000001,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Division can ask another question. How many bags of three can we fill?",
+     "t": 0.4,
+     "d": 4.587
+    },
+    {
+     "spk": "N",
+     "text": "Four bags! So twelve divided by three is four.",
+     "t": 5.337,
+     "d": 3.392
+    }
+   ],
+   "D": 9.929,
+   "start": 32.011
+  },
+  {
+   "type": "stop",
+   "scene": "deal",
+   "p": {
+    "item": "gem",
+    "n": 15,
+    "k": 5,
+    "eq": "15 ÷ 5 = 3",
+    "labels": [
+     "15 gems",
+     "5 knights",
+     "3 each"
+    ]
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div1",
+   "q": "15 ÷ 5",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 5.572,
+   "acues": [
+    6.172
+   ],
+   "dealAt": 6.472,
+   "dealEnd": 9.072000000000001,
+   "endDeal": 9.348666666666666,
+   "eqAt": 9.848666666666666,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Fifteen gems, five knights. How many does each knight get?",
+     "t": 0.4,
+     "d": 4.672
+    },
+    {
+     "spk": "N",
+     "text": "Three each! Deal them out and see.",
+     "t": 6.172,
+     "d": 2.347
+    }
+   ],
+   "D": 12.449,
+   "start": 41.94
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l1c",
+   "title": false,
+   "theme": "div1",
+   "q": null,
+   "cues": [
+    0.5,
+    3.815
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Division is fair sharing. You've got it, knight!",
+     "t": 0.5,
+     "d": 2.965
+    },
+    {
+     "spk": "E",
+     "text": "Arf! Next up: the reverse spell!",
+     "t": 3.815,
+     "d": 1.67
+    }
+   ],
+   "D": 6.5,
+   "start": 54.389
+  }
+ ],
+ "audio": [
+  {
+   "file": "div1-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div1-0-say-1-E.wav",
+   "t": 7.435,
+   "spk": "E"
+  },
+  {
+   "file": "div1-1-say-0-N.wav",
+   "t": 9.493,
+   "spk": "N"
+  },
+  {
+   "file": "div1-1-say-1-N.wav",
+   "t": 15.006,
+   "spk": "N"
+  },
+  {
+   "file": "div1-1-say-2-N.wav",
+   "t": 17.767,
+   "spk": "N"
+  },
+  {
+   "file": "div1-1-say-3-E.wav",
+   "t": 22.128,
+   "spk": "E"
+  },
+  {
+   "file": "div1-2-say-0-N.wav",
+   "t": 26.011,
+   "spk": "N"
+  },
+  {
+   "file": "div1-3-say-0-N.wav",
+   "t": 32.411,
+   "spk": "N"
+  },
+  {
+   "file": "div1-3-say-1-N.wav",
+   "t": 37.348,
+   "spk": "N"
+  },
+  {
+   "file": "div1-4-say-0-N.wav",
+   "t": 42.34,
+   "spk": "N"
+  },
+  {
+   "file": "div1-4-after-0-N.wav",
+   "t": 48.112,
+   "spk": "N"
+  },
+  {
+   "file": "div1-5-say-0-N.wav",
+   "t": 54.889,
+   "spk": "N"
+  },
+  {
+   "file": "div1-5-say-1-E.wav",
+   "t": 58.204,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   47.51,
+   "15 ÷ 5",
+   3
+  ]
+ ]
+}

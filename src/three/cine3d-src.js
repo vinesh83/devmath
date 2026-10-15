@@ -336,18 +336,69 @@ function overlay(host){const mk=(css,txt)=>{const d=document.createElement('div'
     bars:[mk('position:absolute;left:0;right:0;top:0;height:9%;background:#000;pointer-events:none'),mk('position:absolute;left:0;right:0;bottom:0;height:9%;background:#000;pointer-events:none')],
     fade:mk('position:absolute;inset:0;background:#000;opacity:1;pointer-events:none')};}
 
+
+// ---------- lesson shots: one of his worlds + his characters + treasure props, filmed with a slow camera move.
+// Frame 0 of each shot is also the first frame handed to Veo, so the AI footage starts in his game's look.
+const PM={};function pmat(k){if(PM[k])return PM[k];return PM[k]=({
+  gold:()=>new THREE.MeshStandardMaterial({color:'#ffc933',metalness:0.9,roughness:0.25,envMapIntensity:1.5}),
+  wood:()=>new THREE.MeshStandardMaterial({color:'#8a5a2a',roughness:0.8}),
+  bone:()=>new THREE.MeshStandardMaterial({color:'#cfc2a4',roughness:0.85}),
+  steel:()=>new THREE.MeshStandardMaterial({color:'#7a80a8',metalness:0.7,roughness:0.3,envMapIntensity:1.2}),
+  stone:()=>new THREE.MeshStandardMaterial({color:'#5a5a70',roughness:0.9})}[k])();}
+const shadowAll=g=>{g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});return g;};
+const PROPS={
+  gem:o=>{const g=new THREE.Group(),c=new THREE.Color(o.col);const m=new THREE.Mesh(new THREE.OctahedronGeometry(0.2*(o.s||1),0),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:0.45,metalness:0.1,roughness:0.12,flatShading:true}));m.scale.y=1.45;g.add(m);return shadowAll(g);},
+  bar:o=>shadowAll(new THREE.Mesh(new RoundedBoxGeometry(0.9*(o.s||1),0.26*(o.s||1),0.38*(o.s||1),2,0.05),pmat('gold'))),
+  coin:o=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(0.17*(o.s||1),0.17*(o.s||1),0.06,22),pmat('gold'));return shadowAll(m);},
+  bone:o=>{const g=new THREE.Group(),M=pmat('bone'),k=o.s||1;g.add(new THREE.Mesh(new THREE.BoxGeometry(0.5*k,0.1*k,0.1*k),M));for(const x of [-0.27,0.27])for(const z of [-0.065,0.065]){const b=new THREE.Mesh(new THREE.SphereGeometry(0.075*k,10,8),M);b.position.set(x*k,0,z*k);g.add(b);}return shadowAll(g);},
+  shield:o=>{const g=new THREE.Group(),c=new THREE.Color(o.col||'#5ef2ff');g.add(new THREE.Mesh(new RoundedBoxGeometry(0.72,0.86,0.12,2,0.05),pmat('steel')));const e=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.12,0.15),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1.2}));e.position.y=0.14;g.add(e);
+    const e2=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.5,0.15),e.material);e2.position.y=0.05;g.add(e2);return shadowAll(g);},
+  chest:o=>{const g=new THREE.Group(),k=o.s||1;const b=new THREE.Mesh(new RoundedBoxGeometry(1.6*k,0.9*k,1*k,2,0.06),pmat('wood'));b.position.y=0.45*k;g.add(b);const lid=new THREE.Mesh(new RoundedBoxGeometry(1.64*k,0.28*k,1.04*k,2,0.06),pmat('wood'));lid.position.set(0,1.0*k,-0.5*k);lid.rotation.x=-1.15;g.add(lid);
+    for(const x of [-0.6,0.6]){const t=new THREE.Mesh(new THREE.BoxGeometry(0.12*k,0.95*k,1.05*k),pmat('gold'));t.position.set(x*k,0.47*k,0);g.add(t);}return shadowAll(g);},
+  anvil:o=>{const g=new THREE.Group(),M=pmat('steel');const a=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.35,0.55),M);a.position.y=0.95;g.add(a);const h=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.3,0.4),M);h.position.set(0.75,0.98,0);g.add(h);
+    const b=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.8,0.5),pmat('stone'));b.position.y=0.4;g.add(b);return shadowAll(g);},
+  rune:o=>{const c=new THREE.Color(o.col||'#5ef2ff');const m=new THREE.Mesh(new THREE.RingGeometry(o.r||1.4,(o.r||1.4)+(o.w||0.26),o.sides||3,1),new THREE.MeshBasicMaterial({color:c.multiplyScalar(1.8),toneMapped:false,transparent:true,opacity:0.9,side:THREE.DoubleSide}));m.rotation.x=-Math.PI/2;return m;},
+  banner:o=>{const g=new THREE.Group(),c=new THREE.Color(o.col||'#9b6bff');const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,3.4,8),pmat('wood'));pole.position.y=1.7;g.add(pole);
+    const f=new THREE.Mesh(new THREE.PlaneGeometry(1.1,1.6),new THREE.MeshStandardMaterial({color:c,side:THREE.DoubleSide,emissive:c,emissiveIntensity:0.25}));f.position.set(0.6,2.5,0);g.add(f);return shadowAll(g);}};
+const GEMCOLS=['#5ef2ff','#ff4d9d','#7dff5a','#ffe066','#b98cff'];
+function layout(st,P,list){const n=P.n||1,out=[],[cx,cz]=P.at||[0,0],y0=P.y||0;
+  const mk=i=>{const o=Object.assign({},P,{col:P.col||(P.type==='gem'?GEMCOLS[i%GEMCOLS.length]:null)});const m=PROPS[P.type](o);st.scene.add(m);list.push({m,P,i});return m;};
+  if(P.layout==='pile'){const r=P.r||1.1;for(let i=0;i<n;i++){const a=rnd()*6.283,d=Math.sqrt(rnd())*r,m=mk(i);m.position.set(cx+Math.cos(a)*d,y0+0.18+(1-d/r)*(P.h||0.7)+rnd()*0.12,cz+Math.sin(a)*d*0.8);m.rotation.set(rnd()*0.5,rnd()*6.28,rnd()*0.5);}}
+  else if(P.layout==='groups'){const G=P.groups||[[0,0]],per=P.per||3;G.forEach(([gx,gz],gi)=>{for(let i=0;i<per;i++){const m=mk(gi*per+i);const k=i-(per-1)/2;m.position.set(gx+k*(P.gap||0.42),y0+0.25+(P.type==='bar'?0.14*Math.floor(i/3):0),gz+((i%2)?0.12:-0.12));m.rotation.y=rnd()*0.4;}});}
+  else if(P.layout==='grid'){const R=P.rows||3,C=P.cols||4,g=P.gap||0.95;for(let r=0;r<R;r++)for(let c=0;c<C;c++){const m=mk(r*C+c);m.position.set(cx+(c-(C-1)/2)*g,y0+(R-1-r)*g*1.05,cz);}}
+  else if(P.layout==='stack'){for(let i=0;i<n;i++){const m=mk(i);m.position.set(cx+(i%2)*0.05,y0+0.06+i*0.07,cz);m.rotation.y=i*0.7;}}
+  else{for(let i=0;i<n;i++){const m=mk(i);m.position.set(cx+(i-(n-1)/2)*(P.gap||0.5),y0+0.2,cz);}}}
+function lessonShot(st,S,o){const sh=o.shot;seed=31+(sh.seed||0);const W=WORLDS[sh.world||'castle'](st),D=sh.D||8,deckY=W.deckY||0;
+  const chars=[],props=[];
+  for(const c of sh.chars||[]){let m;const k=c.k;
+    if(k==='hero')m=voxel(S.hero.stand,{size:0.1*(c.s||1),depth:3,noGlow:c.glow!==true});
+    else if(k==='knight')m=voxel((S.friends&&S.friends[(c.f||0)%S.friends.length])||S.hero.stand,{size:0.1*(c.s||1),depth:3});
+    else if(k==='dog')m=voxel(S.dog,{size:0.085*(c.s||1),depth:3,tint:c.tint,tintK:c.tintK||0.3});
+    else if(k==='glitch')m=voxel(S.glitch,{size:0.1*(c.s||1),depth:3});
+    else if(k==='gmech')m=voxel(S.gmech,{size:0.32*(c.s||1),depth:4,metal:0.45});
+    else if(k==='mech')m=voxel(S.mech,{size:0.32*(c.s||1),depth:4,metal:0.45});
+    if(!m)continue;m.position.set(c.x||0,deckY+(c.y||0),c.z||0);m.rotation.y=c.rot||0;if(m.userData.glowMat&&k!=='glitch')m.userData.glowMat.opacity=c.glow==null?0.9:c.glow;st.scene.add(m);chars.push({m,c,y:m.position.y});}
+  for(const P of sh.props||[])layout(st,Object.assign({y:deckY},P),props);
+  for(const L of sh.lights||[]){const l=new THREE.PointLight(L.col||'#ffe9b0',L.i||30,L.d||10,1.6);l.position.set(L.x||0,deckY+(L.y||2),L.z||0);st.scene.add(l);}
+  const spark=st.part(400,{size:0.09,grav:-0.3,jit:0.4,bright:2.6});const C=sh.cam||{};const A=V(...(C.from||[0,3,8])),B=V(...(C.to||C.from||[0,3,8])),T0=V(...(C.at||[0,1,0])),T1=V(...(C.at2||C.at||[0,1,0]));if(C.fov)st.fov(C.fov);
+  return {D,update(t,dt){if(W.tick)W.tick(t);const k=ease(Math.min(1,t/D));st.look(A.clone().lerp(B,k),T0.clone().lerp(T1,k));
+    chars.forEach(({m,c,y},i)=>{if(c.k==='glitch')m.position.y=y+Math.sin(t*2.2+i)*0.15;else if(c.bob!==false)m.position.y=y+Math.abs(Math.sin(t*2+i*1.3))*0.025;});
+    props.forEach(({m,P,i})=>{if(P.type==='gem'&&P.layout!=='pile'){m.rotation.y+=dt*1.2;}if(P.float){m.position.y+=Math.sin(t*2+i)*0.003;}});
+    if(sh.sparkle&&rnd()<0.7){const s=sh.sparkle;spark.emit(V(s[0]+(rnd()-.5)*(s[2]||2),deckY+0.3+rnd()*1.2,s[1]+(rnd()-.5)*(s[2]||2)*0.6),V(0,0.6,0),0.2,['#ffe066','#5ef2ff','#ffffff','#ff4d9d'],1.1,2);}
+    if(o.ov){o.ov.fade.style.opacity=String(sh.fadeIn?Math.max(0,1-t/0.5):0);}}};}
+
 const Cine3D={
   ok(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(e){return false;}},
   // kind: 'world' | 'mech'. o: {sprites, world, title, sub, boss, color, sfx(name), onStart}
   play(kind,o){return new Promise(res=>{const host=document.createElement('div');host.id='cine3d';host.style.cssText='position:fixed;inset:0;z-index:60;background:#000;overflow:hidden;touch-action:none';document.body.appendChild(host);
-    const st=new Stage(host),ov=overlay(host);o.ov=ov;const sc=({mech:mechScene,world:worldScene,victory:victoryScene,belt:beltScene}[kind]||worldScene)(st,o.sprites,o);
+    const st=new Stage(host),ov=overlay(host);o.ov=ov;const sc=({mech:mechScene,world:worldScene,victory:victoryScene,belt:beltScene,shot:lessonShot}[kind]||worldScene)(st,o.sprites,o);
     const skip=document.createElement('button');skip.textContent='Skip ▸';skip.style.cssText='position:absolute;top:calc(9% + 10px);right:14px;z-index:3;border:0;border-radius:12px;padding:12px 18px;font:700 17px Lexend,system-ui;background:#ffffff26;color:#fff';host.appendChild(skip);
     let done=false,t=0,last=performance.now();const end=()=>{if(done)return;done=true;if(o.onEnd)o.onEnd();window.removeEventListener('resize',rs);st.dispose();host.remove();res();};
     const rs=()=>st.resize();window.addEventListener('resize',rs);skip.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();end();});
     if(o.manual){this._step=(tt,dt)=>{t=tt;sc.update(t,dt);st.render(dt);};this._end=end;
       // composite frame (3D + overlay text) for recording
       this._frame=(q)=>{const gl=st.r.domElement,W=host.clientWidth,H=host.clientHeight,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(gl,0,0,W,H);
-        x.fillStyle='#000';x.fillRect(0,0,W,H*0.09);x.fillRect(0,H*0.91,W,H*0.09);
+        if(!o.noBars){x.fillStyle='#000';x.fillRect(0,0,W,H*0.09);x.fillRect(0,H*0.91,W,H*0.09);}
         const txt=(el,font,y,al,xx)=>{const op=+el.style.opacity||0;if(op<=0.01||!el.textContent)return;x.globalAlpha=op;x.font=font;x.textAlign=al||'center';x.lineJoin='round';const m=/scale\(([\d.]+)\)/.exec(el.style.transform||'');const sc=m?+m[1]:1;
           x.save();x.translate(xx==null?W/2:xx,y);x.scale(sc,sc);x.lineWidth=8;x.strokeStyle='#000';x.strokeText(el.textContent,0,0);x.fillStyle=el.style.color||'#fff';x.fillText(el.textContent,0,0);x.restore();x.globalAlpha=1;};
         const L0=(ov.title.textContent||'').length||8,big=Math.min(W*Math.min(0.11,1.5/L0),92);txt(ov.title,`900 ${big}px "Pixelify Sans",Lexend,sans-serif`,H*0.3+big*0.35);txt(ov.sub,`700 ${Math.min(W*0.04,28)}px Lexend,sans-serif`,H*0.41+20);

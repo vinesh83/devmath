@@ -1,0 +1,778 @@
+{
+ "voices": {
+  "N": "am_michael",
+  "E": "am_puck"
+ },
+ "lessons": [
+  {
+   "id": "div1",
+   "title": "Fair Shares",
+   "num": 1,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l1a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Glitch's crystal vault just cracked open! Twelve power crystals spill out."
+      ],
+      [
+       "E",
+       "Woof! Shiny!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "deal",
+     "p": {
+      "item": "gem",
+      "n": 12,
+      "k": 4,
+      "eq": "12 ÷ 4 = 3",
+      "labels": [
+       "12 crystals",
+       "4 knights",
+       "3 each"
+      ]
+     },
+     "say": [
+      [
+       "N",
+       "Four knights want fair shares. Deal them out, one at a time, round and round."
+      ],
+      [
+       "N",
+       "Every knight gets three. That's fair!"
+      ],
+      [
+       "N",
+       "We write it like this: twelve divided by four equals three."
+      ],
+      [
+       "E",
+       "Division means splitting into equal groups!"
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l1b",
+     "say": [
+      [
+       "N",
+       "Fair shares make happy knights."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "bags",
+     "p": {
+      "item": "gem",
+      "n": 12,
+      "m": 3,
+      "eq": "12 ÷ 3 = 4"
+     },
+     "say": [
+      [
+       "N",
+       "Division can ask another question. How many bags of three can we fill?"
+      ],
+      [
+       "N",
+       "Four bags! So twelve divided by three is four."
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "deal",
+     "p": {
+      "item": "gem",
+      "n": 15,
+      "k": 5,
+      "eq": "15 ÷ 5 = 3",
+      "labels": [
+       "15 gems",
+       "5 knights",
+       "3 each"
+      ]
+     },
+     "q": "15 ÷ 5",
+     "a": 3,
+     "say": [
+      [
+       "N",
+       "Your turn! Fifteen gems, five knights. How many does each knight get?"
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Three each! Deal them out and see."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l1c",
+     "say": [
+      [
+       "N",
+       "Division is fair sharing. You've got it, knight!"
+      ],
+      [
+       "E",
+       "Arf! Next up: the reverse spell!"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "div2",
+   "title": "The Reverse Spell",
+   "num": 2,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l2a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Twelve magic shields, floating in three rows of four."
+      ],
+      [
+       "E",
+       "Ooh, a spell!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "array",
+     "p": {
+      "rows": 3,
+      "cols": 4
+     },
+     "say": [
+      [
+       "N",
+       "Three rows of four. That's a times fact: three times four equals twelve."
+      ],
+      [
+       "N",
+       "Now cast it backwards. Twelve shared into three rows? Four in each row. Twelve divided by three is four."
+      ],
+      [
+       "N",
+       "Twelve into four columns? Three in each. Twelve divided by four is three."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "triangle",
+     "p": {
+      "a": 3,
+      "b": 4,
+      "c": 12
+     },
+     "say": [
+      [
+       "N",
+       "Three numbers, one family. Two times facts and two division facts."
+      ],
+      [
+       "E",
+       "Flip it, and it still works!"
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l2b",
+     "say": [
+      [
+       "N",
+       "That's the reverse spell. Division undoes multiplication."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "think",
+     "p": {
+      "a": 56,
+      "b": 7,
+      "q": 8
+     },
+     "say": [
+      [
+       "N",
+       "Stuck on fifty-six divided by seven? Think: seven times what is fifty-six?"
+      ],
+      [
+       "N",
+       "Seven times eight! So fifty-six divided by seven is eight."
+      ],
+      [
+       "E",
+       "Use the times facts you already own!"
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "think",
+     "p": {
+      "a": 24,
+      "b": 6,
+      "q": 4
+     },
+     "q": "24 ÷ 6",
+     "a": 4,
+     "say": [
+      [
+       "N",
+       "Your turn! Twenty-four divided by six. Think: six times what is twenty-four?"
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Four! Six times four is twenty-four."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l2c",
+     "say": [
+      [
+       "N",
+       "Every times fact you know is a division fact too."
+      ],
+      [
+       "E",
+       "Double power! Woof!"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "div3",
+   "title": "Tens First",
+   "num": 4,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l3a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Glitch's robot guards a heap of gold: eight gold bars and four coins."
+      ],
+      [
+       "N",
+       "Each bar is worth ten."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "blocks",
+     "p": {
+      "tens": 8,
+      "ones": 4,
+      "k": 4,
+      "eq": "84 ÷ 4 = 21"
+     },
+     "say": [
+      [
+       "N",
+       "Four knights share eighty-four. Start with the big ones: the tens."
+      ],
+      [
+       "N",
+       "Eight tens shared by four: two tens each."
+      ],
+      [
+       "N",
+       "Now the ones. Four coins shared by four: one each."
+      ],
+      [
+       "N",
+       "Two tens and one one. Each knight gets twenty-one!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "house",
+     "p": {
+      "n": 84,
+      "d": 4,
+      "show": "map"
+     },
+     "say": [
+      [
+       "N",
+       "In long division, the tens answer goes over the tens, and the ones answer goes over the ones."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l3b",
+     "say": [
+      [
+       "N",
+       "Tens first, then ones. Big things first!"
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "blocks",
+     "p": {
+      "tens": 6,
+      "ones": 9,
+      "k": 3,
+      "eq": "69 ÷ 3 = 23"
+     },
+     "q": "69 ÷ 3",
+     "a": 23,
+     "say": [
+      [
+       "N",
+       "Your turn! Sixty-nine divided by three. Tens first!"
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Twenty-three! Two tens each, then three ones each."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l3c",
+     "say": [
+      [
+       "N",
+       "That's how heroes split big numbers."
+      ],
+      [
+       "E",
+       "But what if the tens don't split evenly?"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "div4",
+   "title": "Trade a Ten",
+   "num": 5,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l4a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Seventy-two gold: seven bars and two coins. Three knights to share it."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "blocks",
+     "p": {
+      "tens": 7,
+      "ones": 2,
+      "k": 3,
+      "trade": true,
+      "part": 1
+     },
+     "say": [
+      [
+       "N",
+       "Seven tens shared by three: two each. But one bar is left over!"
+      ],
+      [
+       "N",
+       "We can't cut a bar into three... unless we trade it at the forge."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l4b",
+     "say": [
+      [
+       "N",
+       "Smash! One ten becomes ten ones."
+      ],
+      [
+       "E",
+       "Ka-ching!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "blocks",
+     "p": {
+      "tens": 7,
+      "ones": 2,
+      "k": 3,
+      "trade": true,
+      "part": 2,
+      "eq": "72 ÷ 3 = 24"
+     },
+     "say": [
+      [
+       "N",
+       "Ten coins, plus the two we had: twelve ones."
+      ],
+      [
+       "N",
+       "Twelve shared by three: four each."
+      ],
+      [
+       "N",
+       "Two tens and four ones. Twenty-four each!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "house",
+     "p": {
+      "n": 72,
+      "d": 3,
+      "show": "trade"
+     },
+     "say": [
+      [
+       "N",
+       "In long division, that leftover ten shows up when you subtract. Then bring down the two to make twelve."
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "blocks",
+     "p": {
+      "tens": 5,
+      "ones": 2,
+      "k": 4,
+      "trade": true,
+      "part": 0,
+      "eq": "52 ÷ 4 = 13"
+     },
+     "q": "52 ÷ 4",
+     "a": 13,
+     "say": [
+      [
+       "N",
+       "Your turn! Fifty-two divided by four."
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Thirteen! One ten each, trade the extra ten, then three ones each."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l4c",
+     "say": [
+      [
+       "N",
+       "When a ten won't split, trade it for ten ones!"
+      ],
+      [
+       "E",
+       "Smash!"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "div5",
+   "title": "Leftovers",
+   "num": 3,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l5a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Ellie found fourteen bones. Three puppies want to share them."
+      ],
+      [
+       "E",
+       "Hey! Those are mine!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "deal",
+     "p": {
+      "item": "bone",
+      "n": 14,
+      "k": 3,
+      "who": "dogs",
+      "eq": "14 ÷ 3 = 4 R2",
+      "labels": [
+       "14 bones",
+       "3 puppies",
+       "4 each, 2 left"
+      ]
+     },
+     "say": [
+      [
+       "N",
+       "Deal them out. Four each... and two left over."
+      ],
+      [
+       "N",
+       "Two bones can't go around three puppies fairly. That's the remainder."
+      ],
+      [
+       "N",
+       "Fourteen divided by three is four, remainder two."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "rule",
+     "p": {
+      "d": 3
+     },
+     "say": [
+      [
+       "N",
+       "The remainder must be smaller than the number you divide by. Three or more left? Everyone gets another one!"
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l5b",
+     "say": [
+      [
+       "N",
+       "And the leftovers? Ellie has a plan."
+      ],
+      [
+       "E",
+       "Remainder snack!"
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "deal",
+     "p": {
+      "item": "bone",
+      "n": 17,
+      "k": 5,
+      "who": "dogs",
+      "eq": "17 ÷ 5 = 3 R2",
+      "labels": [
+       "17 bones",
+       "5 puppies",
+       "3 each, 2 left"
+      ],
+      "askRem": true
+     },
+     "q": "17 ÷ 5 = 3 R ?",
+     "a": 2,
+     "say": [
+      [
+       "N",
+       "Your turn! Seventeen shared by five is three each. How many are left over?"
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Two left over. Seventeen divided by five is three, remainder two."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l5c",
+     "say": [
+      [
+       "N",
+       "When it doesn't split evenly, the leftover is the remainder."
+      ],
+      [
+       "E",
+       "Yum!"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "div6",
+   "title": "The Knight's Code",
+   "num": 6,
+   "beats": [
+    {
+     "type": "shot",
+     "shot": "l6a",
+     "title": true,
+     "say": [
+      [
+       "N",
+       "Every knight learns the code. Four moves, over and over."
+      ],
+      [
+       "N",
+       "Divide. Multiply. Subtract. Bring down."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "house",
+     "p": {
+      "n": 456,
+      "d": 3,
+      "show": "code",
+      "until": "d2"
+     },
+     "say": [
+      [
+       "N",
+       "Four hundred fifty-six divided by three. Divide: how many threes in four? One."
+      ],
+      [
+       "N",
+       "Multiply: one times three is three."
+      ],
+      [
+       "N",
+       "Subtract: four minus three is one."
+      ],
+      [
+       "N",
+       "Bring down the five. Now we have fifteen."
+      ]
+     ]
+    },
+    {
+     "type": "stop",
+     "scene": "house",
+     "p": {
+      "n": 456,
+      "d": 3,
+      "show": "code",
+      "from": "d2",
+      "until": "q2"
+     },
+     "q": "15 ÷ 3",
+     "a": 5,
+     "say": [
+      [
+       "N",
+       "Your turn! Divide: how many threes in fifteen?"
+      ]
+     ],
+     "after": [
+      [
+       "N",
+       "Five! Five times three is fifteen. Fifteen minus fifteen is zero. Bring down the six."
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "house",
+     "p": {
+      "n": 456,
+      "d": 3,
+      "show": "code",
+      "from": "d3"
+     },
+     "say": [
+      [
+       "N",
+       "Threes in six? Two. Two times three, six. Six minus six, zero. Nothing left!"
+      ],
+      [
+       "N",
+       "Four hundred fifty-six divided by three is one hundred fifty-two."
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l6b",
+     "say": [
+      [
+       "N",
+       "Divide, multiply, subtract, bring down. Repeat until you run out of digits!"
+      ]
+     ]
+    },
+    {
+     "type": "math",
+     "scene": "check",
+     "p": {
+      "q": 152,
+      "d": 3,
+      "n": 456
+     },
+     "say": [
+      [
+       "N",
+       "And a true knight checks. One fifty-two times three... four fifty-six. It matches!"
+      ],
+      [
+       "E",
+       "Multiply every digit, even the first!"
+      ]
+     ]
+    },
+    {
+     "type": "shot",
+     "shot": "l6c",
+     "say": [
+      [
+       "N",
+       "You know the Knight's Code. Now go split some treasure in the Division Dungeon!"
+      ],
+      [
+       "E",
+       "Let's go!"
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

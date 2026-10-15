@@ -17,6 +17,8 @@ const Cin3={off:false,loading:null,mus:null,
     return {hero,dog:this.spr(p.rows[0].length+10,p.rows.length+10,x=>drawPet(x,dog,5,6,1,0)),mech:this.spr(30,30,x=>drawMech(x,3,2,1,mechCfg(),0,false,false)),gmech:this.spr(30,30,x=>drawMech(x,3,2,1,GLITCH_MECH,0,true,false)),
       glitch:this.spr(18,18,x=>drawGlitch(x,3,4,1,glitchForm(),0,false)),
       minion:this.spr(12,12,x=>{const bc=BUG_COLS[0];drawSprite(x,MINION,1,1,1,{a:bc[1],g:bc[1],G:bc[0],W:'#ffffff',K:'#1d1f33',M:'#1d1f33'});drawSprite(x,MINION_LEGS[0],1,9,1,{g:bc[1]});}),
+      // three friend knights for the lesson movies (different outfits, skin and hair)
+      friends:[{skin:SKINS[0],hair:HAIRS[2],outfit:'ember',hat:'none',cape:'none'},{skin:SKINS[3],hair:HAIRS[1],outfit:'leaf',hat:'none',cape:'red'},{skin:SKINS[1],hair:HAIRS[4],outfit:'frost',hat:'none',cape:'none'}].map(l=>this.spr(16,22,x=>drawHero(x,2,4,1,l,'stand',0))),
       ride:look.ride&&look.ride!=='none'&&typeof Rides!=='undefined'?this.spr(34,30,x=>Rides.draw(x,look.ride,4,4,1,look,0,false)):null};},
   sfx(n){try{({roar:()=>{Snd.tone(70,1.1,'sawtooth',0.09,0,45);Snd.noise(0.9,0.12,0,'lowpass',500);},thunder:()=>Snd.boom(),slam:()=>{Snd.slam();Snd.boom();},charge:()=>Snd.charge(0.8),whoosh:()=>Snd.whoosh()})[n]();}catch(e){}},
   async play(kind,o){if(this.off||(typeof Brawl!=='undefined'&&Brawl.off))return false;if(!(await this.load())||!window.Cine3D||!Cine3D.ok())return false;

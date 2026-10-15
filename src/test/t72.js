@@ -1,0 +1,28 @@
+// Lesson player flow: Level 1 start plays lesson 1, "Your turn" stop, then the next-or-level choice.
+const { chromium } = require('/opt/node-tools/node_modules/playwright');const fs=require('fs');
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--autoplay-policy=no-user-gesture-required']});
+ const pg=await b.newPage({viewport:process.env.PORTRAIT?{width:820,height:1180}:{width:1180,height:820},hasTouch:true});const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+ const W=ms=>pg.waitForTimeout(ms);const ev=(f,a)=>pg.evaluate(f,a);
+ const vid=fs.readFileSync(__dirname+'/sp/fake-lesson.webm');
+ await pg.route('**/video/index.json',r=>r.fulfill({contentType:'application/json',body:JSON.stringify({videos:{div1:{stops:[[1.5,'15 ÷ 5',3]]},div2:{stops:[]},div5:{stops:[]},div3:{stops:[]}}})}));
+ await pg.route(/video\/div\d\.mp4/,r=>r.fulfill({contentType:'video/webm',body:vid}));
+ await pg.goto('http://localhost:8765/');await W(400);await pg.fill('#ob-name','Dev');await pg.click('text=Start the adventure');await W(900);
+ await ev(()=>{const N=window.__nk;Object.keys(N.NPCS).forEach(k=>N.Talk.st().met[k]=1);document.querySelector('#talk').hidden=true;N.Talk.open=false;N.Talk.chain=Promise.resolve();N.Brawl.off=true;N.state.cineEvery=0;N.state.howtoSeen=true;N.Lesson.off=true;N.state.no3d=true;N.Arcade.pickOff=true;N.Dojo.st().unlockDay=new Date().toISOString().slice(0,10);setInterval(()=>{N.Pause.last=Date.now();},300);});
+ await ev(()=>{window.__nk.DivLessons.probing=false;window.__nk.DivLessons.probe();});await W(800);
+ console.log('pending at L1:',await ev(()=>window.__nk.DivLessons.pending(0).map(v=>v.id).join(',')));
+ await ev(()=>{const N=window.__nk;N.Dungeon.open();});await W(600);
+ console.log('vault:',await ev(()=>[...document.querySelectorAll('.dv-vid')].map(x=>x.textContent).join(' | ')));
+ await ev(()=>document.querySelector('.dv-lv').click());await W(1200);
+ console.log('player open:',await ev(()=>!!document.querySelector('.vp')));
+ await ev(()=>document.querySelector('.vp-start').click());await W(2600);
+ console.log('quiz:',await ev(()=>{const q=document.querySelector('.vp-quiz');return q&&!q.hidden?q.textContent.slice(0,40):null;}));await pg.screenshot({path:'sp/t72-quiz.png'});
+ await ev(()=>{const k=[...document.querySelectorAll('.vp-quiz .lab-k')];k.find(x=>x.textContent==='3').click();k.find(x=>x.textContent==='OK').click();});await W(800);
+ console.log('after answer:',await ev(()=>{const v=document.querySelector('.vp-video');return {paused:v.paused,t:+v.currentTime.toFixed(1)};}));
+ await W(3500);
+ console.log('ask:',await ev(()=>{const m=document.querySelector('.dv-ask');return m&&m.textContent;}));await pg.screenshot({path:'sp/t72-ask.png'});
+ console.log('div1 seen:',await ev(()=>JSON.stringify(window.__nk.state.divVideos)));
+ await ev(()=>[...document.querySelectorAll('.dv-ask button')].find(x=>/Play the level/.test(x.textContent)).click());await W(1500);
+ console.log('after skip: player',await ev(()=>!!document.querySelector('.vp')),'overlay',await ev(()=>document.querySelector('#overlay').hidden?'-':document.querySelector('#overlay').textContent.slice(0,80)));
+ console.log('level running:',await ev(()=>{const N=window.__nk,r=N.run;const p=r&&r.queue[r.idx];return p?p.kind+' '+p.n+' ÷ '+p.d+' screen '+!document.querySelector('#scr-level').hidden:null;}).catch(e=>'?'+e.message));console.log('still pending:',await ev(()=>window.__nk.DivLessons.pending(0).map(v=>v.id).join(',')));
+ console.log('slip log video:',await ev(()=>JSON.stringify((window.__nk.state.slipLog||[]).filter(x=>x.kind==='video'))));
+ console.log('errors',errs);await b.close();})();

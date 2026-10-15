@@ -1,0 +1,320 @@
+{
+ "id": "div2",
+ "title": "The Reverse Spell",
+ "num": 2,
+ "D": 74.712,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l2a",
+   "title": true,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    2.2,
+    6.262
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Twelve magic shields, floating in three rows of four.",
+     "t": 2.2,
+     "d": 3.712
+    },
+    {
+     "spk": "E",
+     "text": "Ooh, a spell!",
+     "t": 6.262,
+     "d": 0.776
+    }
+   ],
+   "D": 7.838,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "array",
+   "p": {
+    "rows": 3,
+    "cols": 4
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    0.4,
+    5.977,
+    14.135
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Three rows of four. That's a times fact: three times four equals twelve.",
+     "t": 0.4,
+     "d": 5.227
+    },
+    {
+     "spk": "N",
+     "text": "Now cast it backwards. Twelve shared into three rows? Four in each row. Twelve divided by three is four.",
+     "t": 5.977,
+     "d": 7.808
+    },
+    {
+     "spk": "N",
+     "text": "Twelve into four columns? Three in each. Twelve divided by four is three.",
+     "t": 14.135,
+     "d": 5.632
+    }
+   ],
+   "D": 20.967,
+   "start": 7.838
+  },
+  {
+   "type": "math",
+   "scene": "triangle",
+   "p": {
+    "a": 3,
+    "b": 4,
+    "c": 12
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    0.4,
+    5.166
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Three numbers, one family. Two times facts and two division facts.",
+     "t": 0.4,
+     "d": 4.416
+    },
+    {
+     "spk": "E",
+     "text": "Flip it, and it still works!",
+     "t": 5.166,
+     "d": 1.368
+    }
+   ],
+   "D": 7.734,
+   "start": 28.805
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l2b",
+   "title": false,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    0.5
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "That's the reverse spell. Division undoes multiplication.",
+     "t": 0.5,
+     "d": 3.904
+    }
+   ],
+   "D": 6.5,
+   "start": 36.539
+  },
+  {
+   "type": "math",
+   "scene": "think",
+   "p": {
+    "a": 56,
+    "b": 7,
+    "q": 8
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    0.4,
+    6.446,
+    11.127
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Stuck on fifty-six divided by seven? Think: seven times what is fifty-six?",
+     "t": 0.4,
+     "d": 5.696
+    },
+    {
+     "spk": "N",
+     "text": "Seven times eight! So fifty-six divided by seven is eight.",
+     "t": 6.446,
+     "d": 4.331
+    },
+    {
+     "spk": "E",
+     "text": "Use the times facts you already own!",
+     "t": 11.127,
+     "d": 1.868
+    }
+   ],
+   "D": 14.195,
+   "start": 43.039
+  },
+  {
+   "type": "stop",
+   "scene": "think",
+   "p": {
+    "a": 24,
+    "b": 6,
+    "q": 4
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div2",
+   "q": "24 ÷ 6",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 6.575,
+   "acues": [
+    7.175
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Twenty-four divided by six. Think: six times what is twenty-four?",
+     "t": 0.4,
+     "d": 5.675
+    },
+    {
+     "spk": "N",
+     "text": "Four! Six times four is twenty-four.",
+     "t": 7.175,
+     "d": 2.603
+    }
+   ],
+   "D": 10.978,
+   "start": 57.234
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l2c",
+   "title": false,
+   "theme": "div2",
+   "q": null,
+   "cues": [
+    0.5,
+    4.37
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Every times fact you know is a division fact too.",
+     "t": 0.5,
+     "d": 3.52
+    },
+    {
+     "spk": "E",
+     "text": "Double power! Woof!",
+     "t": 4.37,
+     "d": 1.114
+    }
+   ],
+   "D": 6.5,
+   "start": 68.212
+  }
+ ],
+ "audio": [
+  {
+   "file": "div2-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div2-0-say-1-E.wav",
+   "t": 6.262,
+   "spk": "E"
+  },
+  {
+   "file": "div2-1-say-0-N.wav",
+   "t": 8.238,
+   "spk": "N"
+  },
+  {
+   "file": "div2-1-say-1-N.wav",
+   "t": 13.815,
+   "spk": "N"
+  },
+  {
+   "file": "div2-1-say-2-N.wav",
+   "t": 21.973,
+   "spk": "N"
+  },
+  {
+   "file": "div2-2-say-0-N.wav",
+   "t": 29.205,
+   "spk": "N"
+  },
+  {
+   "file": "div2-2-say-1-E.wav",
+   "t": 33.971,
+   "spk": "E"
+  },
+  {
+   "file": "div2-3-say-0-N.wav",
+   "t": 37.039,
+   "spk": "N"
+  },
+  {
+   "file": "div2-4-say-0-N.wav",
+   "t": 43.439,
+   "spk": "N"
+  },
+  {
+   "file": "div2-4-say-1-N.wav",
+   "t": 49.485,
+   "spk": "N"
+  },
+  {
+   "file": "div2-4-say-2-E.wav",
+   "t": 54.166,
+   "spk": "E"
+  },
+  {
+   "file": "div2-5-say-0-N.wav",
+   "t": 57.634,
+   "spk": "N"
+  },
+  {
+   "file": "div2-5-after-0-N.wav",
+   "t": 64.409,
+   "spk": "N"
+  },
+  {
+   "file": "div2-6-say-0-N.wav",
+   "t": 68.712,
+   "spk": "N"
+  },
+  {
+   "file": "div2-6-say-1-E.wav",
+   "t": 72.582,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   63.81,
+   "24 ÷ 6",
+   4
+  ]
+ ]
+}

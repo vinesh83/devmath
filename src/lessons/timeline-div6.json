@@ -1,0 +1,355 @@
+{
+ "id": "div6",
+ "title": "The Knight's Code",
+ "num": 6,
+ "D": 76.17,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l6a",
+   "title": true,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    2.2,
+    6.411
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Every knight learns the code. Four moves, over and over.",
+     "t": 2.2,
+     "d": 3.861
+    },
+    {
+     "spk": "N",
+     "text": "Divide. Multiply. Subtract. Bring down.",
+     "t": 6.411,
+     "d": 3.115
+    }
+   ],
+   "D": 10.326,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "house",
+   "p": {
+    "n": 456,
+    "d": 3,
+    "show": "code",
+    "until": "d2"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    0.4,
+    6.873,
+    9.89,
+    12.651
+   ],
+   "ev": {
+    "q0": 5.604550000000001,
+    "m0": 8.4732,
+    "s0": 11.3366,
+    "b0": 13.5087
+   },
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Four hundred fifty-six divided by three. Divide: how many threes in four? One.",
+     "t": 0.4,
+     "d": 6.123
+    },
+    {
+     "spk": "N",
+     "text": "Multiply: one times three is three.",
+     "t": 6.873,
+     "d": 2.667
+    },
+    {
+     "spk": "N",
+     "text": "Subtract: four minus three is one.",
+     "t": 9.89,
+     "d": 2.411
+    },
+    {
+     "spk": "N",
+     "text": "Bring down the five. Now we have fifteen.",
+     "t": 12.651,
+     "d": 2.859
+    }
+   ],
+   "D": 16.71,
+   "start": 10.326
+  },
+  {
+   "type": "stop",
+   "scene": "house",
+   "p": {
+    "n": 456,
+    "d": 3,
+    "show": "code",
+    "from": "d2",
+    "until": "q2"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div6",
+   "q": "15 ÷ 3",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 4.292,
+   "acues": [
+    4.892
+   ],
+   "ev": {
+    "q0": -1,
+    "m0": -1,
+    "s0": -1,
+    "b0": -1,
+    "q1": 5.681,
+    "m1": 7.26,
+    "s1": 8.839,
+    "b1": 10.418
+   },
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Divide: how many threes in fifteen?",
+     "t": 0.4,
+     "d": 3.392
+    },
+    {
+     "spk": "N",
+     "text": "Five! Five times three is fifteen. Fifteen minus fifteen is zero. Bring down the six.",
+     "t": 4.892,
+     "d": 6.315
+    }
+   ],
+   "D": 12.407,
+   "start": 27.036
+  },
+  {
+   "type": "math",
+   "scene": "house",
+   "p": {
+    "n": 456,
+    "d": 3,
+    "show": "code",
+    "from": "d3"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    0.4,
+    6.51
+   ],
+   "answerAt": 6.51,
+   "ev": {
+    "q0": -1,
+    "m0": -1,
+    "s0": -1,
+    "b0": -1,
+    "q1": -1,
+    "m1": -1,
+    "s1": -1,
+    "b1": -1,
+    "q2": 1.36,
+    "m2": 3.28,
+    "s2": 5.2
+   },
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Threes in six? Two. Two times three, six. Six minus six, zero. Nothing left!",
+     "t": 0.4,
+     "d": 5.76
+    },
+    {
+     "spk": "N",
+     "text": "Four hundred fifty-six divided by three is one hundred fifty-two.",
+     "t": 6.51,
+     "d": 4.928
+    }
+   ],
+   "D": 12.638,
+   "start": 39.443
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l6b",
+   "title": false,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    0.5
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Divide, multiply, subtract, bring down. Repeat until you run out of digits!",
+     "t": 0.5,
+     "d": 5.675
+    }
+   ],
+   "D": 6.975,
+   "start": 52.081
+  },
+  {
+   "type": "math",
+   "scene": "check",
+   "p": {
+    "q": 152,
+    "d": 3,
+    "n": 456
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    0.4,
+    6.489
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "And a true knight checks. One fifty-two times three... four fifty-six. It matches!",
+     "t": 0.4,
+     "d": 5.739
+    },
+    {
+     "spk": "E",
+     "text": "Multiply every digit, even the first!",
+     "t": 6.489,
+     "d": 2.221
+    }
+   ],
+   "D": 9.91,
+   "start": 59.056
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l6c",
+   "title": false,
+   "theme": "div6",
+   "q": null,
+   "cues": [
+    0.5,
+    5.607
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "You know the Knight's Code. Now go split some treasure in the Division Dungeon!",
+     "t": 0.5,
+     "d": 4.757
+    },
+    {
+     "spk": "E",
+     "text": "Let's go!",
+     "t": 5.607,
+     "d": 0.797
+    }
+   ],
+   "D": 7.204,
+   "start": 68.966
+  }
+ ],
+ "audio": [
+  {
+   "file": "div6-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div6-0-say-1-N.wav",
+   "t": 6.411,
+   "spk": "N"
+  },
+  {
+   "file": "div6-1-say-0-N.wav",
+   "t": 10.726,
+   "spk": "N"
+  },
+  {
+   "file": "div6-1-say-1-N.wav",
+   "t": 17.199,
+   "spk": "N"
+  },
+  {
+   "file": "div6-1-say-2-N.wav",
+   "t": 20.216,
+   "spk": "N"
+  },
+  {
+   "file": "div6-1-say-3-N.wav",
+   "t": 22.977,
+   "spk": "N"
+  },
+  {
+   "file": "div6-2-say-0-N.wav",
+   "t": 27.436,
+   "spk": "N"
+  },
+  {
+   "file": "div6-2-after-0-N.wav",
+   "t": 31.928,
+   "spk": "N"
+  },
+  {
+   "file": "div6-3-say-0-N.wav",
+   "t": 39.843,
+   "spk": "N"
+  },
+  {
+   "file": "div6-3-say-1-N.wav",
+   "t": 45.953,
+   "spk": "N"
+  },
+  {
+   "file": "div6-4-say-0-N.wav",
+   "t": 52.581,
+   "spk": "N"
+  },
+  {
+   "file": "div6-5-say-0-N.wav",
+   "t": 59.456,
+   "spk": "N"
+  },
+  {
+   "file": "div6-5-say-1-E.wav",
+   "t": 65.545,
+   "spk": "E"
+  },
+  {
+   "file": "div6-6-say-0-N.wav",
+   "t": 69.466,
+   "spk": "N"
+  },
+  {
+   "file": "div6-6-say-1-E.wav",
+   "t": 74.573,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   31.33,
+   "15 ÷ 3",
+   5
+  ]
+ ]
+}

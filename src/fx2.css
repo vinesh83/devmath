@@ -473,6 +473,11 @@ html,body{touch-action:manipulation}
 .vp-quiz{position:absolute;display:grid;gap:10px;justify-items:center;padding:18px 22px;border-radius:20px;background:#1f2347f2;color:#fff;width:min(360px,92%)}
 .vp-quiz h3{margin:0;font:800 26px var(--f-display);color:#ffe066}
 .vp-msg{min-height:22px;font:700 18px var(--f-body)}
+/* "Your turn": the video slides aside so the pad never covers the picture */
+.vp-video{transition:width .3s,height .3s}
+.vp.quizzing .vp-video{position:absolute;left:0;top:0;width:calc(100% - 384px);height:100%}
+.vp.quizzing .vp-quiz{right:12px}
+@media (orientation:portrait){.vp.quizzing .vp-video{width:100%;height:calc(100% - 560px)}.vp.quizzing .vp-quiz{right:auto;bottom:64px}}
 .dv-grid{font-size:42px}
 .dv-grid .dv-top{border-radius:0}
 .dv-grid .dv-wall{border-top-left-radius:0}

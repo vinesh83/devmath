@@ -1,0 +1,287 @@
+{
+ "id": "div5",
+ "title": "Leftovers",
+ "num": 3,
+ "D": 56.514,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l5a",
+   "title": true,
+   "theme": "div5",
+   "q": null,
+   "cues": [
+    2.2,
+    6.603
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Ellie found fourteen bones. Three puppies want to share them.",
+     "t": 2.2,
+     "d": 4.053
+    },
+    {
+     "spk": "E",
+     "text": "Hey! Those are mine!",
+     "t": 6.603,
+     "d": 1.097
+    }
+   ],
+   "D": 8.5,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "deal",
+   "p": {
+    "item": "bone",
+    "n": 14,
+    "k": 3,
+    "who": "dogs",
+    "eq": "14 ÷ 3 = 4 R2",
+    "labels": [
+     "14 bones",
+     "3 puppies",
+     "4 each, 2 left"
+    ]
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div5",
+   "q": null,
+   "cues": [
+    0.4,
+    4.078,
+    8.567
+   ],
+   "dealAt": 1.2000000000000002,
+   "dealEnd": 3.878,
+   "endDeal": 4.136714285714286,
+   "eqAt": 8.567,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Deal them out. Four each... and two left over.",
+     "t": 0.4,
+     "d": 3.328
+    },
+    {
+     "spk": "N",
+     "text": "Two bones can't go around three puppies fairly. That's the remainder.",
+     "t": 4.078,
+     "d": 4.139
+    },
+    {
+     "spk": "N",
+     "text": "Fourteen divided by three is four, remainder two.",
+     "t": 8.567,
+     "d": 3.605
+    }
+   ],
+   "D": 13.372,
+   "start": 8.5
+  },
+  {
+   "type": "math",
+   "scene": "rule",
+   "p": {
+    "d": 3
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div5",
+   "q": null,
+   "cues": [
+    0.4
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "The remainder must be smaller than the number you divide by. Three or more left? Everyone gets another one!",
+     "t": 0.4,
+     "d": 6.997
+    }
+   ],
+   "D": 8.597,
+   "start": 21.872
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l5b",
+   "title": false,
+   "theme": "div5",
+   "q": null,
+   "cues": [
+    0.5,
+    3.495
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "And the leftovers? Ellie has a plan.",
+     "t": 0.5,
+     "d": 2.645
+    },
+    {
+     "spk": "E",
+     "text": "Remainder snack!",
+     "t": 3.495,
+     "d": 1.016
+    }
+   ],
+   "D": 6.5,
+   "start": 30.469
+  },
+  {
+   "type": "stop",
+   "scene": "deal",
+   "p": {
+    "item": "bone",
+    "n": 17,
+    "k": 5,
+    "who": "dogs",
+    "eq": "17 ÷ 5 = 3 R2",
+    "labels": [
+     "17 bones",
+     "5 puppies",
+     "3 each, 2 left"
+    ],
+    "askRem": true
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div5",
+   "q": "17 ÷ 5 = 3 R ?",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 6.148,
+   "acues": [
+    6.748
+   ],
+   "dealAt": 7.048,
+   "dealEnd": 9.648,
+   "endDeal": 9.945058823529411,
+   "eqAt": 10.445058823529411,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Seventeen shared by five is three each. How many are left over?",
+     "t": 0.4,
+     "d": 5.248
+    },
+    {
+     "spk": "N",
+     "text": "Two left over. Seventeen divided by five is three, remainder two.",
+     "t": 6.748,
+     "d": 5.056
+    }
+   ],
+   "D": 13.045,
+   "start": 36.969
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l5c",
+   "title": false,
+   "theme": "div5",
+   "q": null,
+   "cues": [
+    0.5,
+    4.519
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "When it doesn't split evenly, the leftover is the remainder.",
+     "t": 0.5,
+     "d": 3.669
+    },
+    {
+     "spk": "E",
+     "text": "Yum!",
+     "t": 4.519,
+     "d": 0.56
+    }
+   ],
+   "D": 6.5,
+   "start": 50.014
+  }
+ ],
+ "audio": [
+  {
+   "file": "div5-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div5-0-say-1-E.wav",
+   "t": 6.603,
+   "spk": "E"
+  },
+  {
+   "file": "div5-1-say-0-N.wav",
+   "t": 8.9,
+   "spk": "N"
+  },
+  {
+   "file": "div5-1-say-1-N.wav",
+   "t": 12.578,
+   "spk": "N"
+  },
+  {
+   "file": "div5-1-say-2-N.wav",
+   "t": 17.067,
+   "spk": "N"
+  },
+  {
+   "file": "div5-2-say-0-N.wav",
+   "t": 22.272,
+   "spk": "N"
+  },
+  {
+   "file": "div5-3-say-0-N.wav",
+   "t": 30.969,
+   "spk": "N"
+  },
+  {
+   "file": "div5-3-say-1-E.wav",
+   "t": 33.964,
+   "spk": "E"
+  },
+  {
+   "file": "div5-4-say-0-N.wav",
+   "t": 37.369,
+   "spk": "N"
+  },
+  {
+   "file": "div5-4-after-0-N.wav",
+   "t": 43.717,
+   "spk": "N"
+  },
+  {
+   "file": "div5-5-say-0-N.wav",
+   "t": 50.514,
+   "spk": "N"
+  },
+  {
+   "file": "div5-5-say-1-E.wav",
+   "t": 54.533,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   43.12,
+   "17 ÷ 5 = 3 R ?",
+   2
+  ]
+ ]
+}

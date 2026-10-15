@@ -1,0 +1,280 @@
+{
+ "id": "div3",
+ "title": "Tens First",
+ "num": 4,
+ "D": 61.906,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l3a",
+   "title": true,
+   "theme": "div3",
+   "q": null,
+   "cues": [
+    2.2,
+    7.798
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Glitch's robot guards a heap of gold: eight gold bars and four coins.",
+     "t": 2.2,
+     "d": 5.248
+    },
+    {
+     "spk": "N",
+     "text": "Each bar is worth ten.",
+     "t": 7.798,
+     "d": 1.856
+    }
+   ],
+   "D": 10.454,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "blocks",
+   "p": {
+    "tens": 8,
+    "ones": 4,
+    "k": 4,
+    "eq": "84 ÷ 4 = 21"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div3",
+   "q": null,
+   "cues": [
+    0.4,
+    4.846,
+    8.225,
+    12.159
+   ],
+   "tenAt": 4.846,
+   "oneAt": 8.225,
+   "done": 12.159,
+   "eqAt": 12.459000000000001,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Four knights share eighty-four. Start with the big ones: the tens.",
+     "t": 0.4,
+     "d": 4.096
+    },
+    {
+     "spk": "N",
+     "text": "Eight tens shared by four: two tens each.",
+     "t": 4.846,
+     "d": 3.029
+    },
+    {
+     "spk": "N",
+     "text": "Now the ones. Four coins shared by four: one each.",
+     "t": 8.225,
+     "d": 3.584
+    },
+    {
+     "spk": "N",
+     "text": "Two tens and one one. Each knight gets twenty-one!",
+     "t": 12.159,
+     "d": 3.541
+    }
+   ],
+   "D": 16.9,
+   "start": 10.454
+  },
+  {
+   "type": "math",
+   "scene": "house",
+   "p": {
+    "n": 84,
+    "d": 4,
+    "show": "map"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div3",
+   "q": null,
+   "cues": [
+    0.4
+   ],
+   "ev": {
+    "q0": 2.71455,
+    "q1": 5.359750000000001
+   },
+   "lines": [
+    {
+     "spk": "N",
+     "text": "In long division, the tens answer goes over the tens, and the ones answer goes over the ones.",
+     "t": 0.4,
+     "d": 6.613
+    }
+   ],
+   "D": 8.213,
+   "start": 27.354
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l3b",
+   "title": false,
+   "theme": "div3",
+   "q": null,
+   "cues": [
+    0.5
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Tens first, then ones. Big things first!",
+     "t": 0.5,
+     "d": 2.901
+    }
+   ],
+   "D": 6.5,
+   "start": 35.567
+  },
+  {
+   "type": "stop",
+   "scene": "blocks",
+   "p": {
+    "tens": 6,
+    "ones": 9,
+    "k": 3,
+    "eq": "69 ÷ 3 = 23"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div3",
+   "q": "69 ÷ 3",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 5.039,
+   "acues": [
+    5.639
+   ],
+   "tenAt": 5.939,
+   "oneAt": 8.139,
+   "done": 10.738999999999999,
+   "eqAt": 10.738999999999999,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Sixty-nine divided by three. Tens first!",
+     "t": 0.4,
+     "d": 4.139
+    },
+    {
+     "spk": "N",
+     "text": "Twenty-three! Two tens each, then three ones each.",
+     "t": 5.639,
+     "d": 3.072
+    }
+   ],
+   "D": 13.339,
+   "start": 42.067
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l3c",
+   "title": false,
+   "theme": "div3",
+   "q": null,
+   "cues": [
+    0.5,
+    3.154
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "That's how heroes split big numbers.",
+     "t": 0.5,
+     "d": 2.304
+    },
+    {
+     "spk": "E",
+     "text": "But what if the tens don't split evenly?",
+     "t": 3.154,
+     "d": 1.966
+    }
+   ],
+   "D": 6.5,
+   "start": 55.406
+  }
+ ],
+ "audio": [
+  {
+   "file": "div3-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div3-0-say-1-N.wav",
+   "t": 7.798,
+   "spk": "N"
+  },
+  {
+   "file": "div3-1-say-0-N.wav",
+   "t": 10.854,
+   "spk": "N"
+  },
+  {
+   "file": "div3-1-say-1-N.wav",
+   "t": 15.3,
+   "spk": "N"
+  },
+  {
+   "file": "div3-1-say-2-N.wav",
+   "t": 18.679,
+   "spk": "N"
+  },
+  {
+   "file": "div3-1-say-3-N.wav",
+   "t": 22.613,
+   "spk": "N"
+  },
+  {
+   "file": "div3-2-say-0-N.wav",
+   "t": 27.754,
+   "spk": "N"
+  },
+  {
+   "file": "div3-3-say-0-N.wav",
+   "t": 36.067,
+   "spk": "N"
+  },
+  {
+   "file": "div3-4-say-0-N.wav",
+   "t": 42.467,
+   "spk": "N"
+  },
+  {
+   "file": "div3-4-after-0-N.wav",
+   "t": 47.706,
+   "spk": "N"
+  },
+  {
+   "file": "div3-5-say-0-N.wav",
+   "t": 55.906,
+   "spk": "N"
+  },
+  {
+   "file": "div3-5-say-1-E.wav",
+   "t": 58.56,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   47.11,
+   "69 ÷ 3",
+   23
+  ]
+ ]
+}

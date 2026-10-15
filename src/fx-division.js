@@ -33,9 +33,11 @@ function renderMul(p,a){const card=$('#card');card.append(cardHead('Multiply'),e
     onDone:res=>complete(p,res)});}
 
 // ---------- 3) long division
-function genDiv(lv){lv=Math.max(1,Math.min(5,Number(lv)||1));
+function genDiv(lv){lv=Number(lv);if(!(lv>=0))lv=1;lv=Math.min(5,lv);
   for(let t=0;t<500;t++){let d,n;
-    if(lv===1){d=pick([2,3,4]);const x=rint(1,Math.floor(9/d)),y=rint(0,Math.floor(9/d));n=d*x*10+d*y;if(n<20)continue;}
+    // L0: one Divide-Multiply-Subtract step with leftovers (17 ÷ 5 = 3 R 2); most have a remainder, some come out even
+    if(lv===0){d=rint(2,9);const q=rint(2,9),r=Math.random()<0.8?rint(1,d-1):0;n=d*q+r;if(n<10)continue;}
+    else if(lv===1){d=pick([2,3,4]);const x=rint(1,Math.floor(9/d)),y=rint(0,Math.floor(9/d));n=d*x*10+d*y;if(n<20)continue;}
     else if(lv===2){d=rint(2,6);const q=rint(11,Math.floor(99/d));n=q*d;if(n>99||Math.floor(n/10)%d===0)continue;}
     else if(lv===3){d=rint(3,9);n=rint(Math.max(2*d+1,d*10+1),99);if(n%d===0)continue;}
     else if(lv===4){d=rint(3,9);n=rint(112,999);if(Math.random()<0.35&&n%d)n-=n%d;}
@@ -105,10 +107,12 @@ function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,sh
 
 // ---------- 4) Division Dungeon (opened from the map; five levels; lessons unlock as he goes)
 const DIV_WORLD={id:'dungeon',name:'Division Dungeon',sub:'Share it out: long division',color:'#e0457b',boss:'The Splitter',
-  levels:[['div:1'],['div:2','div:1'],['div:3','div:2'],['div:4','mul'],['div:5','div:4']],bossMix:['div:4','div:5']};
+  // remainders first: school is on them now (Oct 15)
+  levels:[['div:0'],['div:1','div:0'],['div:2','div:3'],['div:4','mul'],['div:5','div:4']],bossMix:['div:4','div:5']};
 const DivLessons={
-  LIST:[{id:'div1',title:'Fair Shares',lv:0,ic:'💎'},{id:'div2',title:'The Reverse Spell',lv:0,ic:'🔄'},{id:'div3',title:'Tens First',lv:0,ic:'🧱'},
-    {id:'div4',title:'Trade a Ten',lv:1,ic:'⚒️'},{id:'div5',title:'Leftovers',lv:2,ic:'🦴'},{id:'div6',title:'The Knight’s Code',lv:3,ic:'⚔️'}],
+  // Leftovers (remainders) comes third, before Level 1; each later lesson plays before the level it teaches
+  LIST:[{id:'div1',title:'Fair Shares',lv:0,ic:'💎'},{id:'div2',title:'The Reverse Spell',lv:0,ic:'🔄'},{id:'div5',title:'Leftovers',lv:0,ic:'🦴'},
+    {id:'div3',title:'Tens First',lv:1,ic:'🧱'},{id:'div4',title:'Trade a Ten',lv:2,ic:'⚒️'},{id:'div6',title:'The Knight’s Code',lv:3,ic:'⚔️'}],
   // "Your turn" pauses inside each video: [seconds, question, answer]
   STOPS:{},
   st(){return state.divVideos=state.divVideos||{};},
@@ -117,7 +121,11 @@ const DivLessons={
   probe(){if(this.probing)return;this.probing=true;fetch('video/index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{const V=(j&&j.videos)||{};for(const id in V){this.ok[id]=true;this.STOPS[id]=V[id].stops||[];}}).catch(()=>{}).finally(()=>{setTimeout(()=>{this.probing=false;},60000);});},
   unlocked(v){const pr=state.prog.dungeon||{done:0};return v.lv<=pr.done;},
   pending(li){return this.LIST.filter(v=>v.lv<=li&&this.has(v.id)&&!this.st()[v.id]);},
-  async playPending(li){for(const v of this.pending(li))await this.play(v);},
+  // One lesson at a time: after each, Dev picks the next lesson or the level. Skipped ones stay "New!" and come back next time.
+  async playPending(li){const P=this.pending(li);for(let i=0;i<P.length;i++){await this.play(P[i]);if(i<P.length-1&&!(await this.ask(P[i+1],P.length-1-i)))break;}},
+  ask(v,left){return new Promise(res=>{const done=go=>{overlay(null);res(go);};
+    overlay(el('div',{class:'modal dv-modal dv-ask'},el('h2',null,'Nice watching! 🐾'),el('p',null,left>1?`${left} more lessons are ready.`:'One more lesson is ready.'),
+      el('div',{class:'btns'},el('button',{class:'btn',type:'button',onclick:()=>done(true)},`▶ Next: ${v.title}`),el('button',{class:'btn btn-dark',type:'button',onclick:()=>done(false)},'⚔️ Play the level'))));});},
   play(v){return new Promise(res=>{const held=typeof Pause!=='undefined'&&Pause.hold&&Pause.hold();if(typeof Music!=='undefined')Music.stop();
     const vid=el('video',{class:'vp-video',playsinline:'',preload:'auto',src:'video/'+v.id+'.mp4',poster:'video/'+v.id+'.jpg'});vid.setAttribute('playsinline','');vid.setAttribute('webkit-playsinline','');
     const seen=!!this.st()[v.id],stops=(this.STOPS[v.id]||[]).map(s=>({t:s[0],q:s[1],a:s[2],done:false}));
@@ -126,11 +134,11 @@ const DivLessons={
     const btn=(t,fn)=>{const b=el('button',{class:'vp-btn',type:'button'},t);tapify(b,fn);return b;};
     const pp=btn('⏸',()=>{if(vid.paused){vid.play();pp.textContent='⏸';}else{vid.pause();pp.textContent='▶';}});
     const close=()=>{try{vid.pause();}catch(e){}wrap.remove();if(held)Pause.release();res();};
-    bar.append(pp,btn('⟲ 10s',()=>{vid.currentTime=Math.max(0,vid.currentTime-10);}),track,seen?btn('Skip ▸',close):null);
+    bar.append(pp,btn('⟲ 10s',()=>{vid.currentTime=Math.max(0,vid.currentTime-10);}),track);if(seen)bar.append(btn('Skip ▸',close));
     const quiz=el('div',{class:'vp-quiz',hidden:true});
     const wrap=el('div',{class:'vp'},vid,quiz,bar,big);document.body.append(wrap);
     tapify(big,()=>{big.remove();vid.play().catch(()=>{});});
-    vid.addEventListener('timeupdate',()=>{prog.style.width=(100*vid.currentTime/(vid.duration||1))+'%';const s=stops.find(x=>!x.done&&vid.currentTime>=x.t);if(s){s.done=true;vid.pause();this.quiz(quiz,s,()=>{vid.play();});}});
+    vid.addEventListener('timeupdate',()=>{prog.style.width=(100*vid.currentTime/(vid.duration||1))+'%';const s=stops.find(x=>!x.done&&vid.currentTime>=x.t);if(s){s.done=true;vid.pause();wrap.classList.add('quizzing');this.quiz(quiz,s,()=>{wrap.classList.remove('quizzing');vid.play();});}});
     vid.addEventListener('ended',()=>{this.st()[v.id]={seen:dayStr()};saveState();
       Slip.log({kind:'video',id:v.id,stops:stops.length,stopsOk:stops.filter(s=>s.ok).length});setTimeout(close,400);});
     vid.addEventListener('error',()=>{close();});});},
@@ -139,12 +147,12 @@ const DivLessons={
       tapify(b,()=>{if(k==='⌫')v=v.slice(0,-1);else if(k==='OK'){if(!v)return;tries++;if(+v===s.a){s.ok=tries===1;Snd.coin();msg.textContent='Yes! 🐾';DivVoice('found');setTimeout(()=>{box.hidden=true;go();},700);}
         else{Snd.tone(220,0.12,'triangle',0.04);v='';if(tries>=2){msg.textContent=`It’s ${s.a}. Watch how!`;setTimeout(()=>{box.hidden=true;go();},1500);}else msg.textContent='Not quite. Try again!';}}
         else if(v.length<5)v+=k;disp.textContent=v||'?';Snd.tap();});return b;}));
-    box.append(el('h3',null,'Your turn!'),el('div',{class:'lab-q'},s.q+' ='),disp,keys,msg);}
+    box.append(el('h3',null,'Your turn!'),el('div',{class:'lab-q'},/\?/.test(s.q)?s.q:s.q+' ='),disp,keys,msg);}
 };
 const Dungeon={
   open(){DivLessons.probe();const pr=state.prog.dungeon||{done:0,stars:{}};
     const lv=DIV_WORLD.levels.map((_,i)=>{const open=i<=pr.done,st=pr.stars&&pr.stars[i]||0;const b=el('button',{class:'dv-lv'+(open?'':' locked'),type:'button',disabled:!open},
-        el('b',null,`Level ${i+1}`),el('span',null,['2-digit, splits evenly','Trade a ten','Leftovers (remainders)','3-digit numbers','4-digit + zeros'][i]),el('i',null,open?'★'.repeat(st)+'☆'.repeat(3-st):'🔒'));
+        el('b',null,`Level ${i+1}`),el('span',null,['Leftovers (remainders)','2-digit: tens first','Trade a ten','3-digit numbers','4-digit + zeros'][i]),el('i',null,open?'★'.repeat(st)+'☆'.repeat(3-st):'🔒'));
       if(open)tapify(b,()=>{overlay(null);Snd.init();startLevel(DIV_WORLD,i);});return b;});
     const vids=el('div',{class:'dv-vids'});const fill=()=>{vids.innerHTML='';DivLessons.LIST.forEach((v,i)=>{const un=DivLessons.unlocked(v),av=DivLessons.has(v.id);
       const b=el('button',{class:'dv-vid'+(un&&av?'':' locked'),type:'button'},el('span',{class:'dv-vic'},un?v.ic:'🔒'),el('b',null,`${i+1}. ${v.title}`),el('small',null,!un?'Unlocks as you go':av?(DivLessons.st()[v.id]?'Watch again':'New!'):'Coming soon'));

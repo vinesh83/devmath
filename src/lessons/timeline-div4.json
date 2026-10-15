@@ -1,0 +1,327 @@
+{
+ "id": "div4",
+ "title": "Trade a Ten",
+ "num": 5,
+ "D": 66.341,
+ "beats": [
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l4a",
+   "title": true,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    2.2
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Seventy-two gold: seven bars and two coins. Three knights to share it.",
+     "t": 2.2,
+     "d": 4.864
+    }
+   ],
+   "D": 7.864,
+   "start": 0.0
+  },
+  {
+   "type": "math",
+   "scene": "blocks",
+   "p": {
+    "tens": 7,
+    "ones": 2,
+    "k": 3,
+    "trade": true,
+    "part": 1
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    0.4,
+    5.593
+   ],
+   "tenAt": 1.2000000000000002,
+   "oneAt": 1000000000.0,
+   "done": 1000000000.0,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Seven tens shared by three: two each. But one bar is left over!",
+     "t": 0.4,
+     "d": 4.843
+    },
+    {
+     "spk": "N",
+     "text": "We can't cut a bar into three... unless we trade it at the forge.",
+     "t": 5.593,
+     "d": 4.224
+    }
+   ],
+   "D": 11.017,
+   "start": 7.864
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l4b",
+   "title": false,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    0.5,
+    3.389
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Smash! One ten becomes ten ones.",
+     "t": 0.5,
+     "d": 2.539
+    },
+    {
+     "spk": "E",
+     "text": "Ka-ching!",
+     "t": 3.389,
+     "d": 0.763
+    }
+   ],
+   "D": 6.5,
+   "start": 18.881
+  },
+  {
+   "type": "math",
+   "scene": "blocks",
+   "p": {
+    "tens": 7,
+    "ones": 2,
+    "k": 3,
+    "trade": true,
+    "part": 2,
+    "eq": "72 ÷ 3 = 24"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    0.4,
+    3.779,
+    6.454
+   ],
+   "tenAt": -10,
+   "tradeAt": 0.4,
+   "oneAt": 3.779,
+   "done": 6.454,
+   "eqAt": 6.754,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Ten coins, plus the two we had: twelve ones.",
+     "t": 0.4,
+     "d": 3.029
+    },
+    {
+     "spk": "N",
+     "text": "Twelve shared by three: four each.",
+     "t": 3.779,
+     "d": 2.325
+    },
+    {
+     "spk": "N",
+     "text": "Two tens and four ones. Twenty-four each!",
+     "t": 6.454,
+     "d": 2.944
+    }
+   ],
+   "D": 10.598,
+   "start": 25.381
+  },
+  {
+   "type": "math",
+   "scene": "house",
+   "p": {
+    "n": 72,
+    "d": 3,
+    "show": "trade"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    0.4
+   ],
+   "ev": {
+    "q0": 0.971,
+    "m0": 2.114,
+    "s0": 3.256,
+    "b0": 4.399,
+    "q1": 5.541,
+    "m1": 6.683,
+    "s1": 7.826
+   },
+   "lines": [
+    {
+     "spk": "N",
+     "text": "In long division, that leftover ten shows up when you subtract. Then bring down the two to make twelve.",
+     "t": 0.4,
+     "d": 6.997
+    }
+   ],
+   "D": 10.497,
+   "start": 35.979
+  },
+  {
+   "type": "stop",
+   "scene": "blocks",
+   "p": {
+    "tens": 5,
+    "ones": 2,
+    "k": 4,
+    "trade": true,
+    "part": 0,
+    "eq": "52 ÷ 4 = 13"
+   },
+   "shot": null,
+   "title": false,
+   "theme": "div4",
+   "q": "52 ÷ 4",
+   "cues": [
+    0.4
+   ],
+   "stopAt": 3.865,
+   "acues": [
+    4.465
+   ],
+   "tenAt": 4.765000000000001,
+   "tradeAt": 6.765000000000001,
+   "oneAt": 8.165000000000001,
+   "done": 10.765,
+   "eqAt": 10.765,
+   "lines": [
+    {
+     "spk": "N",
+     "text": "Your turn! Fifty-two divided by four.",
+     "t": 0.4,
+     "d": 2.965
+    },
+    {
+     "spk": "N",
+     "text": "Thirteen! One ten each, trade the extra ten, then three ones each.",
+     "t": 4.465,
+     "d": 4.523
+    }
+   ],
+   "D": 13.365,
+   "start": 46.476
+  },
+  {
+   "type": "shot",
+   "scene": null,
+   "p": {},
+   "shot": "l4c",
+   "title": false,
+   "theme": "div4",
+   "q": null,
+   "cues": [
+    0.5,
+    3.794
+   ],
+   "lines": [
+    {
+     "spk": "N",
+     "text": "When a ten won't split, trade it for ten ones!",
+     "t": 0.5,
+     "d": 2.944
+    },
+    {
+     "spk": "E",
+     "text": "Smash!",
+     "t": 3.794,
+     "d": 0.621
+    }
+   ],
+   "D": 6.5,
+   "start": 59.841
+  }
+ ],
+ "audio": [
+  {
+   "file": "div4-0-say-0-N.wav",
+   "t": 2.2,
+   "spk": "N"
+  },
+  {
+   "file": "div4-1-say-0-N.wav",
+   "t": 8.264,
+   "spk": "N"
+  },
+  {
+   "file": "div4-1-say-1-N.wav",
+   "t": 13.457,
+   "spk": "N"
+  },
+  {
+   "file": "div4-2-say-0-N.wav",
+   "t": 19.381,
+   "spk": "N"
+  },
+  {
+   "file": "div4-2-say-1-E.wav",
+   "t": 22.27,
+   "spk": "E"
+  },
+  {
+   "file": "div4-3-say-0-N.wav",
+   "t": 25.781,
+   "spk": "N"
+  },
+  {
+   "file": "div4-3-say-1-N.wav",
+   "t": 29.16,
+   "spk": "N"
+  },
+  {
+   "file": "div4-3-say-2-N.wav",
+   "t": 31.835,
+   "spk": "N"
+  },
+  {
+   "file": "div4-4-say-0-N.wav",
+   "t": 36.379,
+   "spk": "N"
+  },
+  {
+   "file": "div4-5-say-0-N.wav",
+   "t": 46.876,
+   "spk": "N"
+  },
+  {
+   "file": "div4-5-after-0-N.wav",
+   "t": 50.941,
+   "spk": "N"
+  },
+  {
+   "file": "div4-6-say-0-N.wav",
+   "t": 60.341,
+   "spk": "N"
+  },
+  {
+   "file": "div4-6-say-1-E.wav",
+   "t": 63.635,
+   "spk": "E"
+  }
+ ],
+ "stops": [
+  [
+   50.34,
+   "52 ÷ 4",
+   13
+  ]
+ ]
+}
