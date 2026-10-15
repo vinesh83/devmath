@@ -357,7 +357,7 @@ const PROPS={
     for(const x of [-0.6,0.6]){const t=new THREE.Mesh(new THREE.BoxGeometry(0.12*k,0.95*k,1.05*k),pmat('gold'));t.position.set(x*k,0.47*k,0);g.add(t);}return shadowAll(g);},
   anvil:o=>{const g=new THREE.Group(),M=pmat('steel');const a=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.35,0.55),M);a.position.y=0.95;g.add(a);const h=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.3,0.4),M);h.position.set(0.75,0.98,0);g.add(h);
     const b=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.8,0.5),pmat('stone'));b.position.y=0.4;g.add(b);return shadowAll(g);},
-  rune:o=>{const c=new THREE.Color(o.col||'#5ef2ff');const m=new THREE.Mesh(new THREE.RingGeometry(o.r||1.4,(o.r||1.4)+(o.w||0.26),o.sides||3,1),new THREE.MeshBasicMaterial({color:c.multiplyScalar(1.8),toneMapped:false,transparent:true,opacity:0.9,side:THREE.DoubleSide}));m.rotation.x=-Math.PI/2;return m;},
+  rune:o=>{const c=new THREE.Color(o.col||'#5ef2ff');const m=new THREE.Mesh(new THREE.RingGeometry(o.r||1.4,(o.r||1.4)+(o.w||0.26),o.sides||3,1,o.theta||0),new THREE.MeshBasicMaterial({color:c.multiplyScalar(1.8),toneMapped:false,transparent:true,opacity:0.9,side:THREE.DoubleSide}));m.rotation.x=-Math.PI/2;return m;},
   banner:o=>{const g=new THREE.Group(),c=new THREE.Color(o.col||'#9b6bff');const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,3.4,8),pmat('wood'));pole.position.y=1.7;g.add(pole);
     const f=new THREE.Mesh(new THREE.PlaneGeometry(1.1,1.6),new THREE.MeshStandardMaterial({color:c,side:THREE.DoubleSide,emissive:c,emissiveIntensity:0.25}));f.position.set(0.6,2.5,0);g.add(f);return shadowAll(g);}};
 const GEMCOLS=['#5ef2ff','#ff4d9d','#7dff5a','#ffe066','#b98cff'];
@@ -367,6 +367,7 @@ function layout(st,P,list){const n=P.n||1,out=[],[cx,cz]=P.at||[0,0],y0=P.y||0;
   else if(P.layout==='groups'){const G=P.groups||[[0,0]],per=P.per||3;G.forEach(([gx,gz],gi)=>{for(let i=0;i<per;i++){const m=mk(gi*per+i);const k=i-(per-1)/2;m.position.set(gx+k*(P.gap||0.42),y0+0.25+(P.type==='bar'?0.14*Math.floor(i/3):0),gz+((i%2)?0.12:-0.12));m.rotation.y=rnd()*0.4;}});}
   else if(P.layout==='grid'){const R=P.rows||3,C=P.cols||4,g=P.gap||0.95;for(let r=0;r<R;r++)for(let c=0;c<C;c++){const m=mk(r*C+c);m.position.set(cx+(c-(C-1)/2)*g,y0+(R-1-r)*g*1.05,cz);}}
   else if(P.layout==='stack'){for(let i=0;i<n;i++){const m=mk(i);m.position.set(cx+(i%2)*0.05,y0+0.06+i*0.07,cz);m.rotation.y=i*0.7;}}
+  else if(P.layout==='pts'){(P.pts||[]).forEach(([x,z],i)=>{const m=mk(i);m.position.set(x,y0+(P.lift||0.35),z);});}
   else{for(let i=0;i<n;i++){const m=mk(i);m.position.set(cx+(i-(n-1)/2)*(P.gap||0.5),y0+0.2,cz);}}}
 function lessonShot(st,S,o){const sh=o.shot;seed=31+(sh.seed||0);const W=WORLDS[sh.world||'castle'](st),D=sh.D||8,deckY=W.deckY||0;
   const chars=[],props=[];
