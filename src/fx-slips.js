@@ -16,7 +16,11 @@ const Slip={
     place:{ic:'📏',t:'Ones under ones. Line them up.',name:'lining up places',voice:'place'},
     digits:{ic:'🔢',t:'Count your digits.',name:'digit count',voice:'digits-more'},
     boxes:{ic:'🧱',t:'Add all the boxes together.',name:'adding area boxes',voice:'boxes'},
-    column:{ic:'🔍',t:'Check this column again.',name:'column slips',voice:'column'}},
+    column:{ic:'🔍',t:'Check this column again.',name:'column slips',voice:'column'},
+    firstdigit:{ic:'☝️',t:'Multiply every digit, even the first!',name:'multiplying every digit',voice:'firstdigit'},
+    carrydigit:{ic:'⬆️',t:'Write the ones. Carry the tens.',name:'what to write vs. carry',voice:'carrydigit'},
+    mulcarry:{ic:'➕',t:'Multiply first, then add the carry.',name:'adding the carry',voice:'mulcarry'},
+    timesfact:{ic:'✖️',t:'Check that times fact.',name:'times facts',voice:'timesfact'}},
   box:null,cur:null,field:null,
 
   // ---------- what went wrong, and where (columns counted from the right, 0 = rightmost digit)
@@ -25,7 +29,16 @@ const Slip={
     if(ctx.area&&!ctx.noWhole&&nums.some(x=>ans===c-x))return{type:'boxes',glow:'ans'};
     if(!ctx.noWhole&&nums.length===2){const [a,b]=nums;if(P.op==='−'&&ans===a+b)return{type:'minus',glow:'op'};if(P.op==='+'&&ans===Math.abs(a-b))return{type:'plus',glow:'op'};}
     if(!ctx.noWhole&&dp>0&&(eqNum(v,rightAligned(P))||[10,100,0.1,0.01].some(m=>eqNum(v*m,P.answer))))return{type:'dots',glow:'dot'};
-    if(!ctx.noWhole&&dp===0&&nums.length===2){const [a,b]=nums;if(String(a).length!==String(b).length){const alt=P.op==='−'?[a-b*10,a-Math.floor(b/10)]:[a+b*10,a+Math.floor(b/10)];if(alt.includes(ans))return{type:'place',glow:'ones'};}}
+    if(!ctx.noWhole&&dp===0&&nums.length===2&&(P.op==='+'||P.op==='−')){const [a,b]=nums;if(String(a).length!==String(b).length){const alt=P.op==='−'?[a-b*10,a-Math.floor(b/10)]:[a+b*10,a+Math.floor(b/10)];if(alt.includes(ans))return{type:'place',glow:'ones'};}}
+    if(P.op==='×'&&nums.length===2){const [a,m]=nums,n=String(a).length,dg=(x,i)=>Math.floor(Math.abs(x)/Math.pow(10,i))%10,low=Math.pow(10,n-1);
+      let cy=0;for(let i=0;i<n-1;i++)cy=Math.floor((dg(a,i)*m+cy)/10);const lead=dg(a,n-1);
+      if(ans%low===c%low&&ans!==c&&[lead,lead+cy].includes(Math.floor(ans/low)))return{type:'firstdigit',col:n-1,op:'×',top:lead,m,cin:cy,lead:true};
+      let col=-1;for(let i=0;i<Math.max(A.length,C.length);i++){if(dg(ans,i)!==dg(c,i)){col=i;break;}}if(col<0)return{type:'column',col:0};
+      if(col>=n)return{type:'mulcarry',col:n-1,op:'×',top:lead,m,cin:cy,lead:true};
+      let ci=0;for(let i=0;i<col;i++)ci=Math.floor((dg(a,i)*m+ci)/10);const top=dg(a,col),pr=top*m+ci,h=dg(ans,col),info={col,op:'×',top,m,cin:ci,lead:col===n-1};
+      if(pr>=10&&h===Math.floor(pr/10)%10&&h!==pr%10)return{type:'carrydigit',...info};
+      if(ci&&h===(top*m)%10)return{type:'mulcarry',...info};
+      return{type:'timesfact',...info};}
     if(A.length!==C.length)return dp>0&&!ctx.noWhole?{type:'dots',glow:'dot'}:{type:'digits',glow:'ans',more:A.length>C.length};
     let col=-1;for(let i=0;i<C.length;i++){if(A[A.length-1-i]!==C[C.length-1-i]){col=i;break;}}
     if(col<0)return{type:'column',col:0};
@@ -46,6 +59,7 @@ const Slip={
   tip(an){const T=this.TIPS[an.type]||this.TIPS.column;if(an.type==='digits')return{...T,t:an.more?'Count your digits. One too many?':'Count your digits. One missing?',voice:an.more?'digits-more':'digits-less'};return T;},
   key(an){if(an.type==='borrow'||an.type==='borrowed')return an.type==='borrowed'?'sub0':'sub';if(an.type==='carry')return 'add';
     if(an.type==='minus')return 'sub';if(an.type==='plus')return 'add';if(an.type==='dots')return 'dec';if(an.type==='place')return 'addlen';if(an.type==='boxes')return 'area';
+    if(['firstdigit','carrydigit','mulcarry','timesfact'].includes(an.type)||an.op==='×')return 'mul';
     if(an.type==='column')return an.op==='−'?'sub':an.op==='+'?'add':null;return null;},
 
   // ---------- the stacked problem, with one spot glowing
@@ -75,6 +89,9 @@ const Slip={
     else if(ty==='borrowed'){const now=an.top-1+(an.need?10:0);
       R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},el('div',{class:'sl-top'},d(an.top,'sl-old sl-strike',0),d(an.top-1,'sl-new',1.0)),d(an.bot,'sl-bot'),el('div',{class:'sl-line'})),d('lent 1','sl-chip sl-minus1',0.3)),cap(an.need?`It lent 1, then borrows: ${now} − ${an.bot}`:`It lent 1: ${now} − ${an.bot} = ?`));}
     else if(ty==='carry'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},d('1','sl-chip sl-rise',0.4),...an.ds.map(x=>d(x,'sl-bot')),el('div',{class:'sl-line'})),d('from the right','sl-small sl-from')),cap(`${an.ds.join(' + ')} + 1 = ?`));}
+    else if(ty==='firstdigit'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},d(an.top,'sl-old sl-glowd',0),el('div',{class:'sl-line'})),d('× '+an.m,'sl-chip sl-fly',0.5)),cap(`${an.top} × ${an.m}${an.cin?' + '+an.cin:''} = ?`));}
+    else if(ty==='carrydigit'){R.append(el('div',{class:'sl-op'},d('ones ⬇','sl-chip',0.2),d('tens ↗','sl-chip',0.9)),cap('Ones go down. Tens carry over.'));}
+    else if(ty==='mulcarry'||ty==='timesfact'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},an.cin?d('+'+an.cin,'sl-chip sl-rise',0.5):null,d(an.top,'sl-bot'),el('div',{class:'sl-line'})),d('× '+an.m,'sl-small sl-from')),cap(`${an.top} × ${an.m}${an.cin?' + '+an.cin:''} = ?`));}
     else if(ty==='minus'||ty==='plus'){R.append(el('div',{class:'sl-op'},d(ty==='minus'?'−':'+','sl-bigop',0)),cap(ty==='minus'?'Minus means take away.':'Plus means add.'));}
     else if(ty==='dots'){const before=this.raw(P),after=this.stack(P,null,{ghost:true,glowDot:true});before.classList.add('sl-before');after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},before,after),cap('Dots in a line. Fill gaps with 0.'));}
     else if(ty==='place'){const after=this.stack(P,null,{glowOnes:true});after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},after),cap('Ones under ones!'));}
@@ -122,12 +139,13 @@ const Slip={
     let q,want,cue;
     if(an.op==='−'){const top=an.top-an.bin+(an.need?10:0);q=`${top} − ${an.bot}`;want=top-an.bot;
       cue=an.need?`Top is smaller, so borrow: ${an.top-an.bin} becomes ${top}.`:an.bin?`This one lent 1 away, so ${an.top} becomes ${an.top-1}.`:'Top minus bottom.';}
+    else if(an.op==='×'){q=`${an.top} × ${an.m}`+(an.cin?` + ${an.cin}`:'');want=an.top*an.m+an.cin;cue=an.cin?'Multiply, then add the carry.':'Multiply this digit.';}
     else if(an.op==='+'){const parts=an.ds.slice();if(an.cin)parts.push(an.cin);q=parts.join(' + ');want=parts.reduce((u,x)=>u+x,0);cue=an.cin?'Count the carried 1 too.':'Add the column.';}
     else return null;
     const f=Pad.make({sm:true,allowDot:false,max:2,ph:'?'});this.field=f;const res=el('div',{class:'sl-hc'});let tries=0;
     f.onChange=()=>{if(f.locked||f.val.length<String(want).length)return;tries++;const x=Pad.val(f);
       if(x===want){Pad.right(f);Pad.lock(f);Snd.coin();this.cur.ev.helper=tries===1?'right':'right2';saveState();
-        res.textContent=want>=10?`Yes! Write the ${want%10} and carry the 1. Now fix the whole answer.`:`Yes! Write ${want} there. Now fix the whole answer.`;
+        res.textContent=an.op==='×'&&an.lead?`Yes! It’s the first digit, so write all of ${want}. Now fix the whole answer.`:want>=10?`Yes! Write the ${want%10} and carry the ${Math.floor(want/10)}. Now fix the whole answer.`:`Yes! Write ${want} there. Now fix the whole answer.`;
         setTimeout(()=>{if(o&&o.field&&!o.field.locked)Pad.focus(o.field);},700);}
       else{Pad.wrong(f);setTimeout(()=>Pad.set(f,''),350);if(tries>=2){Pad.set(f,String(want));Pad.lock(f);this.cur.ev.helper='shown';saveState();res.textContent=`It’s ${want}. Write that digit, then fix the whole answer.`;setTimeout(()=>{if(o&&o.field)Pad.focus(o.field);},900);}}};
     wrap.append(el('div',{class:'sl-ht'},`🔧 Fix just the ${placeName(an.col,dp)} column`),this.stack(P,an.v,{col:an.col}),el('div',{class:'sl-hc'},cue),el('div',{class:'sl-q'},el('span',null,q+' ='),f.el),res);
@@ -136,7 +154,7 @@ const Slip={
   // ---------- the same slip twice in a day: a 2-problem mini-drill opens his next level
   count(an,P){const k=this.key(an);if(!k)return;const d=dayStr();const S=state.slipDay=state.slipDay&&state.slipDay.day===d?state.slipDay:{day:d,c:{},drilled:[],next:null};
     S.c[k]=(S.c[k]||0)+1;if(S.c[k]>=2&&!S.drilled.includes(k)&&!S.next)S.next=k;saveState();},
-  NAMES:{sub:'borrowing',sub0:'borrowing across a zero',add:'carrying',dec:'lining up decimals',addlen:'lining up places',area:'adding the area boxes'},
+  NAMES:{mul:'multiplying every digit',sub:'borrowing',sub0:'borrowing across a zero',add:'carrying',dec:'lining up decimals',addlen:'lining up places',area:'adding the area boxes'},
   drillProblem(k){const subRegroups=(a,b)=>{let br=0,n=0;for(let i=0;i<String(a).length;i++){const t=Math.floor(a/Math.pow(10,i))%10-br,bb=Math.floor(b/Math.pow(10,i))%10;br=t<bb?1:0;n+=br;}return n;};
     const addCarries2=(a,b)=>{let c=0,n=0;for(let i=0;i<6;i++){const s=Math.floor(a/Math.pow(10,i))%10+Math.floor(b/Math.pow(10,i))%10+c;c=s>=10?1:0;n+=c;}return n;};
     let p=null;
@@ -147,6 +165,7 @@ const Slip={
       p=mkArith(op==='+'?'dec_add':'dec_sub',op,[a.toFixed(1),b],2,2);p.stacked=false;}
     else if(k==='addlen'){const a=rint(1200,9800),b=rint(12,98);p=mkArith('add','+',[String(a),String(b)],0,2);p.stacked=false;}
     else if(k==='area'){p=makeProblem('area:2');}
+    else if(k==='mul'&&typeof genMul!=='undefined'){p=genMul(2);}
     if(p)p.drill=k;return p;},
   drillMix(probs,spec){const S=state.slipDay;if(!S||S.day!==dayStr()||!S.next)return probs;const k=S.next;S.next=null;S.drilled.push(k);
     const add=[this.drillProblem(k),this.drillProblem(k)].filter(Boolean);if(!add.length){saveState();return probs;}

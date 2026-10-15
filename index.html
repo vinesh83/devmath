@@ -847,6 +847,66 @@ html,body{touch-action:manipulation}
 .sl-q{display:flex;align-items:center;gap:10px;font:800 30px var(--f-math)}
 .sl-drill{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;border-radius:12px;background:#e8f6ff;border:2px solid #5ab0ff;font:700 15px var(--f-body);color:#1d1f33}
 .sl-drill b{font-size:17px}
+/* ---------- Division: long division, Dungeon, lesson videos */
+#scr-level.divmode .scratch-wrap,#scr-level.divmode .sc-grip{display:none}
+#scr-level.divmode .card{flex:1 1 auto!important;max-height:none!important;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.dv-coach{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;border-radius:14px;background:#1f2347;color:#fff;font:700 20px var(--f-body);align-self:flex-start}
+.dv-coach b{font:800 20px var(--f-display);letter-spacing:.06em;color:#ffe066}
+.dv-ic{font-size:24px}
+.dv-wrap{display:flex;justify-content:center;padding:6px 0}
+.dv-grid{display:grid;font:800 34px var(--f-math);color:#1d1f33;row-gap:2px;align-items:center}
+.dv-cell{display:flex;justify-content:flex-end;align-items:center;min-height:1.25em;border-radius:6px}
+.dv-dig{justify-content:center}
+.dv-top{border-top:4px solid #1d1f33}
+.dv-wall{border-left:4px solid #1d1f33;border-top:4px solid #1d1f33;border-top-left-radius:14px;height:100%;margin-top:-2px}
+.dv-divisor{padding-right:8px;color:#7a2bd6}
+.dv-q{justify-content:center}
+.dv-minus{justify-content:flex-end;padding-right:4px;color:#b3122f}
+.dv-rule{border-top:3px solid #1d1f33;min-height:0;height:0}
+.dv-num .field.sm,.dv-q .field.sm{font:800 30px var(--f-math);min-width:1.1em;height:1.25em;padding:0 4px}
+.dv-cell.glow{background:#ffe066;box-shadow:0 0 0 3px #ffb627}
+.dv-down{color:#1f6fd1}
+@keyframes dvDrop{from{transform:translateY(-110px);opacity:.2}to{transform:none;opacity:1}}
+.dv-tip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:20px}
+.dv-tip .dog-ic{width:56px;height:56px;image-rendering:pixelated}
+.dv-bring{font-size:20px}
+.dv-result{font:800 30px var(--f-math);color:#1d1f33}
+.dv-result b{color:var(--grass-deep)}
+.dv-check{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:700 22px var(--f-body);color:#1d1f33}
+.dv-check .field.sm{font:800 26px var(--f-math)}
+.dv-ckmsg{font:700 17px var(--f-body);color:#3a3d5c}
+.dv-flip{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:#efe6ff;border:2px solid #9b6bff;font:700 18px var(--f-body);color:#1d1f33}
+.quest.ow-div{background:linear-gradient(135deg,#e0457b,#7a1f4d)}
+.dv-modal{width:min(820px,100%)}
+.dv-lvs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.dv-lvs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dv-lv{display:grid;gap:4px;justify-items:center;padding:12px 8px;border-radius:14px;border:0;background:#e0457b;color:#fff;font:700 14px var(--f-body);box-shadow:0 4px 0 #0007;cursor:pointer}
+.dv-lv b{font:800 18px var(--f-display)}
+.dv-lv i{font-style:normal;color:#ffe066}
+.dv-lv.locked{background:#3a4180;opacity:.6;cursor:default}
+.dv-vids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.dv-vids{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dv-vid{display:grid;gap:4px;justify-items:center;padding:12px 8px;border-radius:14px;border:2px solid #ffffff26;background:#2c3264;color:#fff;font:700 15px var(--f-body);cursor:pointer}
+.dv-vid small{opacity:.8;font-size:12px}
+.dv-vid.locked{opacity:.55;cursor:default}
+.dv-vic{font-size:30px}
+.vp{position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center}
+.vp-video{width:100%;height:100%;object-fit:contain;background:#000}
+.vp-start{position:absolute;display:grid;justify-items:center;gap:8px;border:0;border-radius:24px;padding:24px 40px;background:#e0457bcc;color:#fff;font:800 26px var(--f-display);cursor:pointer}
+.vp-start span{font-size:64px;line-height:1}
+.vp-bar{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(transparent,#000c)}
+.vp-btn{border:0;border-radius:12px;padding:10px 14px;background:#ffffff26;color:#fff;font:700 16px var(--f-body);cursor:pointer}
+.vp-track{flex:1;height:8px;border-radius:4px;background:#ffffff33;overflow:hidden}
+.vp-track i{display:block;height:100%;width:0;background:#ffe066}
+.vp-quiz{position:absolute;display:grid;gap:10px;justify-items:center;padding:18px 22px;border-radius:20px;background:#1f2347f2;color:#fff;width:min(360px,92%)}
+.vp-quiz h3{margin:0;font:800 26px var(--f-display);color:#ffe066}
+.vp-msg{min-height:22px;font:700 18px var(--f-body)}
+.dv-grid{font-size:42px}
+.dv-grid .dv-top{border-radius:0}
+.dv-grid .dv-wall{border-top-left-radius:0}
+.dv-grid .field.right::after{display:none}
+.dv-grid .field.sm{min-width:1.05em;min-height:0;height:1.2em;padding:0 3px;font-size:38px;border-width:2px}
+.dv-grid .field.right{background:#e6fbe9}
 </style>
 
 <div id="app">
@@ -3548,7 +3608,11 @@ const Slip={
     place:{ic:'📏',t:'Ones under ones. Line them up.',name:'lining up places',voice:'place'},
     digits:{ic:'🔢',t:'Count your digits.',name:'digit count',voice:'digits-more'},
     boxes:{ic:'🧱',t:'Add all the boxes together.',name:'adding area boxes',voice:'boxes'},
-    column:{ic:'🔍',t:'Check this column again.',name:'column slips',voice:'column'}},
+    column:{ic:'🔍',t:'Check this column again.',name:'column slips',voice:'column'},
+    firstdigit:{ic:'☝️',t:'Multiply every digit, even the first!',name:'multiplying every digit',voice:'firstdigit'},
+    carrydigit:{ic:'⬆️',t:'Write the ones. Carry the tens.',name:'what to write vs. carry',voice:'carrydigit'},
+    mulcarry:{ic:'➕',t:'Multiply first, then add the carry.',name:'adding the carry',voice:'mulcarry'},
+    timesfact:{ic:'✖️',t:'Check that times fact.',name:'times facts',voice:'timesfact'}},
   box:null,cur:null,field:null,
 
   // ---------- what went wrong, and where (columns counted from the right, 0 = rightmost digit)
@@ -3557,7 +3621,16 @@ const Slip={
     if(ctx.area&&!ctx.noWhole&&nums.some(x=>ans===c-x))return{type:'boxes',glow:'ans'};
     if(!ctx.noWhole&&nums.length===2){const [a,b]=nums;if(P.op==='−'&&ans===a+b)return{type:'minus',glow:'op'};if(P.op==='+'&&ans===Math.abs(a-b))return{type:'plus',glow:'op'};}
     if(!ctx.noWhole&&dp>0&&(eqNum(v,rightAligned(P))||[10,100,0.1,0.01].some(m=>eqNum(v*m,P.answer))))return{type:'dots',glow:'dot'};
-    if(!ctx.noWhole&&dp===0&&nums.length===2){const [a,b]=nums;if(String(a).length!==String(b).length){const alt=P.op==='−'?[a-b*10,a-Math.floor(b/10)]:[a+b*10,a+Math.floor(b/10)];if(alt.includes(ans))return{type:'place',glow:'ones'};}}
+    if(!ctx.noWhole&&dp===0&&nums.length===2&&(P.op==='+'||P.op==='−')){const [a,b]=nums;if(String(a).length!==String(b).length){const alt=P.op==='−'?[a-b*10,a-Math.floor(b/10)]:[a+b*10,a+Math.floor(b/10)];if(alt.includes(ans))return{type:'place',glow:'ones'};}}
+    if(P.op==='×'&&nums.length===2){const [a,m]=nums,n=String(a).length,dg=(x,i)=>Math.floor(Math.abs(x)/Math.pow(10,i))%10,low=Math.pow(10,n-1);
+      let cy=0;for(let i=0;i<n-1;i++)cy=Math.floor((dg(a,i)*m+cy)/10);const lead=dg(a,n-1);
+      if(ans%low===c%low&&ans!==c&&[lead,lead+cy].includes(Math.floor(ans/low)))return{type:'firstdigit',col:n-1,op:'×',top:lead,m,cin:cy,lead:true};
+      let col=-1;for(let i=0;i<Math.max(A.length,C.length);i++){if(dg(ans,i)!==dg(c,i)){col=i;break;}}if(col<0)return{type:'column',col:0};
+      if(col>=n)return{type:'mulcarry',col:n-1,op:'×',top:lead,m,cin:cy,lead:true};
+      let ci=0;for(let i=0;i<col;i++)ci=Math.floor((dg(a,i)*m+ci)/10);const top=dg(a,col),pr=top*m+ci,h=dg(ans,col),info={col,op:'×',top,m,cin:ci,lead:col===n-1};
+      if(pr>=10&&h===Math.floor(pr/10)%10&&h!==pr%10)return{type:'carrydigit',...info};
+      if(ci&&h===(top*m)%10)return{type:'mulcarry',...info};
+      return{type:'timesfact',...info};}
     if(A.length!==C.length)return dp>0&&!ctx.noWhole?{type:'dots',glow:'dot'}:{type:'digits',glow:'ans',more:A.length>C.length};
     let col=-1;for(let i=0;i<C.length;i++){if(A[A.length-1-i]!==C[C.length-1-i]){col=i;break;}}
     if(col<0)return{type:'column',col:0};
@@ -3578,6 +3651,7 @@ const Slip={
   tip(an){const T=this.TIPS[an.type]||this.TIPS.column;if(an.type==='digits')return{...T,t:an.more?'Count your digits. One too many?':'Count your digits. One missing?',voice:an.more?'digits-more':'digits-less'};return T;},
   key(an){if(an.type==='borrow'||an.type==='borrowed')return an.type==='borrowed'?'sub0':'sub';if(an.type==='carry')return 'add';
     if(an.type==='minus')return 'sub';if(an.type==='plus')return 'add';if(an.type==='dots')return 'dec';if(an.type==='place')return 'addlen';if(an.type==='boxes')return 'area';
+    if(['firstdigit','carrydigit','mulcarry','timesfact'].includes(an.type)||an.op==='×')return 'mul';
     if(an.type==='column')return an.op==='−'?'sub':an.op==='+'?'add':null;return null;},
 
   // ---------- the stacked problem, with one spot glowing
@@ -3607,6 +3681,9 @@ const Slip={
     else if(ty==='borrowed'){const now=an.top-1+(an.need?10:0);
       R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},el('div',{class:'sl-top'},d(an.top,'sl-old sl-strike',0),d(an.top-1,'sl-new',1.0)),d(an.bot,'sl-bot'),el('div',{class:'sl-line'})),d('lent 1','sl-chip sl-minus1',0.3)),cap(an.need?`It lent 1, then borrows: ${now} − ${an.bot}`:`It lent 1: ${now} − ${an.bot} = ?`));}
     else if(ty==='carry'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},d('1','sl-chip sl-rise',0.4),...an.ds.map(x=>d(x,'sl-bot')),el('div',{class:'sl-line'})),d('from the right','sl-small sl-from')),cap(`${an.ds.join(' + ')} + 1 = ?`));}
+    else if(ty==='firstdigit'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},d(an.top,'sl-old sl-glowd',0),el('div',{class:'sl-line'})),d('× '+an.m,'sl-chip sl-fly',0.5)),cap(`${an.top} × ${an.m}${an.cin?' + '+an.cin:''} = ?`));}
+    else if(ty==='carrydigit'){R.append(el('div',{class:'sl-op'},d('ones ⬇','sl-chip',0.2),d('tens ↗','sl-chip',0.9)),cap('Ones go down. Tens carry over.'));}
+    else if(ty==='mulcarry'||ty==='timesfact'){R.append(el('div',{class:'sl-col'},el('div',{class:'sl-stackc'},an.cin?d('+'+an.cin,'sl-chip sl-rise',0.5):null,d(an.top,'sl-bot'),el('div',{class:'sl-line'})),d('× '+an.m,'sl-small sl-from')),cap(`${an.top} × ${an.m}${an.cin?' + '+an.cin:''} = ?`));}
     else if(ty==='minus'||ty==='plus'){R.append(el('div',{class:'sl-op'},d(ty==='minus'?'−':'+','sl-bigop',0)),cap(ty==='minus'?'Minus means take away.':'Plus means add.'));}
     else if(ty==='dots'){const before=this.raw(P),after=this.stack(P,null,{ghost:true,glowDot:true});before.classList.add('sl-before');after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},before,after),cap('Dots in a line. Fill gaps with 0.'));}
     else if(ty==='place'){const after=this.stack(P,null,{glowOnes:true});after.classList.add('sl-after');R.append(el('div',{class:'sl-swap'},after),cap('Ones under ones!'));}
@@ -3654,12 +3731,13 @@ const Slip={
     let q,want,cue;
     if(an.op==='−'){const top=an.top-an.bin+(an.need?10:0);q=`${top} − ${an.bot}`;want=top-an.bot;
       cue=an.need?`Top is smaller, so borrow: ${an.top-an.bin} becomes ${top}.`:an.bin?`This one lent 1 away, so ${an.top} becomes ${an.top-1}.`:'Top minus bottom.';}
+    else if(an.op==='×'){q=`${an.top} × ${an.m}`+(an.cin?` + ${an.cin}`:'');want=an.top*an.m+an.cin;cue=an.cin?'Multiply, then add the carry.':'Multiply this digit.';}
     else if(an.op==='+'){const parts=an.ds.slice();if(an.cin)parts.push(an.cin);q=parts.join(' + ');want=parts.reduce((u,x)=>u+x,0);cue=an.cin?'Count the carried 1 too.':'Add the column.';}
     else return null;
     const f=Pad.make({sm:true,allowDot:false,max:2,ph:'?'});this.field=f;const res=el('div',{class:'sl-hc'});let tries=0;
     f.onChange=()=>{if(f.locked||f.val.length<String(want).length)return;tries++;const x=Pad.val(f);
       if(x===want){Pad.right(f);Pad.lock(f);Snd.coin();this.cur.ev.helper=tries===1?'right':'right2';saveState();
-        res.textContent=want>=10?`Yes! Write the ${want%10} and carry the 1. Now fix the whole answer.`:`Yes! Write ${want} there. Now fix the whole answer.`;
+        res.textContent=an.op==='×'&&an.lead?`Yes! It’s the first digit, so write all of ${want}. Now fix the whole answer.`:want>=10?`Yes! Write the ${want%10} and carry the ${Math.floor(want/10)}. Now fix the whole answer.`:`Yes! Write ${want} there. Now fix the whole answer.`;
         setTimeout(()=>{if(o&&o.field&&!o.field.locked)Pad.focus(o.field);},700);}
       else{Pad.wrong(f);setTimeout(()=>Pad.set(f,''),350);if(tries>=2){Pad.set(f,String(want));Pad.lock(f);this.cur.ev.helper='shown';saveState();res.textContent=`It’s ${want}. Write that digit, then fix the whole answer.`;setTimeout(()=>{if(o&&o.field)Pad.focus(o.field);},900);}}};
     wrap.append(el('div',{class:'sl-ht'},`🔧 Fix just the ${placeName(an.col,dp)} column`),this.stack(P,an.v,{col:an.col}),el('div',{class:'sl-hc'},cue),el('div',{class:'sl-q'},el('span',null,q+' ='),f.el),res);
@@ -3668,7 +3746,7 @@ const Slip={
   // ---------- the same slip twice in a day: a 2-problem mini-drill opens his next level
   count(an,P){const k=this.key(an);if(!k)return;const d=dayStr();const S=state.slipDay=state.slipDay&&state.slipDay.day===d?state.slipDay:{day:d,c:{},drilled:[],next:null};
     S.c[k]=(S.c[k]||0)+1;if(S.c[k]>=2&&!S.drilled.includes(k)&&!S.next)S.next=k;saveState();},
-  NAMES:{sub:'borrowing',sub0:'borrowing across a zero',add:'carrying',dec:'lining up decimals',addlen:'lining up places',area:'adding the area boxes'},
+  NAMES:{mul:'multiplying every digit',sub:'borrowing',sub0:'borrowing across a zero',add:'carrying',dec:'lining up decimals',addlen:'lining up places',area:'adding the area boxes'},
   drillProblem(k){const subRegroups=(a,b)=>{let br=0,n=0;for(let i=0;i<String(a).length;i++){const t=Math.floor(a/Math.pow(10,i))%10-br,bb=Math.floor(b/Math.pow(10,i))%10;br=t<bb?1:0;n+=br;}return n;};
     const addCarries2=(a,b)=>{let c=0,n=0;for(let i=0;i<6;i++){const s=Math.floor(a/Math.pow(10,i))%10+Math.floor(b/Math.pow(10,i))%10+c;c=s>=10?1:0;n+=c;}return n;};
     let p=null;
@@ -3679,6 +3757,7 @@ const Slip={
       p=mkArith(op==='+'?'dec_add':'dec_sub',op,[a.toFixed(1),b],2,2);p.stacked=false;}
     else if(k==='addlen'){const a=rint(1200,9800),b=rint(12,98);p=mkArith('add','+',[String(a),String(b)],0,2);p.stacked=false;}
     else if(k==='area'){p=makeProblem('area:2');}
+    else if(k==='mul'&&typeof genMul!=='undefined'){p=genMul(2);}
     if(p)p.drill=k;return p;},
   drillMix(probs,spec){const S=state.slipDay;if(!S||S.day!==dayStr()||!S.next)return probs;const k=S.next;S.next=null;S.drilled.push(k);
     const add=[this.drillProblem(k),this.drillProblem(k)].filter(Boolean);if(!add.length){saveState();return probs;}
@@ -3815,6 +3894,170 @@ setTimeout(()=>{try{Cin3.music();}catch(e){}},1200);
 setTimeout(()=>{try{if(!Cin3.off)Cin3.load();}catch(e){}},4000);
 
 /* =========================================================
+   Division: (1) division facts join the Times Dojo as the flip side of owned times facts,
+   (2) standard-algorithm multiplication (3-4 digits × 1 digit) with the slip finder,
+   (3) Division Dungeon: guided long division, one step at a time (Divide, Multiply, Subtract, Bring down),
+   (4) the division lesson videos, with "Your turn" pauses.
+   ========================================================= */
+
+// ---------- 1) fact families: own 3 × 4 and 12 ÷ 3, 12 ÷ 4 join the Times Dojo right away (they don't count toward belts)
+{const _facts=Dojo.facts;Dojo.facts=function(did){const all=_facts.call(this,did);if(did!=='tm')return all;const D=this.st().facts,m=new Map(all.map(f=>[f.key,f]));
+  for(const f of all){if(f.op!=='×'||!(D[f.key]&&D[f.key].owned))continue;
+    for(const d of new Set([f.a,f.b])){if(d<2||d>12)continue;const g=fct('÷',f.a*f.b,d),ex=m.get(g.key);
+      if(!ex)m.set(g.key,Object.assign(g,{belt:f.belt,flip:f}));else if(ex.belt>f.belt)m.set(g.key,Object.assign({},ex,{belt:f.belt,flip:f}));}}
+  // a gentle ramp: at most 4 brand-new division facts a day
+  const today=dayStr(),flips=[...m.values()].filter(f=>f.flip&&f.op==='÷'),seenToday=flips.filter(f=>D[f.key]&&Object.keys(D[f.key].days||{}).sort()[0]===today).length;
+  let room=Math.max(0,4-seenToday);for(const f of flips){if(D[f.key])continue;if(room>0){room--;continue;}m.delete(f.key);}
+  return [...m.values()];};
+ const _next=Dojo.next;Dojo.next=function(){_next.apply(this,arguments);try{const p=run&&run.queue&&run.queue[run.idx],f=p&&p.f;if(!f||f.op!=='÷'||!f.flip)return;const r=this.st().facts[f.key];if(r&&r.n>=3)return;
+    const card=$('#card'),ex=card&&card.querySelector('.dj-expr');if(ex)ex.before(el('div',{class:'dv-flip'},el('span',null,'🔄'),el('b',null,'Flip it!'),` ${f.flip.a} × ${f.flip.b} = ${f.flip.a*f.flip.b}, so ${f.a} ÷ ${f.b} = ?`));}catch(e){}};}
+
+// ---------- 2) standard-algorithm multiplication
+function genMul(r){const L=Math.max(1,Math.min(5,Math.round(r||1)));const nd=L<=2?3:4;let a,m;
+  for(let t=0;t<200;t++){a=rdig(nd);m=rint(L<=1?3:4,9);if(a%10!==0)break;}
+  return {kind:'mul',skill:'mul',op:'×',nums:[String(a),String(m)],dp:0,answer:a*m,L};}
+function mulMarks(p){const a=Number(p.nums[0]),m=Number(p.nums[1]),s=String(a),n=s.length,out=Array(n).fill(null);let c=0;
+  for(let i=0;i<n;i++){const d=Math.floor(a/Math.pow(10,i))%10,v=d*m+c;c=Math.floor(v/10);if(c&&i+1<n)out[n-2-i]=c;}return out;}
+function renderMul(p,a){const card=$('#card');card.append(cardHead('Multiply'),el('div',{class:'expr'},`${fmtStr(p.nums[0])} × ${p.nums[1]} =`),
+    el('div',{class:'tip'},'Stack it. Multiply every digit, right to left, even the first one!'));
+  const f=Pad.make({allowDot:false});card.append(el('div',{class:'ans-row'},el('span',null,'Answer'),f.el));Pad.focus(f);
+  Scratch.reset(drawStackOnGrid(p));say('Work it on the paper. Carries go above the next digit.','');
+  answerFlow({field:f,correct:p.answer,check:null,slip:{P:p},
+    diag:v=>{let t='other';try{t=Slip.analyze(p,v).type;}catch(e){}return{tags:[t],places:diffPlaces(v,p.answer,0)};},
+    reveal:v=>el('div',null,el('div',{class:'lbl'},'Small numbers show the carries. Green is the answer. Red boxes show where yours was different.'),stackDOM(p,{marks:mulMarks(p),answer:p.answer,yours:v})),
+    onDone:res=>complete(p,res)});}
+
+// ---------- 3) long division
+function genDiv(lv){lv=Math.max(1,Math.min(5,Number(lv)||1));
+  for(let t=0;t<500;t++){let d,n;
+    if(lv===1){d=pick([2,3,4]);const x=rint(1,Math.floor(9/d)),y=rint(0,Math.floor(9/d));n=d*x*10+d*y;if(n<20)continue;}
+    else if(lv===2){d=rint(2,6);const q=rint(11,Math.floor(99/d));n=q*d;if(n>99||Math.floor(n/10)%d===0)continue;}
+    else if(lv===3){d=rint(3,9);n=rint(Math.max(2*d+1,d*10+1),99);if(n%d===0)continue;}
+    else if(lv===4){d=rint(3,9);n=rint(112,999);if(Math.random()<0.35&&n%d)n-=n%d;}
+    else{d=rint(3,9);let q;do{q=rint(102,2400);}while(!String(q).includes('0')||q*d<1000||q*d>9999);n=q*d+(Math.random()<0.5?rint(1,d-1):0);if(n>9999)continue;}
+    const q=Math.floor(n/d),rem=n%d;return {kind:'div',skill:'div',op:'÷',n,d,answer:q,rem,L:lv,nums:[String(n),String(d)],dp:0};}
+  return {kind:'div',skill:'div',op:'÷',n:84,d:4,answer:21,rem:0,L:lv,nums:['84','4'],dp:0};}
+function divPlan(n,d){const s=String(n);let i=0,cur=+s[0];while(cur<d&&i<s.length-1){i++;cur=cur*10+ +s[i];}
+  const rows=[];let col=i;for(;;){const q=Math.floor(cur/d),prod=q*d,diff=cur-prod;rows.push({col,cur,q,prod,diff});if(col>=s.length-1)break;col++;cur=diff*10+ +s[col];}
+  return {s,start:i,rows,rem:rows[rows.length-1].diff};}
+const DivVoice=id=>{try{Slip.voice(id);}catch(e){}};
+function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,short=p.L>=4,cue=p.L<=2&&run&&run.idx<2;card.classList.add('tall');
+  card.append(cardHead('Long division'),el('div',{class:'expr'},`${fmtStr(String(p.n))} ÷ ${p.d} = ?`));
+  const coach=el('div',{class:'dv-coach'});const tipEl=el('div',{class:'dv-tip'});
+  // the bracket: col 1 = divisor, col 2 = bracket wall, cols 3.. = dividend digits
+  const g=el('div',{class:'dv-grid',style:`grid-template-columns:auto 6px repeat(${N},1.15em)`});const C=c=>c+3;
+  const cell=(row,c1,c2,node,cls)=>{const e=el('div',{class:'dv-cell '+(cls||''),style:`grid-row:${row};grid-column:${c1}/${c2+1}`},node);g.append(e);return e;};
+  const digits=P.s.split('').map((ch,i)=>cell(2,C(i),C(i),ch,'dv-dig dv-top'));cell(2,1,1,String(p.d),'dv-divisor');cell(2,2,2,'','dv-wall');
+  card.append(coach,el('div',{class:'dv-wrap'},g),tipEl);Scratch.reset(null);
+  const qf=[];let row=3,errs=0,stepErr=0,cur=null,k=0,done=false;a.steps=[];
+  const glow=els=>{g.querySelectorAll('.glow').forEach(x=>x.classList.remove('glow'));els.forEach(x=>x&&x.classList.add('glow'));};
+  const setCoach=(ic,name,text)=>{coach.innerHTML='';coach.append(el('span',{class:'dv-ic'},ic),el('b',null,name),short?null:el('span',null,text));};
+  const tip=(t,voice)=>{tipEl.innerHTML='';if(!t)return;tipEl.append(dogIcon(Slip.pet(),120),el('div',{class:'sl-bub'},el('b',null,t)));if(voice)DivVoice(voice);};
+  const ask=(want,max,place,onOk,check)=>{const f=Pad.make({sm:true,allowDot:false,max,ph:'?'});place.append(f.el);Pad.focus(f);let tries=0;
+    f.onChange=()=>{if(f.locked||f.val.length<String(want).length)return;const v=Pad.val(f);tries++;
+      if(v===want){Pad.right(f);Pad.lock(f);Snd.tap();tip(null);a.steps.push({k,want,ok:tries===1});setTimeout(()=>onOk(f),250);return;}
+      errs++;stepErr++;Pad.wrong(f);const why=check(v);a.errors=(a.errors||[]).concat([{a:v,want,tags:['div:'+why.tag]}]);
+      if(tries>=2){setTimeout(()=>{Pad.set(f,String(want));Pad.lock(f);tip(`It’s ${want}. ${why.after||''}`);a.steps.push({k,want,ok:false});setTimeout(()=>onOk(f),900);},350);return;}
+      tip(why.text,why.voice);setTimeout(()=>{if(!f.locked)Pad.set(f,'');},350);};return f;};
+  const stepDivide=()=>{const r=P.rows[k];cur=r;const span=String(r.cur).length;
+    const curCells=digits.slice(r.col-span+1,r.col+1);
+    if(k===0&&P.start>0)tip(`${p.d} doesn’t fit in ${P.s[0]}. Use ${r.cur}.`);
+    const prevDiff=k>0?g.querySelectorAll('.dv-diffrow'):[];glow(k===0?curCells:[...prevDiff].slice(-1));
+    setCoach('➗','DIVIDE',`How many ${p.d}s fit in ${r.cur}?`);if(cue)DivVoice('div-divide');
+    const place=cell(1,C(r.col),C(r.col),'','dv-q');
+    ask(r.q,1,place,f=>{qf.push(f);stepMultiply();},v=>v*p.d>r.cur?{tag:'qtoobig',text:`Too big! ${v} × ${p.d} = ${v*p.d}. That’s more than ${r.cur}.`,voice:'div-big'}
+      :{tag:'qtoosmall',text:`Too small! ${v+1} × ${p.d} = ${(v+1)*p.d} still fits in ${r.cur}.`,voice:'div-small',after:''});};
+  const stepMultiply=()=>{const r=cur,span=String(r.cur).length,c1=C(r.col-span+1),c2=C(r.col);row++;
+    cell(row,1,2,'−','dv-minus');const place=cell(row,c1,c2,'','dv-num');glow([place]);
+    setCoach('✖️','MULTIPLY',`${r.q} × ${p.d} = ?`);if(cue)DivVoice('div-multiply');
+    ask(r.prod,String(r.cur).length,place,()=>{row++;cell(row,c1,c2,'','dv-rule');stepSubtract();},v=>({tag:'mulfact',text:`Check it: ${r.q} × ${p.d} = ?`,voice:'timesfact'}));};
+  const stepSubtract=()=>{const r=cur,span=String(r.cur).length,c1=C(r.col-span+1),c2=C(r.col);row++;const place=cell(row,c1,c2,'','dv-num dv-diffrow');glow([place]);
+    setCoach('➖','SUBTRACT',`${r.cur} − ${r.prod} = ?`);if(cue)DivVoice('div-subtract');
+    ask(r.diff,String(r.cur).length,place,()=>{if(r.diff>=p.d){tip(`${r.diff} is not smaller than ${p.d}. The divide step was too small.`,'div-rem');}
+        if(k<P.rows.length-1)stepBring(place,c2);else finish();},v=>({tag:'subslip',text:`Check your subtraction: ${r.cur} − ${r.prod}.`,voice:'div-sub'}));};
+  const stepBring=(place,c2)=>{const nc=P.rows[k].col+1,ch=P.s[nc];glow([digits[nc]]);setCoach('⬇️','BRING DOWN',`Bring down the ${ch}.`);if(cue)DivVoice('div-bring');
+    const b=el('button',{class:'btn btn-blue dv-bring',type:'button'},`⬇ Bring down the ${ch}`);tipEl.innerHTML='';tipEl.append(b);
+    tapify(b,()=>{b.remove();Snd.tap();const d=cell(row,C(nc),C(nc),ch,'dv-dig dv-down');d.style.animation='dvDrop .45s ease-out';k++;setTimeout(stepDivide,350);});};
+  const finish=()=>{done=true;glow([]);const R=P.rem;const ans=R?`${fmt(p.answer)} R${R}`:fmt(p.answer);
+    setCoach('🏁','DONE',R?`The leftover is ${R}. It’s smaller than ${p.d}, so it’s the remainder.`:'Nothing left over. It splits evenly!');
+    tip(null);DivVoice('div-done');Snd.coin();
+    const res=el('div',{class:'dv-result'},`${fmt(p.n)} ÷ ${p.d} = `,el('b',null,ans));
+    const ckF=Pad.make({sm:true,allowDot:false,max:6,ph:'?'});const ckMsg=el('span',{class:'dv-ckmsg'});
+    const ck=el('div',{class:'dv-check'},el('b',null,'Check it: '),`${fmt(p.answer)} × ${p.d}${R?' + '+R:''} = `,ckF.el,ckMsg);
+    tipEl.innerHTML='';tipEl.append(res,ck);Pad.focus(ckF);if(!cue)DivVoice('div-check');
+    const end=checked=>{if(checked)a.checkUsed=true;a.divRem=R;complete(p,{solved:true,firstTry:errs===0,tries:errs?2:1});};
+    let ct=0;ckF.onChange=()=>{if(ckF.locked||ckF.val.length<String(p.n).length)return;ct++;if(Pad.val(ckF)===p.n){Pad.right(ckF);Pad.lock(ckF);Snd.coin();ckMsg.textContent=` ✓ ${fmt(p.n)}. It checks out!`;setTimeout(()=>end(true),700);}
+      else{Pad.wrong(ckF);setTimeout(()=>{if(!ckF.locked)Pad.set(ckF,'');},350);ckMsg.textContent=ct>=2?` It should come back to ${fmt(p.n)}.`:' Not quite. Multiply, then add the leftover.';if(ct>=2){Pad.lock(ckF);setTimeout(()=>end(false),1200);}}};
+    setActions([{label:'Skip check ▸',cls:'btn-dark',onClick:()=>{if(!ckF.locked){Pad.lock(ckF);end(false);}}}]);};
+  setActions([]);stepDivide();}
+
+// problem plumbing: tokens "div:1..5" and "mul", the twin after a miss, the log line
+{const _mp=makeProblem;makeProblem=function(tok,boost){const [k,arg]=String(tok).split(':');if(k==='div')return genDiv(arg);if(k==='mul')return genMul(R('mul')+(boost||0));return _mp(tok,boost);};
+ const _tw=twinOf;twinOf=function(p){if(p&&p.kind==='div')return genDiv(p.L);if(p&&p.kind==='mul')return genMul(p.L);return _tw(p);};
+ const _ds=describe;describe=function(p){if(p&&p.kind==='div')return `${p.n} ÷ ${p.d}`;if(p&&p.kind==='mul')return `${p.nums[0]} × ${p.nums[1]}`;return _ds(p);};
+ // Area Castle mixes in standard-algorithm multiplication (school is using it right now)
+ const ca=WORLDS.find(w=>w.id==='castle');if(ca){ca.levels[1]=['area','mul'];ca.levels[2]=['mul','area'];}}
+
+// ---------- 4) Division Dungeon (opened from the map; five levels; lessons unlock as he goes)
+const DIV_WORLD={id:'dungeon',name:'Division Dungeon',sub:'Share it out: long division',color:'#e0457b',boss:'The Splitter',
+  levels:[['div:1'],['div:2','div:1'],['div:3','div:2'],['div:4','mul'],['div:5','div:4']],bossMix:['div:4','div:5']};
+const DivLessons={
+  LIST:[{id:'div1',title:'Fair Shares',lv:0,ic:'💎'},{id:'div2',title:'The Reverse Spell',lv:0,ic:'🔄'},{id:'div3',title:'Tens First',lv:0,ic:'🧱'},
+    {id:'div4',title:'Trade a Ten',lv:1,ic:'⚒️'},{id:'div5',title:'Leftovers',lv:2,ic:'🦴'},{id:'div6',title:'The Knight’s Code',lv:3,ic:'⚔️'}],
+  // "Your turn" pauses inside each video: [seconds, question, answer]
+  STOPS:{},
+  st(){return state.divVideos=state.divVideos||{};},
+  ok:{},has(id){return this.ok[id];},
+  // video/index.json lists the finished lessons and their "Your turn" pauses: {"videos":{"div1":{"stops":[[31.5,"15 ÷ 3",5]]}}}
+  probe(){if(this.probing)return;this.probing=true;fetch('video/index.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{const V=(j&&j.videos)||{};for(const id in V){this.ok[id]=true;this.STOPS[id]=V[id].stops||[];}}).catch(()=>{}).finally(()=>{setTimeout(()=>{this.probing=false;},60000);});},
+  unlocked(v){const pr=state.prog.dungeon||{done:0};return v.lv<=pr.done;},
+  pending(li){return this.LIST.filter(v=>v.lv<=li&&this.has(v.id)&&!this.st()[v.id]);},
+  async playPending(li){for(const v of this.pending(li))await this.play(v);},
+  play(v){return new Promise(res=>{const held=typeof Pause!=='undefined'&&Pause.hold&&Pause.hold();if(typeof Music!=='undefined')Music.stop();
+    const vid=el('video',{class:'vp-video',playsinline:'',preload:'auto',src:'video/'+v.id+'.mp4',poster:'video/'+v.id+'.jpg'});vid.setAttribute('playsinline','');vid.setAttribute('webkit-playsinline','');
+    const seen=!!this.st()[v.id],stops=(this.STOPS[v.id]||[]).map(s=>({t:s[0],q:s[1],a:s[2],done:false}));
+    const big=el('button',{class:'vp-start',type:'button'},el('span',null,'▶'),el('b',null,v.title));
+    const bar=el('div',{class:'vp-bar'});const prog=el('i');const track=el('div',{class:'vp-track'},prog);
+    const btn=(t,fn)=>{const b=el('button',{class:'vp-btn',type:'button'},t);tapify(b,fn);return b;};
+    const pp=btn('⏸',()=>{if(vid.paused){vid.play();pp.textContent='⏸';}else{vid.pause();pp.textContent='▶';}});
+    const close=()=>{try{vid.pause();}catch(e){}wrap.remove();if(held)Pause.release();res();};
+    bar.append(pp,btn('⟲ 10s',()=>{vid.currentTime=Math.max(0,vid.currentTime-10);}),track,seen?btn('Skip ▸',close):null);
+    const quiz=el('div',{class:'vp-quiz',hidden:true});
+    const wrap=el('div',{class:'vp'},vid,quiz,bar,big);document.body.append(wrap);
+    tapify(big,()=>{big.remove();vid.play().catch(()=>{});});
+    vid.addEventListener('timeupdate',()=>{prog.style.width=(100*vid.currentTime/(vid.duration||1))+'%';const s=stops.find(x=>!x.done&&vid.currentTime>=x.t);if(s){s.done=true;vid.pause();this.quiz(quiz,s,()=>{vid.play();});}});
+    vid.addEventListener('ended',()=>{this.st()[v.id]={seen:dayStr()};saveState();
+      Slip.log({kind:'video',id:v.id,stops:stops.length,stopsOk:stops.filter(s=>s.ok).length});setTimeout(close,400);});
+    vid.addEventListener('error',()=>{close();});});},
+  quiz(box,s,go){box.hidden=false;box.innerHTML='';let v='',tries=0;const disp=el('div',{class:'lab-ans'},'?');const msg=el('div',{class:'vp-msg'});
+    const keys=el('div',{class:'lab-keys'},...[1,2,3,4,5,6,7,8,9,'⌫',0,'OK'].map(k=>{const b=el('button',{class:'lab-k'+(k==='OK'?' ok':''),type:'button'},String(k));
+      tapify(b,()=>{if(k==='⌫')v=v.slice(0,-1);else if(k==='OK'){if(!v)return;tries++;if(+v===s.a){s.ok=tries===1;Snd.coin();msg.textContent='Yes! 🐾';DivVoice('found');setTimeout(()=>{box.hidden=true;go();},700);}
+        else{Snd.tone(220,0.12,'triangle',0.04);v='';if(tries>=2){msg.textContent=`It’s ${s.a}. Watch how!`;setTimeout(()=>{box.hidden=true;go();},1500);}else msg.textContent='Not quite. Try again!';}}
+        else if(v.length<5)v+=k;disp.textContent=v||'?';Snd.tap();});return b;}));
+    box.append(el('h3',null,'Your turn!'),el('div',{class:'lab-q'},s.q+' ='),disp,keys,msg);}
+};
+const Dungeon={
+  open(){DivLessons.probe();const pr=state.prog.dungeon||{done:0,stars:{}};
+    const lv=DIV_WORLD.levels.map((_,i)=>{const open=i<=pr.done,st=pr.stars&&pr.stars[i]||0;const b=el('button',{class:'dv-lv'+(open?'':' locked'),type:'button',disabled:!open},
+        el('b',null,`Level ${i+1}`),el('span',null,['2-digit, splits evenly','Trade a ten','Leftovers (remainders)','3-digit numbers','4-digit + zeros'][i]),el('i',null,open?'★'.repeat(st)+'☆'.repeat(3-st):'🔒'));
+      if(open)tapify(b,()=>{overlay(null);Snd.init();startLevel(DIV_WORLD,i);});return b;});
+    const vids=el('div',{class:'dv-vids'});const fill=()=>{vids.innerHTML='';DivLessons.LIST.forEach((v,i)=>{const un=DivLessons.unlocked(v),av=DivLessons.has(v.id);
+      const b=el('button',{class:'dv-vid'+(un&&av?'':' locked'),type:'button'},el('span',{class:'dv-vic'},un?v.ic:'🔒'),el('b',null,`${i+1}. ${v.title}`),el('small',null,!un?'Unlocks as you go':av?(DivLessons.st()[v.id]?'Watch again':'New!'):'Coming soon'));
+      if(un&&av)tapify(b,()=>{overlay(null);DivLessons.play(v).then(()=>this.open());});vids.append(b);});};fill();setTimeout(fill,900);
+    overlay(el('div',{class:'modal dv-modal'},el('h2',null,'🗝️ Division Dungeon'),el('p',null,'Share it out! Watch the lessons, then split the treasure step by step.'),
+      el('div',{class:'dv-lvs'},...lv),el('h3',null,'📺 Lessons'),vids,el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(null)},'Back to map'))));}
+};
+// map button
+{const _rm=renderMap;renderMap=function(){_rm.apply(this,arguments);try{const bot=document.querySelector('#scr-map .ow-bottom');if(!bot||bot.querySelector('.ow-div'))return;const pr=state.prog.dungeon||{done:0};
+  const b=el('button',{class:'quest ow-div',type:'button'},el('div',null,el('h2',null,'Division Dungeon'),el('p',null,pr.done>=5?'All 5 levels cleared · play again!':`Lessons + long division · level ${Math.min(5,pr.done+1)} of 5`)));
+  tapify(b,()=>{Snd.init();Dungeon.open();});const q=bot.querySelector('.ow-quest');if(q)q.after(b);else bot.prepend(b);}catch(e){}};}
+// level flow: lessons play before the level they teach (first time), then the usual level card; "Next level" works here too
+{const _ip=Intro.play.bind(Intro);Intro.play=function(w,li,n){if(w&&w.id==='dungeon'){const V=state.worldIntro=state.worldIntro||{};V.dungeon=1;
+    return DivLessons.playPending(li).then(()=>Intro.off||(typeof Brawl!=='undefined'&&Brawl.off)?null:Intro.level(w,li,n));}return _ip(w,li,n);};
+ const _nl=nextLevelFor;nextLevelFor=function(sp){if(sp&&sp.world==='dungeon'){if(sp.level==null||sp.level>=4)return null;return {w:DIV_WORLD,li:sp.level+1};}return _nl(sp);};
+ setTimeout(()=>{try{DivLessons.probe();}catch(e){}},3000);}
+
+/* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
    Pair once with  ...devmath/#sync=TOKEN  (or paste the token in Report)
    ========================================================= */
@@ -3939,7 +4182,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261014181229';
+const BUILD='20261015000125';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -5688,8 +5931,8 @@ function nextProblem(){if(run.idx>=run.queue.length)return finishRun();
   ATT={v:1,id:uid(),ts:new Date().toISOString(),day:dayStr(),hour:new Date().getHours(),session:SESSION.id,mode:run.spec.mode,world:run.spec.world||null,level:run.spec.level!=null?run.spec.level:null,
     pack:run.spec.packId||null,skill:p.skill,kind:p.kind,diff:p.L||null,r:+sk.r.toFixed(2),variant,probe,twin:!!p.twin,q:describe(p),correct:p.answer,tries:[],t0:Date.now()};
   p.variant=variant;p.probe=probe;
-  ({arith:renderArith,fact:renderFact,dfact:renderDFact,area:renderArea,word:renderWord,table:renderTable,bug:renderBug})[p.kind](p,ATT);
-  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();
+  ({arith:renderArith,fact:renderFact,dfact:renderDFact,div:renderDiv,mul:renderMul,area:renderArea,word:renderWord,table:renderTable,bug:renderBug})[p.kind](p,ATT);
+  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();$('#scr-level').classList.toggle('divmode',p.kind==='div');
   const factBig=(p.kind==='fact'||p.kind==='dfact')&&typeof InkBox!=='undefined'&&!!InkBox.pad;$('#scr-level').classList.toggle('factmode',factBig);
   if(factBig){const ink=el('div',{class:'dj-ink fact-ink'});card.append(ink);InkBox.mount(ink,{big:true,allowDot:false,boxes:p.answer>=100?3:2});}else InkBox.usePad();
   if(typeof AnswerHint!=='undefined')AnswerHint.arm(p);}
@@ -6114,7 +6357,7 @@ function boot(){Scratch.init();Battle.init();Cine.init();Talk.init();
   if(state.hero){renderMap();show('scr-map');}else{renderOnboard();show('scr-onboard');}
   Data.init();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){Data.saveSession();Data.flush();}});}
-window.__nk={Slip,Lab,nextProblem:()=>nextProblem(),showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
+window.__nk={Dungeon,DivLessons,DIV_WORLD,genDiv,genMul,divPlan,Slip,Lab,nextProblem:()=>nextProblem(),showRep:(...a)=>showReport(...a),Cin3,Explore,Intro,FactMix,Lesson,Blocks,Arcade,Games,Breaks,PETS,drawPet:(...a)=>drawPet(...a),Rides,DogGear,NoZoom,BoxBreath,Inter,BigPad,DogPower,DOG_POWERS,InkCheck,ScreenTime,Parent,Pause,Updater,Brawl,InkBox,HW,Dojo,DOJOS,BELTS,Sync,stamp,Grip,Battle,Cine,Talk,NPCS,openChest,rollLoot,grantLoot,openMechBay,glitchForm,mechPower,get cfg(){return cfg;},inject(o){if(o.cfg)cfg=o.cfg;if(o.packs)packs=o.packs;onDataPulled();},startRun,startLevel,startPack,renderShop,renderMap,show,WORLDS,GEN,genArea,genFact,genBug,genTable,genWord,diagArith,subSteps,estimateArith,makeProblem,packProblem,wordFinish,get state(){return state;},get run(){return run;},Pad};
 boot();
 })();
 </script>
