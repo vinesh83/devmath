@@ -132,7 +132,7 @@ const Lab={
     if(S.length)rows.push(el('div',{class:'lab-row'},el('b',null,'How he solves right answers: '),`⚡ knew it ${pct(cnt('knew'),S.length)} · 🖐️ counted ${pct(cnt('counted'),S.length)} · 🧠 trick ${pct(cnt('trick'),S.length)} · 🎲 guessed ${pct(cnt('guess'),S.length)} (${S.length} answers)`));
     if(L.pref.length){const c={};L.pref.forEach(p=>{if(p.choice!=='same')c[p.choice]=(c[p.choice]||0)+1;});rows.push(el('div',{class:'lab-row'},el('b',null,'He picked as clearest: '),Object.entries(c).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`${this.NAMES[a]} ×${n}`).join(' · ')||'–'));}
     const go=el('button',{class:'btn btn-blue',type:'button'},'🧪 Start Brain Lab (10 min)');tapify(go,()=>{overlay(null);setTimeout(()=>this.brainLab(),50);});
-    return el('div',{class:'lab-panel'},el('h3',null,'How Dev learns (Learning Lab)'),rows.length?rows:el('p',{class:'lab-sub'},'Collecting data. Hint experiments and check-ins run quietly as he plays.'),
+    return el('div',{class:'lab-panel'},el('h3',null,`How ${((state.hero&&state.hero.name)||'your child')} learns (Learning Lab)`),rows.length?rows:el('p',{class:'lab-sub'},'Collecting data. Hint experiments and check-ins run quietly as he plays.'),
       el('p',{class:'lab-sub'},`Brain Lab sessions: ${L.sessions.length}${L.sessions.length?' · last '+L.sessions[L.sessions.length-1].day:''}`),go);}
 };
 // after a right Dojo answer: sometimes a quick "How did you get it?" before moving on

@@ -12,7 +12,7 @@ const Parent={until:0,
       if(v===pin){Parent.until=Date.now()+5*60000;overlay(null);fn();}else{box.value='';msg.textContent='Wrong PIN.';Snd.hurt();}};
     box.addEventListener('keydown',e=>{if(e.key==='Enter')ok();});
     overlay(el('div',{class:'modal pin-modal'},el('h2',null,pin?'Grown-up PIN':'Create a grown-up PIN'),
-      el('p',null,pin?'Enter your 4-digit PIN.':'Pick 4 digits that Dev doesn’t know. You’ll need it to change limits, unlock, approve prizes or start over.'),box,msg,
+      el('p',null,pin?'Enter your 4-digit PIN.':`Pick 4 digits that ${((state.hero&&state.hero.name)||'your child')} doesn’t know. You’ll need it to change limits, unlock, approve prizes or start over.`),box,msg,
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-green',type:'button',onclick:ok},'OK'))));
     setTimeout(()=>box.focus(),50);}
 };

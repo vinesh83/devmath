@@ -3587,7 +3587,7 @@ const Lab={
     if(S.length)rows.push(el('div',{class:'lab-row'},el('b',null,'How he solves right answers: '),`⚡ knew it ${pct(cnt('knew'),S.length)} · 🖐️ counted ${pct(cnt('counted'),S.length)} · 🧠 trick ${pct(cnt('trick'),S.length)} · 🎲 guessed ${pct(cnt('guess'),S.length)} (${S.length} answers)`));
     if(L.pref.length){const c={};L.pref.forEach(p=>{if(p.choice!=='same')c[p.choice]=(c[p.choice]||0)+1;});rows.push(el('div',{class:'lab-row'},el('b',null,'He picked as clearest: '),Object.entries(c).sort((a,b)=>b[1]-a[1]).map(([a,n])=>`${this.NAMES[a]} ×${n}`).join(' · ')||'–'));}
     const go=el('button',{class:'btn btn-blue',type:'button'},'🧪 Start Brain Lab (10 min)');tapify(go,()=>{overlay(null);setTimeout(()=>this.brainLab(),50);});
-    return el('div',{class:'lab-panel'},el('h3',null,'How Dev learns (Learning Lab)'),rows.length?rows:el('p',{class:'lab-sub'},'Collecting data. Hint experiments and check-ins run quietly as he plays.'),
+    return el('div',{class:'lab-panel'},el('h3',null,`How ${((state.hero&&state.hero.name)||'your child')} learns (Learning Lab)`),rows.length?rows:el('p',{class:'lab-sub'},'Collecting data. Hint experiments and check-ins run quietly as he plays.'),
       el('p',{class:'lab-sub'},`Brain Lab sessions: ${L.sessions.length}${L.sessions.length?' · last '+L.sessions[L.sessions.length-1].day:''}`),go);}
 };
 // after a right Dojo answer: sometimes a quick "How did you get it?" before moving on
@@ -4141,7 +4141,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
   block(){const st=el('p',{class:'tiny-ok'},this.on()?(this.err?'Sync problem: '+this.err:this.last?'Last sync: '+new Date(this.last).toLocaleString():'Connected. First sync coming up.'):'Not connected.');
     if(this.on()&&this.needRestore){const r=this.needRestore,n=Object.keys((r.dojo&&r.dojo.facts)||{}).length;
       return el('div',{class:'syncbox restorebox'},el('p',null,el('b',null,'Backup found! '),`${r.hero||'Hero'} · ${n} facts tracked · ${r.coins||0} coins · saved ${new Date(r.generated).toLocaleString()}`),
-        el('p',{class:'tiny-ok'},'This iPad has less progress than the backup. Restore it to pick up where Dev left off.'),
+        el('p',{class:'tiny-ok'},`This iPad has less progress than the backup. Restore it to pick up where ${((state.hero&&state.hero.name)||'your child')} left off.`),
         el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>Parent.guard(()=>{this.restore(r);location.replace(location.pathname);})},'Restore progress'),
           el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{lsSet('nk-sync-ok',1);this.needRestore=null;showReport();})},'Start fresh instead')));}
     if(this.on())return el('div',{class:'syncbox'},el('p',null,el('b',null,'Coach sync: '),'on → '+this.cfg.repo),st,
@@ -4197,7 +4197,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261015010750';
+const BUILD='20261015023403';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4329,7 +4329,7 @@ const Parent={until:0,
       if(v===pin){Parent.until=Date.now()+5*60000;overlay(null);fn();}else{box.value='';msg.textContent='Wrong PIN.';Snd.hurt();}};
     box.addEventListener('keydown',e=>{if(e.key==='Enter')ok();});
     overlay(el('div',{class:'modal pin-modal'},el('h2',null,pin?'Grown-up PIN':'Create a grown-up PIN'),
-      el('p',null,pin?'Enter your 4-digit PIN.':'Pick 4 digits that Dev doesn’t know. You’ll need it to change limits, unlock, approve prizes or start over.'),box,msg,
+      el('p',null,pin?'Enter your 4-digit PIN.':`Pick 4 digits that ${((state.hero&&state.hero.name)||'your child')} doesn’t know. You’ll need it to change limits, unlock, approve prizes or start over.`),box,msg,
       el('div',{class:'btns'},el('button',{class:'btn btn-dark',type:'button',onclick:()=>showReport()},'Cancel'),el('button',{class:'btn btn-green',type:'button',onclick:ok},'OK'))));
     setTimeout(()=>box.focus(),50);}
 };

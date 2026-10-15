@@ -67,7 +67,7 @@ const Sync={cfg:lsGet('nk-sync',null),busy:false,last:lsGet('nk-sync-last',null)
   block(){const st=el('p',{class:'tiny-ok'},this.on()?(this.err?'Sync problem: '+this.err:this.last?'Last sync: '+new Date(this.last).toLocaleString():'Connected. First sync coming up.'):'Not connected.');
     if(this.on()&&this.needRestore){const r=this.needRestore,n=Object.keys((r.dojo&&r.dojo.facts)||{}).length;
       return el('div',{class:'syncbox restorebox'},el('p',null,el('b',null,'Backup found! '),`${r.hero||'Hero'} · ${n} facts tracked · ${r.coins||0} coins · saved ${new Date(r.generated).toLocaleString()}`),
-        el('p',{class:'tiny-ok'},'This iPad has less progress than the backup. Restore it to pick up where Dev left off.'),
+        el('p',{class:'tiny-ok'},`This iPad has less progress than the backup. Restore it to pick up where ${((state.hero&&state.hero.name)||'your child')} left off.`),
         el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>Parent.guard(()=>{this.restore(r);location.replace(location.pathname);})},'Restore progress'),
           el('button',{class:'btn btn-dark',type:'button',onclick:()=>Parent.guard(()=>{lsSet('nk-sync-ok',1);this.needRestore=null;showReport();})},'Start fresh instead')));}
     if(this.on())return el('div',{class:'syncbox'},el('p',null,el('b',null,'Coach sync: '),'on → '+this.cfg.repo),st,
