@@ -101,6 +101,12 @@ const Dojo={
   cur(did){for(let i=0;i<8;i++)if(!this.belt(did,i).earned)return i;return 8;},
   black(did){return this.cur(did)>=8;},
   doneToday(did){return this.st().today[did].rounds>0;},
+  // Times comes first each day (coach PRs #1-#2, Oct 10-13): until a Times round is done, the map sends him there once
+  // and the Dojo won't start Plus-Minus. A grown-up unlock, or a Times black belt, turns this off.
+  timesDue(){const d=this.st();return d.unlockDay!==dayStr()&&!this.doneToday('tm')&&!this.black('tm');},
+  timesFirst(){const d=this.st(),day=dayStr();if(!this.timesDue()||d.tmAuto===day)return false;
+    Talk.say([['sensei',pick(['Times first today, {name}! One round, then the rest.','Warm-up time: one Times round. You\u2019ve got this.'])]])
+      .then(()=>{if($('#scr-map').hidden||!$('#overlay').hidden)return;d.tmAuto=day;saveState();this.start('tm','round');});return true;},
   KEY:{pm:[5,6],tm:[0,1,2,3,4,5,6]},
   keyDone(){return Object.entries(this.KEY).every(([did,l])=>l.every(i=>this.belt(did,i).earned));},
   strict(){const d=this.st();return !d.strictOff&&!this.keyDone();},
@@ -179,7 +185,8 @@ const Dojo={
       sb?el('small',null,`Sprint best: ${sb} in 1 minute`):null);},
   sprintPool(did){const F=this.st().facts;return this.facts(did).filter(f=>F[f.key]&&(F[f.key].owned||(F[f.key].credits>=1&&F[f.key].ok/Math.max(1,F[f.key].n)>=0.9)));},
   // ---------- a run
-  start(did,kind){const d=this.st(),ci=Math.min(this.cur(did),7),B=BELTS[ci],black=this.black(did);
+  start(did,kind){if(did==='pm'&&this.timesDue()){Talk.say([['sensei','Times first, {name}! Then Plus-Minus is all yours.']]).then(()=>this.start('tm','round'));return;}
+    const d=this.st(),ci=Math.min(this.cur(did),7),B=BELTS[ci],black=this.black(did);
     const items=kind==='sprint'?shuffle(this.sprintPool(did)).concat(shuffle(this.sprintPool(did))).map(f=>({f,kind:'sprint'})):this.buildRound(did,{review:black});
     if(!items.length){Talk.say([['sensei','Nothing to train right now. Come back tomorrow!']]);return;}
     const title=kind==='sprint'?`${DOJOS[did].short} · 1-minute sprint`:`${DOJOS[did].short} Dojo · ${black?'Review':B[0]+' Belt'}`;

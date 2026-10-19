@@ -35,7 +35,8 @@ s=rep(s,"  const bottom=el('div',{class:'ow-bottom'},\n",
  "      el('p',null,Dojo.gateText()))),\n")
 s=rep(s,"      if(!this.met('knight')){this.say(INTROS.knight);return;}",
         "      if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}\n"
-        "      if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}")
+        "      if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}\n"
+        "      if(Dojo.timesFirst())return;")
 # report
 s=re.sub(r"  const payload=\{app:'number-knight',v:1,.*?log:L\.slice\(-300\)\};\n","  const payload=reportPayload();\n",s,count=1,flags=re.S)
 assert 'const payload=reportPayload();' in s
