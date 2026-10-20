@@ -22,7 +22,7 @@ const Brawl={off:false,
       foe:{x:0,y:0,vy:0,st:'walk',t:0,dur:1.4,atk:null,stun:0,hurt:0,angry:false,pref:0.38},
       bugs:[],miss:[],wave:null,fx:[],txt:[],shake:0,flash:0,flashCol:'#fff',combo:0,best:0,dmg:0,perfect:0,squashed:0,
       dog:{t:5,dash:0,hitDone:false},prot:false,sp:null,coins:0,done:false,end:null,keys:{l:0,r:0},cue:null,init:false,tips:{},mech,shots:[],canCd:0};
-    const _cw0=0;const cueWords={punch:['BLOCK!','#5ef2ff'],laser:['JUMP!','#ffe066'],slam:['JUMP!','#ffe066'],missiles:['MOVE!','#ff9f43'],bugs:['SQUASH!','#3fdc6b']};
+    const _cw0=0;const cueWords={punch:['BLOCK!','#5ef2ff'],laser:['JUMP or BLOCK!','#ffe066'],slam:['JUMP!','#ffe066'],missiles:['MOVE!','#ff9f43'],bugs:['SQUASH!','#3fdc6b']};
     let W=0,H=0,Y=0,hs=8,gs=11,hw=96,gw=132;
     const say=(s,col,big,x,y)=>G.txt.push({s,col:col||'#fff',big:!!big,x,y,age:0,life:big?1.2:0.8});
     const burst=(x,y,n,cols,sp)=>{for(let i=0;i<n;i++){const a=Math.random()*6.28,v=(sp||220)*(0.4+Math.random());G.fx.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,life:0.4+Math.random()*0.4,col:pick(cols)});}};
@@ -73,7 +73,7 @@ const Brawl={off:false,
       if(!G.tips[k]&&!state.bossTip){G.tips[k]=1;}};
     const strike=()=>{const f=G.foe,h=G.hero,k=f.atk;f.st='act';f.t=0;G.cue=null;
       if(k==='punch'){f.dur=0.22;f.from=f.x;f.to=Math.max(h.x+hw*0.5+gw*0.3,W*0.2);Snd.whoosh();}
-      else if(k==='laser'){f.dur=0.5;Snd.zap(1);}
+      else if(k==='laser'){f.dur=0.5;f.dodged=0;Snd.zap(1);}
       else if(k==='missiles'){f.dur=0.35;G.miss.forEach(m=>m.fall=0.001);Snd.whoosh();}
       else if(k==='slam'){f.dur=0.3;f.vy=0;G.wave={x:f.x-gw*0.3,v:W*(f.angry?0.95:0.75),hitDone:false};Snd.slam();G.shake=0.35;}
       else if(k==='bugs'){f.dur=0.3;const n=f.angry?4:3;for(let i=0;i<n;i++)G.bugs.push({x:f.x-gw*0.3+i*hs*7,v:W*(0.13+Math.random()*0.07)*(DP('corgi')?0.6:1),dead:false,ph:Math.random()*6,born:G.t,d:i*0.35});
@@ -130,7 +130,11 @@ const Brawl={off:false,
         else if(f.st==='act'){f.t+=dt;
           if(f.atk==='punch'){const k=Math.min(1,f.t/f.dur);f.x=f.from+(f.to-f.from)*Math.sin(k*Math.PI*0.5);if(f.t>=f.dur&&!f.res){f.res=1;resolve();}}
           if(f.atk==='slam')f.y=Math.min(0,f.y+H*3*dt);
-          if(f.atk==='laser'&&h.y>-H*0.1&&!G.sp)hurtHero('ZAPPED!');
+          // the laser can be beaten two ways: be in the air when it fires (JUMP), or have the shield up (BLOCK, up to 0.6 s early)
+          if(f.atk==='laser'&&!G.sp&&!f.dodged){
+            if(h.blk>0||G.t-(h.blkAt==null?-9:h.blkAt)<0.6){f.dodged=1;h.blk=Math.max(h.blk,0.5);Snd.block();say('BLOCKED!','#5ef2ff',false,h.x,Y-hw*1.4);burst(h.x+hw*0.5,Y-H*0.05,14,['#5ef2ff','#fff'],200);gain(0.04);}
+            else if(h.y<=-H*0.1&&f.t<0.2){f.dodged=1;say('DODGED!','#ffe066',false,h.x,Y-hw*1.6);gain(0.04);}
+            else if(h.y>-H*0.1)hurtHero('ZAPPED!');}
           if(f.t>=f.dur){f.res=0;f.st='rec';f.t=0;f.dur=(f.atk==='punch'?0.75:0.55)*(f.angry?0.8:1);f.y=0;}}
         else if(f.st==='rec'){f.t+=dt;if(f.atk==='punch'&&f.from)f.x+=(f.from-f.x)*Math.min(1,dt*3);
           if(f.t>=f.dur){if(f.angry&&Math.random()<0.4){choose();}else{f.st=Math.random()<0.18?'guard':'walk';f.t=0;f.dur=f.st==='guard'?0.9:0.8+Math.random()*1.0;f.pref=0.25+Math.random()*0.25;}}}
@@ -252,7 +256,7 @@ const Brawl={off:false,
       if(G.phase==='intro'){Cine.title(c,W,H,G.t,boss?'BOSS BATTLE!':G.mech?'MECH BATTLE!':'BATTLE TIME!','#ffe066',`${AR.n} · Battle Power ${power} · ${G.maxHearts} hearts · SUPER ${Math.round(G.sup*100)}%`);
         if(lost){c.font='800 18px Lexend,sans-serif';c.textAlign='center';c.fillStyle='#3fdc6b';c.fillText('Glitch is worn out from running away. He’s weaker this time!',W/2,H*0.42);}
         if(G.introLen>3){c.font='700 16px Lexend,sans-serif';c.textAlign='center';c.fillStyle='#cfd5ff';c.globalAlpha=Math.min(1,Math.max(0,G.t-1.2)*2);
-          c.fillText('Hold ◀ ▶ to run · JUMP over lasers and shockwaves · ATTACK up close',W/2,H*0.36);c.fillText('BLOCK punches right before they land for a PERFECT BLOCK',W/2,H*0.36+22);c.fillText('ATTACK in the air for a GROUND POUND · grab power-ups that float down!',W/2,H*0.36+44);c.globalAlpha=1;}}
+          c.fillText('Hold ◀ ▶ to run · JUMP or BLOCK lasers · JUMP shockwaves · ATTACK up close',W/2,H*0.36);c.fillText('BLOCK punches right before they land for a PERFECT BLOCK',W/2,H*0.36+22);c.fillText('ATTACK in the air for a GROUND POUND · grab power-ups that float down!',W/2,H*0.36+44);c.globalAlpha=1;}}
       if(win())Cine.title(c,W,H,G.t,'K.O.!','#ffe066','Finishing move…');
       if(G.phase==='time')Cine.title(c,W,H,G.t,'TIME!','#5ef2ff',`Glitch escapes! You hit for ${G.dmg} · +${Math.max(5,Math.round(G.dmg/2))} coins`);
       if(G.phase==='lose')Cine.title(c,W,H,G.t,'GLITCH ESCAPES!','#ff9f43',`He’ll be weaker next time! · +${Math.max(5,Math.round(G.dmg/2))} coins`);
