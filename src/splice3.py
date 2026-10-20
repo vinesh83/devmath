@@ -3,7 +3,7 @@ p='number-knight.html'; s=open(p).read()
 def rep(s,a,b,count=1):
     assert a in s, 'MISSING: '+a[:110]; return s.replace(a,b,count)
 s=rep(s,"</style>",open('fx2.css').read()+"</style>")
-s=rep(s,"/* =========================================================\n   Keypad + fields","\n".join(open(f).read() for f in ['fx-action.js','fx-supers.js','fx-brawl.js','fx-games.js','fx-blocks.js','fx-lessons.js','fx-dojo2.js','fx-mix.js','fx-lab.js','fx-slips.js','fx-intro.js','fx-cin3.js','fx-division.js','fx-flip.js','fx-sync.js','fx-pause.js','fx-dogs.js','fx-dogpow.js','fx-time.js','fx-bigpad.js','fx-interlude.js','fx-breathe.js','fx-breaks.js','fx-rides.js'])+"\n/* =========================================================\n   Keypad + fields")
+s=rep(s,"/* =========================================================\n   Keypad + fields","\n".join(open(f).read() for f in ['fx-action.js','fx-supers.js','fx-brawl.js','fx-games.js','fx-blocks.js','fx-lessons.js','fx-dojo2.js','fx-mix.js','fx-lab.js','fx-slips.js','fx-intro.js','fx-cin3.js','fx-division.js','fx-flip.js','fx-surprise.js','fx-sync.js','fx-pause.js','fx-dogs.js','fx-dogpow.js','fx-time.js','fx-bigpad.js','fx-interlude.js','fx-breathe.js','fx-breaks.js','fx-rides.js'])+"\n/* =========================================================\n   Keypad + fields")
 s=rep(s,'<div id="card" class="card"></div>\n        <div class="scratch-wrap">','<div id="card" class="card"></div>\n        <div class="sc-grip" id="scGrip" role="separator" aria-label="Drag to resize the paper"><span></span></div>\n        <div class="scratch-wrap">')
 s=rep(s,'<section id="scr-mech" class="screen" hidden></section>','<section id="scr-mech" class="screen" hidden></section>\n  <section id="scr-dojo" class="screen" hidden></section>')
 # keypad / fields
@@ -36,6 +36,7 @@ s=rep(s,"  const bottom=el('div',{class:'ow-bottom'},\n",
 s=rep(s,"      if(!this.met('knight')){this.say(INTROS.knight);return;}",
         "      if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}\n"
         "      if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}\n"
+        "      if(typeof Surprise!=='undefined'&&Surprise.due()){Surprise.play();return;}\n"
         "      if(Dojo.timesFirst())return;")
 # report
 s=re.sub(r"  const payload=\{app:'number-knight',v:1,.*?log:L\.slice\(-300\)\};\n","  const payload=reportPayload();\n",s,count=1,flags=re.S)

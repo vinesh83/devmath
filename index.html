@@ -2065,6 +2065,7 @@ const Talk={el:null,popEl:null,open:false,lastPop:0,runPops:0,probPop:null,check
   onMap(){setTimeout(()=>{if($('#scr-map').hidden||this.open||!$('#overlay').hidden||!$('#cine').hidden||!state.hero)return;const N=this.st();
       if(!this.met('knight')){this.say(INTROS.knight).then(()=>{if(!Dojo.gateOk())this.say(INTROS.sensei).then(()=>Dojo.open());});return;}
       if(!this.met('sensei')&&!Dojo.gateOk()){this.say(INTROS.sensei).then(()=>Dojo.open());return;}
+      if(typeof Surprise!=='undefined'&&Surprise.due()){Surprise.play();return;}
       if(Dojo.timesFirst())return;
       if(cfg.message&&N.msg!==cfg.message){N.msg=cfg.message;saveState();this.say([['knight','A message from HQ, {name}!'],['knight',cfg.message]]);return;}
       const d=dayStr();if(N.day!==d){N.day=d;saveState();const f=questFocus()[0],who=SKILL_NPC[f]||'hoot';
@@ -4163,6 +4164,36 @@ function renderFF(p,a){const card=$('#card'),L=Flip.lvl(p.fam),isDiv=p.part==='d
    tapify(b,()=>{overlay(null);Snd.init();Flip.pending=null;startRun({title:'Flip It · Fact Families',mode:'drill',color:'#e0457b',problems:Array.from({length:10},()=>genFF())});});lvs.after(b);}catch(e){}};}
 
 /* =========================================================
+   Surprises: one-time drops from home. Each plays once, on the first map visit after it ships:
+   the Knight reads a message from home, then golden chests open with prizes chosen ahead of time.
+   ========================================================= */
+const SURPRISES=[
+  {id:'home-oct20',for:'dev',   // only on Dev's own game (the link is shared with other families)
+   lines:[['knight','{name}! A message from home just landed at HQ.'],
+     ['knight','“I see how hard you work, Dev. Your Plus-Minus facts got faster this week: 1.6 seconds, your fastest ever!”'],
+     ['knight','“Division is new and tricky. That’s okay. Every time you try, your brain gets stronger.”'],
+     ['knight','“I believe in you. You get better every single day, and I’m so proud of you.”'],
+     ['knight','Home sent something else too… golden chests! Tap to open them.']],
+   chests:[{rarity:'epic',type:'super',id:'dragon',name:'Dragon Summon'},
+     {rarity:'legendary',type:'part',slot:'paint',id:'gold',name:'Solid Gold',power:8}],
+   after:[['knight','Dragon Summon AND Solid Gold paint! Visit the Mech Bay to suit up.']]}
+];
+const Surprise={
+  st(){return state.surprises=state.surprises||{};},
+  next(){const me=String((state.hero&&state.hero.name)||'').trim().toLowerCase();return SURPRISES.find(s=>!this.st()[s.id]&&(!s.for||s.for===me));},
+  due(){return !!this.next();},
+  force:[],
+  async play(){const s=this.next();if(!s)return;this.st()[s.id]=dayStr();saveState();
+    await Talk.say(s.lines);
+    const I=inv();let swapped=false;
+    for(const c of s.chests){const have=c.type==='super'?I.supers.includes(c.id):c.type==='part'?I.parts.includes(c.slot+':'+c.id):false;
+      if(have)swapped=true;this.force.push(have?{rarity:c.rarity,type:'coins',n:c.rarity==='legendary'?300:120,name:(c.rarity==='legendary'?300:120)+' coins'}:c);
+      await openChest('great');}
+    if(s.after&&!swapped)await Talk.say(s.after);}
+};
+{const _rl=rollLoot;rollLoot=function(ctx){if(Surprise.force.length)return Surprise.force.shift();return _rl(ctx);};}
+
+/* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
    Pair once with  ...devmath/#sync=TOKEN  (or paste the token in Report)
    ========================================================= */
@@ -4287,7 +4318,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261020203354';
+const BUILD='20261020203841';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
