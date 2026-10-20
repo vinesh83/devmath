@@ -3,7 +3,7 @@ p='number-knight.html'; s=open(p).read()
 def rep(s,a,b,count=1):
     assert a in s, 'MISSING: '+a[:110]; return s.replace(a,b,count)
 s=rep(s,"</style>",open('fx2.css').read()+"</style>")
-s=rep(s,"/* =========================================================\n   Keypad + fields","\n".join(open(f).read() for f in ['fx-action.js','fx-supers.js','fx-brawl.js','fx-games.js','fx-blocks.js','fx-lessons.js','fx-dojo2.js','fx-mix.js','fx-lab.js','fx-slips.js','fx-intro.js','fx-cin3.js','fx-division.js','fx-sync.js','fx-pause.js','fx-dogs.js','fx-dogpow.js','fx-time.js','fx-bigpad.js','fx-interlude.js','fx-breathe.js','fx-breaks.js','fx-rides.js'])+"\n/* =========================================================\n   Keypad + fields")
+s=rep(s,"/* =========================================================\n   Keypad + fields","\n".join(open(f).read() for f in ['fx-action.js','fx-supers.js','fx-brawl.js','fx-games.js','fx-blocks.js','fx-lessons.js','fx-dojo2.js','fx-mix.js','fx-lab.js','fx-slips.js','fx-intro.js','fx-cin3.js','fx-division.js','fx-flip.js','fx-sync.js','fx-pause.js','fx-dogs.js','fx-dogpow.js','fx-time.js','fx-bigpad.js','fx-interlude.js','fx-breathe.js','fx-breaks.js','fx-rides.js'])+"\n/* =========================================================\n   Keypad + fields")
 s=rep(s,'<div id="card" class="card"></div>\n        <div class="scratch-wrap">','<div id="card" class="card"></div>\n        <div class="sc-grip" id="scGrip" role="separator" aria-label="Drag to resize the paper"><span></span></div>\n        <div class="scratch-wrap">')
 s=rep(s,'<section id="scr-mech" class="screen" hidden></section>','<section id="scr-mech" class="screen" hidden></section>\n  <section id="scr-dojo" class="screen" hidden></section>')
 # keypad / fields
@@ -177,6 +177,6 @@ s=rep(s,"diag:v=>diagArith(p,v),reveal:v=>revealArith(p,v),onDone:res=>complete(
 s=rep(s,"reveal:()=>areaGrid(p,true).node,extraBtn,onDone:res=>complete(p,res)});","reveal:()=>areaGrid(p,true).node,extraBtn,slip:p.probe?null:{P:{op:'+',nums:allPartials(p).map(String),dp:0,answer:p.answer},area:true},onDone:res=>complete(p,res)});")
 s=rep(s,"spec.problems=FactMix.mix(spec.problems,spec.mode);","spec.problems=FactMix.mix(spec.problems,spec.mode);if(typeof Slip!=='undefined'&&(spec.mode==='level'||spec.mode==='quest')&&!spec.boss&&!spec.packId)spec.problems=Slip.drillMix(spec.problems,spec);")
 # --- division: long division + standard-algorithm multiplication problem kinds; long division gets the whole card (no scratch paper)
-s=rep(s,"dfact:renderDFact,area:renderArea,","dfact:renderDFact,div:renderDiv,mul:renderMul,area:renderArea,")
+s=rep(s,"dfact:renderDFact,area:renderArea,","dfact:renderDFact,div:renderDiv,mul:renderMul,ff:renderFF,area:renderArea,")
 s=rep(s,"  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();\n","  $('.left').classList.toggle('split',card.classList.contains('tall'));Grip.restore();$('#scr-level').classList.toggle('divmode',p.kind==='div');\n")
 open(p,'w').write(s);print('ink ok',len(s))

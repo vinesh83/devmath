@@ -1,0 +1,23 @@
+// Flip It: times fact, then its division twin, with the rows picture and the fact family
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+ const pg=await b.newPage({viewport:{width:1180,height:820},hasTouch:true});const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+ const W=ms=>pg.waitForTimeout(ms);const ev=(f,a)=>pg.evaluate(f,a);
+ await pg.goto('http://localhost:8765/');await W(400);await pg.fill('#ob-name','Dev');await pg.click('text=Start the adventure');await W(900);
+ await ev(()=>{const N=window.__nk;N.Updater.check=()=>{};Object.keys(N.NPCS).forEach(k=>N.Talk.st().met[k]=1);document.querySelector('#talk').hidden=true;N.Talk.open=false;N.Talk.chain=Promise.resolve();N.Brawl.off=true;N.state.cineEvery=0;N.state.howtoSeen=true;N.Lesson.off=true;N.state.no3d=true;N.Arcade.pickOff=true;N.Dojo.st().unlockDay=new Date().toISOString().slice(0,10);N.DivLessons.ok={};N.DivLessons.probing=true;setInterval(()=>{N.Pause.last=Date.now();const t=document.querySelector('#talk');if(t&&!t.hidden)t.hidden=true;},250);});
+ console.log('dungeon L1/L2 mix:',await ev(()=>JSON.stringify(window.__nk.DIV_WORLD.levels.slice(0,2))));
+ await ev(()=>window.__nk.Dungeon.open());await W(500);
+ console.log('drill button:',await ev(()=>{const x=document.querySelector('.dv-flip-drill');return x&&x.textContent;}));
+ await ev(()=>document.querySelector('.dv-flip-drill').click());await W(2000);
+ const cur=()=>ev(()=>{const N=window.__nk,p=N.run.queue[N.run.idx];return {part:p.part,a:p.a,b:p.b,n:p.n,d:p.d,ans:p.answer,expr:document.querySelector('#card .expr').textContent,think:(document.querySelector('.ff-think')||{}).textContent||null,rows:document.querySelectorAll('.ff-row').length};});
+ const typ=async v=>{await ev(v=>{window.__nk.Pad.key('clr');for(const ch of String(v))window.__nk.Pad.key(ch);},v);await W(200);await ev(()=>{const b=[...document.querySelectorAll('#actions button')].find(x=>/Submit/.test(x.textContent));b&&b.click();});await W(700);};
+ const next=async()=>{await ev(()=>{const b=[...document.querySelectorAll('#actions button')].find(x=>/Next|Finish|Got it/.test(x.textContent));b&&b.click();});await W(1200);};
+ let p=await cur();console.log('1:',JSON.stringify(p));await pg.screenshot({path:'sp/t77-mul.png'});
+ await typ(p.ans);console.log('   family:',await ev(()=>(document.querySelector('.ff-fam')||{}).textContent));await next();
+ p=await cur();console.log('2:',JSON.stringify(p));
+ await typ(p.ans+1);console.log('   after miss rows:',await ev(()=>document.querySelectorAll('.ff-row').length),'msg:',await ev(()=>(document.querySelector('#say,.say,#msg')||{}).textContent||''));
+ await pg.screenshot({path:'sp/t77-div-miss.png'});
+ await typ(p.ans);await W(300);await pg.screenshot({path:'sp/t77-div-done.png'});console.log('   family:',await ev(()=>(document.querySelector('.ff-fam')||{}).textContent));await next();
+ p=await cur();console.log('3:',JSON.stringify(p));
+ console.log('flip state:',await ev(()=>JSON.stringify(window.__nk.state.flip)));
+ console.log('errors',errs);await b.close();})();

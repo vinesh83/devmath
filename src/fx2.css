@@ -484,3 +484,20 @@ html,body{touch-action:manipulation}
 .dv-grid .field.right::after{display:none}
 .dv-grid .field.sm{min-width:1.05em;min-height:0;height:1.2em;padding:0 3px;font-size:38px;border-width:2px}
 .dv-grid .field.right{background:#e6fbe9}
+/* Flip It: times facts and division twins */
+.ff-sub{font:700 13px var(--f-body);color:#7a6a9a}
+.ff-think{font:700 20px var(--f-body);color:#5b4b7a;margin:2px 0 8px}
+.ff-think b{font:800 26px var(--f-mono,monospace);color:#e0457b;margin-left:4px}
+.ff-pic{display:grid;justify-items:start;gap:6px;margin:4px 0 10px}
+.ff-rows{display:grid;gap:3px}
+.ff-row{display:flex;align-items:center;gap:4px;opacity:0;animation:ffIn .35s ease forwards}
+.ff-row i{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,#ffe066,#ffb627);box-shadow:inset 0 -2px 0 #c98a00}
+.ff-row b{margin-left:8px;min-width:30px;font:800 15px var(--f-mono,monospace);color:#2f6fdc}
+.ff-cap{font:600 15px var(--f-body);color:#5b4b7a}
+@keyframes ffIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+.ff-fam{margin-top:10px;padding:10px 14px;border-radius:14px;background:#fff4d6;border:2px solid #ffd36b}
+.ff-fam-h{font:800 16px var(--f-body);color:#8a5a00;margin-bottom:6px}
+.ff-fam-l{display:flex;flex-wrap:wrap;gap:8px 16px}
+.ff-fam-l span{font:700 20px var(--f-mono,monospace);color:#5b4b7a}
+.ff-fam-l span.on{color:#1f9d4a}
+.dv-flip-drill{width:100%;margin-top:10px;background:#fff0f6;border-color:#e0457b}
