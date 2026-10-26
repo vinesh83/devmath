@@ -1,0 +1,9 @@
+{
+  "name": "ellie-walkie",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@vercel/blob": "^2.8.2"
+  }
+}

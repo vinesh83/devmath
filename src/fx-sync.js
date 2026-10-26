@@ -6,7 +6,7 @@ function reportPayload(){const L=Local.log;
   return {app:'number-knight',v:2,generated:new Date().toISOString(),hero:state.hero&&state.hero.name,coins:state.coins,streak:state.streak,totals:state.totals,
     skills:state.skills,methods:state.methods,facts:state.facts,prog:state.prog,packsDone:state.packsDone,
     dojo:state.dojo?{belts:state.dojo.belts,today:state.dojo.today,medals:state.dojo.medals,bolts:state.dojo.bolts,bestBolt:state.dojo.bestBolt,facts:state.dojo.facts}:null,
-    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,lab:state.lab||null,slips:(state.slipLog||[]).slice(-200),squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
+    npcMet:state.npc&&state.npc.met,screenTime:state.st||null,pet:state.hero&&state.hero.pet,inkCheck:state.inkStats||null,lab:state.lab||null,slips:(state.slipLog||[]).slice(-200),ellie:(state.ellieLog||[]).slice(-100),squash:state.dojo&&state.dojo.bestSquash,sessions:Local.sess.slice(-60),log:L.slice(-300),
     // full copy of his progress so a deleted or new install can be restored (the grown-up PIN stays off the backup)
     backup:Object.assign(JSON.parse(JSON.stringify(state)),{parentPin:undefined})};}
 // how much progress a state (or a report) holds; used so a fresh install never overwrites a richer backup

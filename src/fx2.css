@@ -538,3 +538,16 @@ html,body{touch-action:manipulation}
 .w3d-card{background:linear-gradient(160deg,#2a2f63f2,#1a1d40f2);border:3px solid rgba(255,255,255,.18)}
 .w3d-lv{background:linear-gradient(#fff0a0,#ffd23f);border:3px solid #fff}
 .w3d-toggle{background:rgba(20,16,40,.6);border:2px solid rgba(255,255,255,.35);backdrop-filter:blur(4px)}
+/* Ellie's walkie-talkie */
+.ellie-btn{position:fixed;z-index:70;left:16px;bottom:16px;display:flex;align-items:center;gap:8px;padding:10px 16px 10px 10px;border:4px solid #fff;border-radius:40px;background:linear-gradient(#ffb3d1,#ff6b9a);color:#4a0d25;font:800 16px var(--f-body,Lexend);box-shadow:0 6px 0 #c2406f,0 10px 20px rgba(0,0,0,.25);touch-action:none;user-select:none;-webkit-user-select:none}
+.ellie-btn.on-map{left:auto;right:132px;bottom:30px}
+.ellie-ico{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#fff;font-size:28px}
+.ellie-btn.talking{background:linear-gradient(#ffe066,#ffb627);box-shadow:0 2px 0 #b87800;transform:translateY(4px)}
+.ellie-btn.talking .ellie-ico{animation:ellieTalk .6s ease-in-out infinite}
+@keyframes ellieTalk{50%{transform:scale(1.15)}}
+.ellie-panel{position:fixed;z-index:70;left:16px;bottom:96px;width:min(420px,calc(100% - 32px));display:grid;gap:8px;pointer-events:none}
+.ellie-row{display:flex;gap:8px;align-items:flex-end}
+.ellie-row p{margin:0;padding:10px 14px;border-radius:18px;font:600 17px/1.35 var(--f-body,Lexend);box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.ellie-row.dev{justify-content:flex-end}.ellie-row.dev p{background:#4d9bff;color:#fff;border-bottom-right-radius:4px}
+.ellie-row.ellie p{background:#fff;color:#1a1530;border-bottom-left-radius:4px}
+.ellie-face{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;font-size:24px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
