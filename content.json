@@ -20,7 +20,8 @@
    "area": 1.5,
    "dec_add": 2.5,
    "dec_sub": 2
-  }
+  },
+  "resetPin": "2026-10-26-pin"
  },
  "packs": [
   {
