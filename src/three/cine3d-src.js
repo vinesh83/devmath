@@ -8,6 +8,7 @@ import {OutputPass} from 'three/examples/jsm/postprocessing/OutputPass.js';
 import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+import {World3D} from './world3d.js';
 // film look: color grade, vignette, a touch of grain
 const GradeShader={uniforms:{tDiffuse:{value:null},time:{value:0},vig:{value:0.42},sat:{value:1.12},con:{value:1.06}},
   vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
@@ -411,3 +412,4 @@ const Cine3D={
 };
 Cine3D.live=(host,o)=>new Live(host,o);
 window.Cine3D=Cine3D;
+window.World3D=World3D;
