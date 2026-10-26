@@ -58,3 +58,5 @@ function renderFF(p,a){const card=$('#card'),L=Flip.lvl(p.fam),isDiv=p.part==='d
  const _op=Dungeon.open.bind(Dungeon);Dungeon.open=function(){_op();try{const lvs=document.querySelector('.dv-modal .dv-lvs');if(!lvs)return;
    const b=el('button',{class:'dv-lv dv-flip-drill',type:'button'},el('b',null,'🔄 Flip It drill'),el('span',null,'Times facts and their division twins (6s–9s)'),el('i',null,'10 problems'));
    tapify(b,()=>{overlay(null);Snd.init();Flip.pending=null;startRun({title:'Flip It · Fact Families',mode:'drill',color:'#e0457b',problems:Array.from({length:10},()=>genFF())});});lvs.after(b);}catch(e){}};}
+// each level starts its own times/division pairs (a level that ended on a times fact must not hand its twin to the next one)
+{const _sl=startLevel;startLevel=function(){Flip.pending=null;return _sl.apply(this,arguments);};}

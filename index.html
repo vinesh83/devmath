@@ -952,6 +952,10 @@ html,body{touch-action:manipulation}
 .w3d-lv.locked{background:#3a3f66;color:#9aa3c7;box-shadow:none}
 .w3d-boss{border:0;border-radius:14px;padding:12px 20px;background:#e0457b;color:#fff;font:800 18px var(--f-body,Lexend)}
 .w3d-toggle{position:fixed;z-index:5;right:16px;top:86px;border:0;border-radius:14px;padding:10px 14px;background:rgba(20,16,40,.75);color:#fff;font:700 15px var(--f-body,Lexend)}
+.w3d-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;pointer-events:auto;opacity:0;
+  font:900 clamp(48px,9vw,110px)/1 "Pixelify Sans",Lexend,sans-serif;color:#fff;letter-spacing:4px;text-shadow:0 6px 0 #1a1530,0 0 30px rgba(255,214,90,.8)}
+.w3d-title small{margin-top:14px;font:700 clamp(16px,2.2vw,24px) Lexend,sans-serif;letter-spacing:1px;text-shadow:0 3px 0 #1a1530}
+#scr-map.w3d-on .ow-side{visibility:visible;position:fixed;left:16px;top:96px;bottom:auto;right:auto;z-index:5}
 </style>
 
 <div id="app">
@@ -4185,6 +4189,8 @@ function renderFF(p,a){const card=$('#card'),L=Flip.lvl(p.fam),isDiv=p.part==='d
  const _op=Dungeon.open.bind(Dungeon);Dungeon.open=function(){_op();try{const lvs=document.querySelector('.dv-modal .dv-lvs');if(!lvs)return;
    const b=el('button',{class:'dv-lv dv-flip-drill',type:'button'},el('b',null,'🔄 Flip It drill'),el('span',null,'Times facts and their division twins (6s–9s)'),el('i',null,'10 problems'));
    tapify(b,()=>{overlay(null);Snd.init();Flip.pending=null;startRun({title:'Flip It · Fact Families',mode:'drill',color:'#e0457b',problems:Array.from({length:10},()=>genFF())});});lvs.after(b);}catch(e){}};}
+// each level starts its own times/division pairs (a level that ended on a times fact must not hand its twin to the next one)
+{const _sl=startLevel;startLevel=function(){Flip.pending=null;return _sl.apply(this,arguments);};}
 
 /* =========================================================
    Surprises: one-time drops from home. Each plays once, on the first map visit after it ships:
@@ -4203,7 +4209,8 @@ const SURPRISES=[
 ];
 const Surprise={
   st(){return state.surprises=state.surprises||{};},
-  next(){const me=String((state.hero&&state.hero.name)||'').trim().toLowerCase();return SURPRISES.find(s=>!this.st()[s.id]&&(!s.for||s.for===me));},
+  // match the name as a word: Dev's saved name is "Agent Dev"
+  next(){const me=String((state.hero&&state.hero.name)||'').toLowerCase();return SURPRISES.find(s=>!this.st()[s.id]&&(!s.for||new RegExp('\\b'+s.for+'\\b').test(me)));},
   due(){return !!this.next();},
   force:[],
   async play(){const s=this.next();if(!s)return;this.st()[s.id]=dayStr();saveState();
@@ -4265,21 +4272,30 @@ const Isle={
   async show(){const m=this.map();if(!m)return;m.classList.toggle('w3d-on',this.on());this.toggleBtn();
     if(!this.on()){if(this.w)this.w.setPaused(true);return;}
     if(!this.host)this.host=el('div',{class:'w3d'});if(!m.contains(this.host))m.prepend(this.host);
+    if(this.w&&this.w.lost){try{this.w.dispose();}catch(e){}this.w=null;}
     if(this.w){this.w.update(this.sites());const lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);if(lk!==this.lk){this.lk=lk;this.w.setLook(this.look(),(state.hero||{}).dogAcc||{});}this.w.setPaused(false);return;}
     if(this.loading)return;this.loading=true;
     const ok=await Cin3.load().catch(()=>false);this.loading=false;
     if(!ok||!window.World3D||!World3D.ok()){this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();return;}
     this.lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);
-    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:(state.hero||{}).dogAcc||{},pos:state.w3dPos,
+    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:(state.hero||{}).dogAcc||{},pos:state.w3dPos,tier:state.w3dTier||0,noAuto:!!window.__w3dNoAuto,onTier:t=>{state.w3dTier=t;saveState();},
       onEnter:s=>this.enter(s),onPos:p=>{state.w3dPos=p;},onNear:s=>{if(!s&&this.w)this.w.card.hidden=true;},
       sfx:k=>{try{Snd.tone(523,0.06,'square',0.03);Snd.tone(784,0.08,'square',0.03,0.05);}catch(e){}}});}
     catch(e){console.error(e);this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();}
-    if(!this.watch)this.watch=setInterval(()=>{if(!this.w)return;const hid=m.hidden||!m.classList.contains('w3d-on')||!$('#overlay').hidden||!$('#cine').hidden||!!document.querySelector('.vp,#cine3d');this.w.setPaused(hid);},300);},
+    if(this.w&&!this.flown&&!window.__w3dNoIntro){this.flown=true;this.w.intro();}
+    if(!this.watch)this.watch=setInterval(()=>{if(!this.w)return;const hid=m.hidden||!m.classList.contains('w3d-on')||!$('#overlay').hidden||!$('#cine').hidden||!!document.querySelector('.vp,#cine3d');this.w.setPaused(hid);this.music(!hid);},300);},
+  // the island has its own orchestral theme; the chiptune map loop is used everywhere else
+  music(on){const a=this.aud||(this.aud=Object.assign(new Audio('audio/island.mp3'),{loop:true,preload:'none',volume:0.55}));
+    const want=on&&!state.mute&&!state.musicOff&&!document.hidden;if(want){if(typeof Music!=='undefined'&&Music.song==='map')Music.stop();if(a.paused)a.play().catch(()=>{});}else if(!a.paused)a.pause();},
   toggleBtn(){const m=this.map();if(!m)return;let b=m.querySelector('.w3d-toggle');if(!b){b=el('button',{class:'w3d-toggle',type:'button'});b.addEventListener('click',()=>{state.view3d=!this.on();if(this.failed&&state.view3d){this.failed=false;}saveState();this.show();});m.append(b);}
     b.textContent=this.on()?'🗺️ 2D map':'🏝️ 3D island';b.hidden=!!this.failed;}
 };
 {const _rm=renderMap;renderMap=function(){_rm.apply(this,arguments);try{Isle.show();}catch(e){console.error(e);}};}
 window.__isle=Isle;
+// don't start the chiptune map loop while the island (with its own music) is showing
+{const _mp=Music.play.bind(Music);Music.play=function(n){if(n==='map'&&Isle.on()&&!$('#scr-map').hidden&&$('#scr-map').classList.contains('w3d-on'))return;return _mp(n);};}
+// iPad only allows audio after a touch: start the island theme on the first tap
+document.addEventListener('pointerdown',()=>{if(Isle.w&&!Isle.w.paused)Isle.music(true);},{passive:true});
 
 /* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
@@ -4406,7 +4422,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261026210027';
+const BUILD='20261026212451';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);

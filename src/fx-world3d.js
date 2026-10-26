@@ -47,18 +47,27 @@ const Isle={
   async show(){const m=this.map();if(!m)return;m.classList.toggle('w3d-on',this.on());this.toggleBtn();
     if(!this.on()){if(this.w)this.w.setPaused(true);return;}
     if(!this.host)this.host=el('div',{class:'w3d'});if(!m.contains(this.host))m.prepend(this.host);
+    if(this.w&&this.w.lost){try{this.w.dispose();}catch(e){}this.w=null;}
     if(this.w){this.w.update(this.sites());const lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);if(lk!==this.lk){this.lk=lk;this.w.setLook(this.look(),(state.hero||{}).dogAcc||{});}this.w.setPaused(false);return;}
     if(this.loading)return;this.loading=true;
     const ok=await Cin3.load().catch(()=>false);this.loading=false;
     if(!ok||!window.World3D||!World3D.ok()){this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();return;}
     this.lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);
-    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:(state.hero||{}).dogAcc||{},pos:state.w3dPos,
+    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:(state.hero||{}).dogAcc||{},pos:state.w3dPos,tier:state.w3dTier||0,noAuto:!!window.__w3dNoAuto,onTier:t=>{state.w3dTier=t;saveState();},
       onEnter:s=>this.enter(s),onPos:p=>{state.w3dPos=p;},onNear:s=>{if(!s&&this.w)this.w.card.hidden=true;},
       sfx:k=>{try{Snd.tone(523,0.06,'square',0.03);Snd.tone(784,0.08,'square',0.03,0.05);}catch(e){}}});}
     catch(e){console.error(e);this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();}
-    if(!this.watch)this.watch=setInterval(()=>{if(!this.w)return;const hid=m.hidden||!m.classList.contains('w3d-on')||!$('#overlay').hidden||!$('#cine').hidden||!!document.querySelector('.vp,#cine3d');this.w.setPaused(hid);},300);},
+    if(this.w&&!this.flown&&!window.__w3dNoIntro){this.flown=true;this.w.intro();}
+    if(!this.watch)this.watch=setInterval(()=>{if(!this.w)return;const hid=m.hidden||!m.classList.contains('w3d-on')||!$('#overlay').hidden||!$('#cine').hidden||!!document.querySelector('.vp,#cine3d');this.w.setPaused(hid);this.music(!hid);},300);},
+  // the island has its own orchestral theme; the chiptune map loop is used everywhere else
+  music(on){const a=this.aud||(this.aud=Object.assign(new Audio('audio/island.mp3'),{loop:true,preload:'none',volume:0.55}));
+    const want=on&&!state.mute&&!state.musicOff&&!document.hidden;if(want){if(typeof Music!=='undefined'&&Music.song==='map')Music.stop();if(a.paused)a.play().catch(()=>{});}else if(!a.paused)a.pause();},
   toggleBtn(){const m=this.map();if(!m)return;let b=m.querySelector('.w3d-toggle');if(!b){b=el('button',{class:'w3d-toggle',type:'button'});b.addEventListener('click',()=>{state.view3d=!this.on();if(this.failed&&state.view3d){this.failed=false;}saveState();this.show();});m.append(b);}
     b.textContent=this.on()?'🗺️ 2D map':'🏝️ 3D island';b.hidden=!!this.failed;}
 };
 {const _rm=renderMap;renderMap=function(){_rm.apply(this,arguments);try{Isle.show();}catch(e){console.error(e);}};}
 window.__isle=Isle;
+// don't start the chiptune map loop while the island (with its own music) is showing
+{const _mp=Music.play.bind(Music);Music.play=function(n){if(n==='map'&&Isle.on()&&!$('#scr-map').hidden&&$('#scr-map').classList.contains('w3d-on'))return;return _mp(n);};}
+// iPad only allows audio after a touch: start the island theme on the first tap
+document.addEventListener('pointerdown',()=>{if(Isle.w&&!Isle.w.paused)Isle.music(true);},{passive:true});

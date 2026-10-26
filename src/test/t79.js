@@ -12,7 +12,7 @@ const { chromium } = require('/opt/node-tools/node_modules/playwright');
  await pg.screenshot({path:'sp/t79-start.png'});
  // walk toward the Dojo pad (straight ahead, north)
  const dbg=()=>ev(()=>{const w=window.__isle.w;return JSON.stringify({paused:w.paused,pos:[+w.hero.position.x.toFixed(1),+w.hero.position.z.toFixed(1)],keys:w.keys,ov:document.querySelector('#overlay').hidden,cine:document.querySelector('#cine').hidden,c3:!!document.querySelector('.vp,#cine3d')});});console.log('before',await dbg());
- await ev(()=>window.__isle.w.teleport(0,11));await W(500);await pg.keyboard.down('w');await W(3500);console.log('during',await dbg());await pg.keyboard.up('w');await W(1500);
+ await ev(()=>window.__isle.w.teleport(0,9));await W(500);await pg.keyboard.down('w');await W(5000);console.log('during',await dbg());await pg.keyboard.up('w');await W(1500);
  await pg.screenshot({path:'sp/t79-walk.png'});
  await pg.screenshot({path:'sp/t79-pad.png'});console.log('act button:',await ev(()=>{const a=document.querySelector('.w3d-act');return a&&!a.hidden?a.textContent:null;}));
  const act=await ev(()=>{const a=document.querySelector('.w3d-act');return a&&!a.hidden;});

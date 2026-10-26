@@ -15,7 +15,8 @@ const SURPRISES=[
 ];
 const Surprise={
   st(){return state.surprises=state.surprises||{};},
-  next(){const me=String((state.hero&&state.hero.name)||'').trim().toLowerCase();return SURPRISES.find(s=>!this.st()[s.id]&&(!s.for||s.for===me));},
+  // match the name as a word: Dev's saved name is "Agent Dev"
+  next(){const me=String((state.hero&&state.hero.name)||'').toLowerCase();return SURPRISES.find(s=>!this.st()[s.id]&&(!s.for||new RegExp('\\b'+s.for+'\\b').test(me)));},
   due(){return !!this.next();},
   force:[],
   async play(){const s=this.next();if(!s)return;this.st()[s.id]=dayStr();saveState();

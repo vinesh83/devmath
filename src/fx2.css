@@ -524,3 +524,7 @@ html,body{touch-action:manipulation}
 .w3d-lv.locked{background:#3a3f66;color:#9aa3c7;box-shadow:none}
 .w3d-boss{border:0;border-radius:14px;padding:12px 20px;background:#e0457b;color:#fff;font:800 18px var(--f-body,Lexend)}
 .w3d-toggle{position:fixed;z-index:5;right:16px;top:86px;border:0;border-radius:14px;padding:10px 14px;background:rgba(20,16,40,.75);color:#fff;font:700 15px var(--f-body,Lexend)}
+.w3d-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;pointer-events:auto;opacity:0;
+  font:900 clamp(48px,9vw,110px)/1 "Pixelify Sans",Lexend,sans-serif;color:#fff;letter-spacing:4px;text-shadow:0 6px 0 #1a1530,0 0 30px rgba(255,214,90,.8)}
+.w3d-title small{margin-top:14px;font:700 clamp(16px,2.2vw,24px) Lexend,sans-serif;letter-spacing:1px;text-shadow:0 3px 0 #1a1530}
+#scr-map.w3d-on .ow-side{visibility:visible;position:fixed;left:16px;top:96px;bottom:auto;right:auto;z-index:5}
