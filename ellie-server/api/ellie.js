@@ -21,6 +21,7 @@ How you talk:
 - Stay on math and the game. If he goes off topic, answer in a few friendly words and steer back to the problem.
 - Never ask for personal information, never mention websites, and never talk about being an AI unless he asks; then say you're his game buddy Ellie.
 - An occasional "Woof!" is fine, not every time.
+- Sometimes you also get a picture of his scratch paper: the printed problem with his handwriting. Read his work and find the first spot where it goes wrong. If there is one, end your reply with a mark tag like <mark x="0.42" y="0.31" w="0.12" h="0.08"/>: the center (x, y) and size (w, h) of that spot as fractions of the picture's width and height, 0 to 1. The game draws a circle there, so your words should point to it ("Check the tens column I circled"). If his work looks right, or you can't read it, add no mark. Never mark a spot just to reveal the answer.
 - Your voice is a cartoon puppy. You may start a reply with one delivery cue in square brackets, chosen from: [excited] [giggles] [gently] [happily] [curious] [whispers]. Use at most one per reply, and never any other bracketed text.`;
 
 const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
@@ -61,7 +62,12 @@ export default async function handler(req, res) {
     p.typed ? `What he has typed: ${String(p.typed).slice(0, 40)}` : '',
     p.tries ? `Wrong tries so far on this problem: ${Number(p.tries) || 0}` : '',
     p.slip ? `Slip note from the game: ${String(p.slip).slice(0, 200)}` : ''].filter(Boolean).join('\n');
-  const messages = [...hist, { role: 'user', content: `[game info]\n${ctx}\n[Dev says]\n${said}` }];
+  // a snapshot of his scratch paper, when he has written on it
+  const img = typeof b.image === 'string' && /^data:image\/jpeg;base64,/.test(b.image) && b.image.length < 700000 ? b.image.split(',')[1] : null;
+  const text = `[game info]\n${ctx}${img ? '\nThe picture is his scratch paper.' : ''}\n[Dev says]\n${said}`;
+  const messages = [...hist, { role: 'user', content: img
+    ? [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: img } }, { type: 'text', text }]
+    : text }];
   // the API wants turns to alternate and start with the user
   while (messages.length && messages[0].role !== 'user') messages.shift();
 
