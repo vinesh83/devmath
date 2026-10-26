@@ -27,7 +27,9 @@ const Walkie={
   bubble(who,text){const p=this.panel;p.hidden=false;this.place();const row=el('div',{class:'ellie-row '+who},who==='ellie'?el('span',{class:'ellie-face'},'🐶'):null,el('p',null,text));
     p.append(row);while(p.children.length>4)p.firstChild.remove();clearTimeout(this.hideT);this.hideT=setTimeout(()=>{p.hidden=true;},20000);return row.querySelector('p');},
   // ---- listening (iPad dictation through Safari)
-  down(){if(this.busy)return;Snd.init&&Snd.init();try{speechSynthesis.cancel();}catch(e){}
+  // Dev talks over Ellie: she stops at once, and her queued sentences are dropped
+  hush(){this.gen=(this.gen||0)+1;this.q=null;try{speechSynthesis.cancel();}catch(e){}try{this.src&&this.src.stop();}catch(e){}this.src=null;this.duck(false);},
+  down(){if(this.busy)return;Snd.init&&Snd.init();this.hush();
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const b=this.btn();b.classList.add('talking');b.querySelector('b').textContent='Listening…';
     if(!SR||this.noMic){this.typeIt();return;}
     this.heard='';const r=this.rec=new SR();r.lang='en-US';r.interimResults=true;r.continuous=true;
@@ -66,11 +68,12 @@ const Walkie={
     // until one clip has worked (the server designs the voice on first use), ask one at a time
     const got=this.voiceOk?go():(this.vlast=(this.vlast||Promise.resolve()).catch(()=>{}).then(go));
     got.catch(()=>{});
-    this.q=(this.q||Promise.resolve()).then(async()=>{this.duck(true);
-      try{const buf=await got;if(first)await this.chirp();await this.play(buf);}
-      catch(st){if(st===503||st===401||(st===0&&code))this.noVoice=true;await this.say(t);}
-      this.duck(false);});},
-  play(buf){const c=Snd.ctx;if(!c)return Promise.reject(-1);return c.decodeAudioData(buf.slice(0)).then(ab=>new Promise(done=>{const s=c.createBufferSource();s.buffer=ab;s.connect(c.destination);s.onended=done;s.start();setTimeout(done,ab.duration*1000+500);}));},
+    const g=this.gen||0;
+    this.q=(this.q||Promise.resolve()).then(async()=>{if(g!==(this.gen||0))return;this.duck(true);
+      try{const buf=await got;if(g!==(this.gen||0))return;if(first)await this.chirp();await this.play(buf);}
+      catch(st){if(st===503||st===401||(st===0&&code))this.noVoice=true;if(g===(this.gen||0))await this.say(t);}
+      if(g===(this.gen||0))this.duck(false);});},
+  play(buf){const c=Snd.ctx;if(!c)return Promise.reject(-1);return c.decodeAudioData(buf.slice(0)).then(ab=>new Promise(done=>{const s=c.createBufferSource();s.buffer=ab;s.connect(c.destination);s.onended=done;this.src=s;s.start();setTimeout(done,ab.duration*1000+500);}));},
   // walkie-talkie "kshh" before Ellie's first words
   chirp(){const c=Snd.ctx;if(!c)return Promise.resolve();try{const n=c.createBuffer(1,c.sampleRate*0.16,c.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
     const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=n;f.type='bandpass';f.frequency.value=2200;g.gain.value=0.25;s.connect(f).connect(g).connect(c.destination);s.start();
