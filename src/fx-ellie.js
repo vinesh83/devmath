@@ -20,7 +20,7 @@ const Walkie={
     const panel=el('div',{class:'ellie-panel',hidden:true});document.body.append(b,panel);this.panel=panel;
     b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
     return b;},
-  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);b.classList.toggle('on-map',map&&!lvl);if(b.hidden&&this.panel)this.panel.hidden=true;},
+  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
   bubble(who,text){const p=this.panel;p.hidden=false;const row=el('div',{class:'ellie-row '+who},who==='ellie'?el('span',{class:'ellie-face'},'🐶'):null,el('p',null,text));
     p.append(row);while(p.children.length>4)p.firstChild.remove();clearTimeout(this.hideT);this.hideT=setTimeout(()=>{p.hidden=true;},20000);return row.querySelector('p');},
   // ---- listening (iPad dictation through Safari)
@@ -41,14 +41,14 @@ const Walkie={
   say(t){t=this.clean(t);if(!t.trim()||state.mute)return Promise.resolve();return new Promise(done=>{try{const u=new SpeechSynthesisUtterance(t);const v=this.voice();if(v)u.voice=v;u.pitch=1.55;u.rate=1.04;u.volume=1;u.onend=u.onerror=()=>done();speechSynthesis.speak(u);setTimeout(done,600+t.length*90);}catch(e){done();}});},
   // the puppy voice (server: /api/voice). Fetches start right away; clips play in order.
   speak(t,first){if(!t.trim()||state.mute)return;
-    const code=state.ellieCode,go=()=>this.noVoice?Promise.reject(0):fetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})})
+    const code=state.ellieCode,go=()=>this.noVoice||!code?Promise.reject(0):fetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})})
       .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;return b;});
     // until one clip has worked (the server designs the voice on first use), ask one at a time
     const got=this.voiceOk?go():(this.vlast=(this.vlast||Promise.resolve()).catch(()=>{}).then(go));
     got.catch(()=>{});
     this.q=(this.q||Promise.resolve()).then(async()=>{this.duck(true);
       try{const buf=await got;if(first)await this.chirp();await this.play(buf);}
-      catch(st){if(st===503||st===401||st===0)this.noVoice=true;await this.say(t);}
+      catch(st){if(st===503||st===401||(st===0&&code))this.noVoice=true;await this.say(t);}
       this.duck(false);});},
   play(buf){const c=Snd.ctx;if(!c)return Promise.reject(-1);return c.decodeAudioData(buf.slice(0)).then(ab=>new Promise(done=>{const s=c.createBufferSource();s.buffer=ab;s.connect(c.destination);s.onended=done;s.start();setTimeout(done,ab.duration*1000+500);}));},
   // walkie-talkie "kshh" before Ellie's first words
