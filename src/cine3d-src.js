@@ -417,5 +417,14 @@ const Cine3D={
     if(o.onStart)o.onStart();requestAnimationFrame(loop);});}
 };
 Cine3D.live=(host,o)=>new Live(host,o);
+// a toon character drawn into a transparent canvas (for the 2D lesson animations): feet at the bottom, centered.
+// w,h = the box it replaces; res = extra resolution so it stays crisp when the animation scales it up.
+Cine3D.portrait=(spr,o={})=>{const w=o.w||96,h=o.h||132,res=o.res||4,W=w*res,H=h*res;
+  const r=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});r.setSize(W,H,false);r.setClearColor(0x000000,0);r.outputColorSpace=THREE.SRGBColorSpace;
+  const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight('#ffffff','#8a7a9a',1.5));const d=new THREE.DirectionalLight('#fff4e0',2.2);d.position.set(2,4,5);sc.add(d);
+  const m=canToon(spr)?toonModel(spr,{size:0.1}):voxel(spr,{size:0.1});if(m.userData.inner)m.userData.inner.rotation.y=o.turn!=null?o.turn:0.45;sc.add(m);
+  const box=new THREE.Box3().setFromObject(m),sz=box.getSize(new THREE.Vector3()),c=box.getCenter(new THREE.Vector3());
+  const k=Math.max(sz.x/w,sz.y/h)*1.04,cam=new THREE.OrthographicCamera(-w*k/2,w*k/2,h*k,0,-50,50);cam.position.set(c.x,box.min.y,10);cam.lookAt(c.x,box.min.y,0);
+  r.render(sc,cam);const out=document.createElement('canvas');out.width=W;out.height=H;out.getContext('2d').drawImage(r.domElement,0,0);r.dispose();out.lw=w;out.lh=h;out.toon=true;return out;};
 window.Cine3D=Cine3D;
 window.World3D=World3D;
