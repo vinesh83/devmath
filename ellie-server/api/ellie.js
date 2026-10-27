@@ -6,6 +6,8 @@ import { put, head } from '@vercel/blob';
 const ORIGINS = ['https://vinesh83.github.io', 'http://localhost:8765'];
 const CAP_USD = Number(process.env.ELLIE_DAILY_CAP_USD || '1');
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY
+// models a request may pick (for speed tests); the game itself never sends one
+const MODELS = ['claude-opus-5-5', 'claude-sonnet-5-5', 'claude-haiku-5-5'];
 
 const SYSTEM = `You are Ellie, a small white dog with a wizard hat who is best friends with Dev, a 9-year-old in 4th grade.
 Dev is talking to you on a walkie-talkie while he works a math problem in his game. Your job is to help him think, not to think for him.
@@ -21,7 +23,7 @@ How you talk:
 - Stay on math and the game. If he goes off topic, answer in a few friendly words and steer back to the problem.
 - Never ask for personal information, never mention websites, and never talk about being an AI unless he asks; then say you're his game buddy Ellie.
 - An occasional "Woof!" is fine, not every time.
-- Sometimes you also get a picture of his scratch paper: the printed problem with his handwriting. Read his work and find the first spot where it goes wrong. If there is one, end your reply with a mark tag like <mark x="0.42" y="0.31" w="0.12" h="0.08"/>: the center (x, y) and size (w, h) of that spot as fractions of the picture's width and height, 0 to 1. The game draws a circle there, so your words should point to it ("Check the tens column I circled"). If his work looks right, or you can't read it, add no mark. Never mark a spot just to reveal the answer.
+- Sometimes you also get a picture of his scratch paper: the printed problem with his handwriting. Read his work and find the first spot where it goes wrong. If there is one, START your reply with a mark tag like <mark x="0.42" y="0.31" w="0.12" h="0.08"/>: the center (x, y) and size (w, h) of that spot as fractions of the picture's width and height, 0 to 1. Center it on the wrong number or digit itself, not the one before it, and size it to just cover that number. The game draws a circle there the moment you start, so your words should point to it ("Check the tens column I circled"). If his work looks right, or you can't read it, add no mark. Never mark a spot just to reveal the answer.
 - Your voice is a cartoon puppy. You may start a reply with one delivery cue in square brackets, chosen from: [excited] [giggles] [gently] [happily] [curious] [whispers]. Use at most one per reply, and never any other bracketed text.`;
 
 const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
@@ -49,8 +51,7 @@ export default async function handler(req, res) {
   const said = String(b.said || '').slice(0, 500).trim();
   if (!said) return res.status(400).json({ error: 'empty' });
 
-  const d = today(), spent = await getSpend(d);
-  if (spent.usd >= CAP_USD) return res.status(429).json({ capped: true });
+  const d = today(), spentP = getSpend(d);
 
   // Recent turns from the game (text only), then this turn with the problem context
   const hist = (Array.isArray(b.history) ? b.history : []).slice(-10)
@@ -71,15 +72,30 @@ export default async function handler(req, res) {
   // the API wants turns to alternate and start with the user
   while (messages.length && messages[0].role !== 'user') messages.shift();
 
+  // the budget check and the model start together; nothing is sent until the check passes
+  const ac = new AbortController();
+  let stream;
+  try {
+    const model = MODELS.includes(b.model) ? b.model : (process.env.ELLIE_MODEL || 'claude-opus-5-5');
+    // server-side fallback where the model has one (Haiku 5.5 does not)
+    const fb = model === 'claude-haiku-5-5' ? {} : { betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' };
+    stream = client.beta.messages.stream({
+      model, max_tokens: 1500, output_config: { effort: 'low' }, ...fb,
+      system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }], messages,
+    }, { signal: ac.signal });
+  } catch (e) { console.error('ellie start', e && e.message); }
+  // hold early words until the budget check passes
+  let early = [], live = false;
+  const done = stream ? stream.finalMessage() : Promise.reject(new Error('no stream'));
+  done.catch(() => {});
+  if (stream) stream.on('text', (t) => { if (live) res.write(t); else early.push(t); });
+  const spent = await spentP;
+  if (spent.usd >= CAP_USD) { ac.abort(); return res.status(429).json({ capped: true }); }
   res.setHeader('Content-Type', 'text/plain; charset=utf-8'); res.setHeader('Cache-Control', 'no-store');
   try {
-    const stream = client.beta.messages.stream({
-      model: 'claude-opus-5-5', max_tokens: 1500, output_config: { effort: 'low' },
-      betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default',
-      system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }], messages,
-    });
-    stream.on('text', (t) => res.write(t));
-    const msg = await stream.finalMessage();
+    if (!stream) throw new Error('no stream');
+    res.write(early.join('')); live = true; early = [];
+    const msg = await done;
     if (msg.stop_reason === 'refusal') res.write("Let's look at the problem together. What's the first step?");
     await addSpend(d, spent, cost(msg.usage));
   } catch (e) {

@@ -4342,6 +4342,7 @@ const Walkie={
   URL:'https://ellie-walkie.vercel.app/api/ellie',
   on(){return !!state.ellieCode;},
   hist:[],key:null,busy:false,
+  tfetch(url,o,ms){const ac=new AbortController(),t=setTimeout(()=>ac.abort(),ms);return fetch(url,Object.assign({},o,{signal:ac.signal})).finally(()=>clearTimeout(t));},
   // what's on screen right now, for Ellie's context
   ctx(){if(!run||!run.queue||$('#scr-level').hidden)return {text:'(on the island map, no problem open)'};const p=run.queue[run.idx];if(!p)return {};
     let text='';try{text=describe(p);}catch(e){}const f=Pad.active;const typed=f&&f.val?f.val:'';
@@ -4354,7 +4355,7 @@ const Walkie={
     const panel=el('div',{class:'ellie-panel',hidden:true});document.body.append(b,panel);this.panel=panel;
     b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
     return b;},
-  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
+  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
   // on a problem, the chat sits on the empty right side of the problem card, clear of the scratch paper
   place(){const p=this.panel,c=$('#card');if(!p)return;if($('#scr-level').hidden||!c){p.style.cssText='';return;}const r=c.getBoundingClientRect();if(!r.width){p.style.cssText='';return;}
     const w=Math.min(420,r.width*0.52);p.style.cssText=`left:${r.right-w-14}px;top:${r.top+14}px;bottom:auto;width:${w}px;transform:none`;},
@@ -4378,26 +4379,49 @@ const Walkie={
     this._v=vs.find(v=>/Samantha|Nicky|Karen|Moira|Tessa/i.test(v.name)&&/^en/i.test(v.lang))||vs.find(v=>/^en-US/i.test(v.lang))||null;return this._v;},
   clean(t){return this.words(t).replace(/\[[^\]]*\]\s*/g,'').replace(/[*_#]/g,'');},
   // the spoken part of a reply: everything before Ellie's <mark .../> tag (or a tag still arriving)
-  words(t){return t.replace(/<mark[\s\S]*$/,'').replace(/<[^>]*$/,'');},
+  words(t){return t.replace(/<mark\b[^>]*>\s*/g,'').replace(/<[^>]*$/,'');},
+  // ---- instant replies: short lines in Ellie's voice that play the moment he lets go, while she reads and thinks.
+  // Made once with the puppy voice and kept on the iPad.
+  FILL:{look:['[curious] Ooh, let me look at your paper!','[happily] Hmm, let me sniff this out!','[gently] Okay, let me see your work!'],
+    talk:['[happily] Hmm, good thinking, let me think!','[curious] Ooh, okay, one sec!','[gently] Mm-hmm, let me think about that!']},
+  fillLoad(){if(this.fillT||!state.ellieCode||this.noVoice)return;this.fillT=1;let store={};try{store=JSON.parse(localStorage.getItem('ellie-fill-v1')||'{}');}catch(e){}
+    this.fillBuf={};const all=[...this.FILL.look,...this.FILL.talk];
+    const b64=buf=>{let s='';const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s);};
+    const idle=()=>new Promise(ok=>{const w=()=>this.busy||this.talking?setTimeout(w,700):ok();w();});
+    (async()=>{for(const t of all){if(store[t]){const bin=atob(store[t]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);this.fillBuf[t]=u.buffer;continue;}
+      // never compete with a live question: wait until Ellie is idle
+      await idle();
+      try{const r=await fetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code:state.ellieCode,text:t})});if(!r.ok){this.fillT=0;break;}
+        const buf=await r.arrayBuffer();this.fillBuf[t]=buf;store[t]=b64(buf);try{localStorage.setItem('ellie-fill-v1',JSON.stringify(store));}catch(e){}}catch(e){this.fillT=0;break;}}})();},
+  fill(kind){if(state.mute)return false;const L=this.FILL[kind],t=L[Math.floor(Math.random()*L.length)],buf=this.fillBuf&&this.fillBuf[t];
+    // not downloaded yet: stay quiet rather than switch voices mid-chat
+    if(!buf&&state.ellieCode&&!this.noVoice)return false;
+    const g=this.gen||0;this.q=(this.q||Promise.resolve()).then(async()=>{if(g!==(this.gen||0))return;this.duck(true);await this.chirp();
+      if(buf&&!this.noVoice){try{await this.play(buf);}catch(e){await this.say(t);}}else await this.say(t);});return true;},
   // ---- seeing his scratch paper
-  snap(){try{if(typeof Scratch==='undefined'||!Scratch.cv||!Scratch.strokes.some(x=>x.t==='p')||$('#scr-level').hidden)return null;
-    const c=Scratch.cv,k=Math.min(1,900/c.width),o=document.createElement('canvas');o.width=Math.round(c.width*k);o.height=Math.round(c.height*k);
-    const x=o.getContext('2d');x.fillStyle='#fffaf0';x.fillRect(0,0,o.width,o.height);x.drawImage(c,0,0,o.width,o.height);this.snapWH=[c.clientWidth,c.clientHeight];return o.toDataURL('image/jpeg',0.72);}catch(e){return null;}},
+  snap(){try{if(typeof Scratch==='undefined'||!Scratch.cv||$('#scr-level').hidden)return null;const ink=Scratch.strokes.filter(x=>x.t==='p');if(!ink.length)return null;
+    // crop to his writing (plus a margin): a smaller picture reads faster and more accurately
+    const c=Scratch.cv,W=c.clientWidth,H=c.clientHeight;let x0=W,y0=H,x1=0,y1=0;for(const s of ink)for(const p of s.pts){x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1]);}
+    const m=40;x0=Math.max(0,x0-m);y0=Math.max(0,y0-m);x1=Math.min(W,x1+m);y1=Math.min(H,y1+m);
+    if(x1-x0<240){const cx=(x0+x1)/2;x0=Math.max(0,cx-120);x1=Math.min(W,x0+240);}if(y1-y0<140){const cy=(y0+y1)/2;y0=Math.max(0,cy-70);y1=Math.min(H,y0+140);}
+    const d=c.width/W,k=Math.min(1,700/((x1-x0)*d)),o=document.createElement('canvas');o.width=Math.round((x1-x0)*d*k);o.height=Math.round((y1-y0)*d*k);
+    const g=o.getContext('2d');g.fillStyle='#fffaf0';g.fillRect(0,0,o.width,o.height);g.drawImage(c,x0*d,y0*d,(x1-x0)*d,(y1-y0)*d,0,0,o.width,o.height);
+    this.snapBox={x:x0,y:y0,w:x1-x0,h:y1-y0};return o.toDataURL('image/jpeg',0.75);}catch(e){return null;}},
   markOf(t){const m=t.match(/<mark\b([^>]*)\/?>/);if(!m)return null;const v=n=>{const r=m[1].match(new RegExp(n+'\\s*=\\s*"?([0-9.]+)'));return r?Math.max(0,Math.min(1,+r[1])):null;};
     const o={x:v('x'),y:v('y'),w:v('w')||0.12,h:v('h')||0.1};return o.x==null||o.y==null?null:o;},
   // a soft golden "look here" ring on the scratch paper; goes away when he writes again or after 25 seconds
   ring(m){this.unring();if(!m||typeof Scratch==='undefined'||!Scratch.cv)return;const cv=Scratch.cv,par=cv.offsetParent;if(!par||!cv.offsetWidth)return;
     // pinned to the paper's top-left corner in the same units as his strokes, so it stays on his writing if the paper resizes
-    const [W,H]=this.snapWH||[cv.offsetWidth,cv.offsetHeight],w=Math.max(70,m.w*W+36),h=Math.max(56,m.h*H+30);
+    const B=this.snapBox||{x:0,y:0,w:cv.offsetWidth,h:cv.offsetHeight},w=Math.max(70,m.w*B.w+36),h=Math.max(56,m.h*B.h+30),cx=B.x+m.x*B.w,cy=B.y+m.y*B.h;
     const L=el('div',{class:'ellie-mark-layer',style:`left:${cv.offsetLeft}px;top:${cv.offsetTop}px`});
-    L.append(el('div',{class:'ellie-mark',style:`left:${m.x*W-w/2}px;top:${m.y*H-h/2}px;width:${w}px;height:${h}px`},el('span',null,'🐾')));
+    L.append(el('div',{class:'ellie-mark',style:`left:${cx-w/2}px;top:${cy-h/2}px;width:${w}px;height:${h}px`},el('span',null,'🐾')));
     par.append(L);this.ringEl=L;this.ringT=setTimeout(()=>this.unring(),25000);
     if(!this.ringHook){this.ringHook=1;cv.addEventListener('pointerdown',()=>{this.unring();if(this.panel&&!this.busy)this.panel.hidden=true;});}},
   unring(){clearTimeout(this.ringT);if(this.ringEl){this.ringEl.remove();this.ringEl=null;}},
   say(t){t=this.clean(t);if(!t.trim()||state.mute)return Promise.resolve();return new Promise(done=>{try{const u=new SpeechSynthesisUtterance(t);const v=this.voice();if(v)u.voice=v;u.pitch=1.55;u.rate=1.04;u.volume=1;u.onend=u.onerror=()=>done();speechSynthesis.speak(u);setTimeout(done,600+t.length*90);}catch(e){done();}});},
   // the puppy voice (server: /api/voice). Fetches start right away; clips play in order.
   speak(t,first){t=this.words(t);if(!t.trim()||state.mute)return;
-    const code=state.ellieCode,go=()=>this.noVoice||!code?Promise.reject(0):fetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})})
+    const code=state.ellieCode,go=()=>this.noVoice||!code?Promise.reject(0):this.tfetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})},7000)
       .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;return b;});
     // until one clip has worked (the server designs the voice on first use), ask one at a time
     const got=this.voiceOk?go():(this.vlast=(this.vlast||Promise.resolve()).catch(()=>{}).then(go));
@@ -4414,19 +4438,20 @@ const Walkie={
     const o=c.createOscillator(),og=c.createGain();o.frequency.value=1400;og.gain.setValueAtTime(0.06,c.currentTime+0.16);og.gain.setValueAtTime(0,c.currentTime+0.22);og.gain.setValueAtTime(0,c.currentTime);og.gain.setValueAtTime(0.06,c.currentTime+0.16);o.connect(og).connect(c.destination);o.start();o.stop(c.currentTime+0.23);}catch(e){}
     return new Promise(r=>setTimeout(r,260));},
   // music drops while Ellie talks
-  duck(on){try{if(Snd.musG)Snd.musG.gain.value=on?0.25:1;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
+  duck(on){this.talking=on;try{if(Snd.musG)Snd.musG.gain.value=on?0.25:1;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
   async send(said){this.mark=null;const c=this.ctx(),k=(run&&run.idx)+'|'+c.text;if(k!==this.key){this.key=k;this.hist=[];}
-    this.busy=true;this.unring();const out=this.bubble('ellie','…');let reply='',spoken=0;const image=this.snap();
-    try{const body=JSON.stringify({code:state.ellieCode,problem:c,history:this.hist,said,image}),ask=()=>fetch(this.URL,{method:'POST',headers:{'content-type':'application/json'},body});
+    this.busy=true;this.unring();this.snapBox=null;const image=this.snap();const out=this.bubble('ellie',image?'👀 Looking at your paper…':'…');let reply='',spoken=0,ringed=false;const filled=this.fill(image?'look':'talk');
+    try{const body=JSON.stringify({code:state.ellieCode,problem:c,history:this.hist,said,image}),ask=()=>this.tfetch(this.URL,{method:'POST',headers:{'content-type':'application/json'},body},15000);
       // one quiet retry if the Wi-Fi blips
       const r=await ask().catch(()=>new Promise(ok=>setTimeout(ok,900)).then(ask));
       if(r.status===429){reply='I’ve talked a lot today! Let’s chat again tomorrow. You’ve got this. Woof!';out.textContent=reply;this.speak(reply,1);}
       else if(!r.ok||!r.body){reply=r.status===401?'Ask a grown-up to check my walkie-talkie code.':'My walkie-talkie is crackly. Try again in a moment!';out.textContent=reply;this.speak(reply,1);}
       else{const rd=r.body.getReader(),dec=new TextDecoder();
-        for(;;){const {value,done}=await rd.read();if(done)break;reply+=dec.decode(value,{stream:true});out.textContent=this.clean(reply);
+        for(;;){const {value,done}=await rd.read();if(done)break;reply+=dec.decode(value,{stream:true});const shown=this.clean(reply);if(shown.trim())out.textContent=shown;
+          if(!ringed&&/<mark\b[^>]*>/.test(reply)){ringed=true;this.mark=this.markOf(reply);this.ring(this.mark);}
           // speak each finished sentence as soon as it arrives
-          const m=this.words(reply).slice(spoken).match(/^[\s\S]*?[.!?](\s|$)/);if(m){this.speak(m[0],!spoken);spoken+=m[0].length;}}
-        const rest=this.words(reply).slice(spoken);if(rest.trim())this.speak(rest,!spoken);this.mark=this.markOf(reply);this.ring(this.mark);}}
+          const m=this.words(reply).slice(spoken).match(/^[\s\S]*?[.!?](\s|$)/);if(m){this.speak(m[0],!spoken&&!filled);spoken+=m[0].length;}}
+        const rest=this.words(reply).slice(spoken);if(rest.trim())this.speak(rest,!spoken&&!filled);if(!ringed){this.mark=this.markOf(reply);this.ring(this.mark);}}}
     catch(e){console.warn('ellie',e);reply='My walkie-talkie is crackly. Try again in a moment!';out.textContent=reply;this.say(reply);}
     this.busy=false;this.hist.push({role:'user',content:said},{role:'assistant',content:this.words(reply).trim()||'…'});
     state.ellieLog=(state.ellieLog||[]).concat([{t:new Date().toISOString(),day:dayStr(),q:c.text,typed:c.typed||'',said,reply:this.clean(reply),saw:!!image,mark:this.markOf(reply)}]).slice(-200);
@@ -4631,7 +4656,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261026233402';
+const BUILD='20261027000027';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);

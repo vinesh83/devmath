@@ -2,6 +2,7 @@
 // Same guards as /api/ellie (origin + device code) plus a daily character cap. The voice is designed once from
 // a description and its id is saved in Blob storage, unless ELLIE_VOICE_ID is set.
 import { put, head } from '@vercel/blob';
+import { waitUntil } from '@vercel/functions';
 
 const ORIGINS = ['https://vinesh83.github.io', 'http://localhost:8765'];
 const CHARS_DAY = Number(process.env.ELLIE_VOICE_CHARS_DAY || '6000');
@@ -22,10 +23,12 @@ const xi = (path, body) => fetch(XI + path, {
 });
 
 // Design the puppy voice the first time, then reuse it
+let VOICE = null; // remembered while this server instance stays warm
 async function voiceId() {
   if (process.env.ELLIE_VOICE_ID) return process.env.ELLIE_VOICE_ID;
+  if (VOICE) return VOICE;
   const saved = await readJson('ellie-voice.json', null);
-  if (saved && saved.voice_id) return saved.voice_id;
+  if (saved && saved.voice_id) return (VOICE = saved.voice_id);
   const d = await xi('/text-to-voice/design', { voice_description: DESCRIPTION, model_id: 'eleven_ttv_v3', auto_generate_text: true, seed: 2026 });
   if (!d.ok) throw new Error('design ' + d.status + ' ' + (await d.text()).slice(0, 200));
   const g = (await d.json()).previews[0].generated_voice_id;
@@ -33,7 +36,7 @@ async function voiceId() {
   if (!c.ok) throw new Error('create ' + c.status + ' ' + (await c.text()).slice(0, 200));
   const id = (await c.json()).voice_id;
   await writeJson('ellie-voice.json', { voice_id: id, made: new Date().toISOString() });
-  return id;
+  return (VOICE = id);
 }
 
 export default async function handler(req, res) {
@@ -48,16 +51,19 @@ export default async function handler(req, res) {
   const text = String(b.text || '').slice(0, 300).trim();
   if (!text) return res.status(400).json({ error: 'empty' });
 
-  const d = today(), path = `ellie-spend/voice-${d}.json`, used = await readJson(path, { chars: 0, n: 0 });
+  const d = today(), path = `ellie-spend/voice-${d}.json`;
+  // the character count and the voice id load together
+  const [used, id] = await Promise.all([readJson(path, { chars: 0, n: 0 }), voiceId().catch((e) => { console.error('voice id', e && e.message); return null; })]);
   if (used.chars + text.length > CHARS_DAY) return res.status(429).json({ capped: true });
   try {
-    const id = await voiceId();
+    if (!id) throw new Error('no voice');
     const r = await xi(`/text-to-speech/${id}?output_format=mp3_44100_64`, {
       text, model_id: 'eleven_v4_turbo', voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.5 },
     });
     if (!r.ok) { console.error('tts', r.status, (await r.text()).slice(0, 300)); return res.status(502).json({ error: 'tts' }); }
     const audio = Buffer.from(await r.arrayBuffer());
-    await writeJson(path, { chars: used.chars + text.length, n: used.n + 1 });
+    // count the characters after the audio is on its way
+    waitUntil(writeJson(path, { chars: used.chars + text.length, n: used.n + 1 }).catch(() => {}));
     res.setHeader('Content-Type', 'audio/mpeg'); res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(audio);
   } catch (e) {
