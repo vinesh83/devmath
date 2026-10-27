@@ -1,20 +1,27 @@
 /* =========================================================
-   Long Division Workshop: a required, video-style tutorial for 3-digit ÷ 1-digit long division.
-   Four problems (857÷3, 645÷4, 247÷7 first digit too small, 614÷3 zero in the answer). The board draws itself
+   Long Division Workshop: a required, video-style tutorial series for 3-digit ÷ 1-digit long division.
+   Three daily episodes of about 10 minutes (one unlocks per day): Day 1 The Knight's Code (857÷3, 247÷7 first digit
+   too small), Day 2 The Zero Trap (645÷4, 614÷3), Day 3 Knight's Challenge (932÷4 no remainder, 529÷6). The board draws itself
    and a narrator talks him through it, but every step is a question he answers: Divide, Multiply, Subtract,
    Check, Bring down, then the remainder and a multiply-back check. A miss gives a hint; a second miss shows
    the answer and he writes it. Progress is saved by problem. Class Practice and the 3-digit Dungeon levels
-   stay locked until he finishes. Script and narration: tut/longdiv3.json, tut/a/*.mp3 (made by tut/gen.py).
+   stay locked until Day 1 is done. Each day's episode opens by itself on his first visit to the map.
+   Scripts and narration: tut/ep1..3.json, tut/a/*.mp3 (made by tut/gen.py).
    ========================================================= */
 const Tut={
-  st(){const s=state.tut3=state.tut3||{};s.i=s.i||0;s.log=s.log||[];return s;},
-  done(){return !!this.st().done;},
-  async data(){if(!this.D){const r=await fetch('tut/longdiv3.json',{cache:'no-cache'});this.D=await r.json();}return this.D;},
+  EPS:3,TITLES:["The Knight's Code",'The Zero Trap',"Knight's Challenge"],
+  st(){const s=state.tut3=state.tut3||{};s.i=s.i||0;s.log=s.log||[];s.eps=s.eps||{};if(s.done&&!s.eps[1])s.eps[1]={doneAt:s.doneAt||new Date().toISOString()};return s;},
+  // Day 1 unlocks Class Practice and the 3-digit levels
+  done(){return !!this.st().eps[1];},
+  epDone(n){return !!this.st().eps[n];},
+  // the next episode he can do today: one a day, in order
+  nextEp(){const E=this.st().eps;for(let n=1;n<=this.EPS;n++){if(E[n])continue;if(n===1)return 1;const prev=E[n-1];return prev&&String(prev.doneAt).slice(0,10)<dayStr()?n:null;}return null;},
+  async data(n){this.cache=this.cache||{};if(!this.cache[n]){const r=await fetch('tut/ep'+n+'.json',{cache:'no-cache'});this.cache[n]=await r.json();}return this.D=this.cache[n];},
   // ---- the screen
-  async open(o){o=o||{};if(this.el)return;const D=await this.data();const S=this.st();
+  async open(o){o=o||{};if(this.el)return;const ep=o.ep||this.nextEp()||1;this.ep=ep;const D=await this.data(ep);const S=this.st();
     if(typeof Music!=='undefined')Music.stop();try{speechSynthesis.cancel();}catch(e){}
     const root=el('div',{class:'vp tut'});this.el=root;
-    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,'🎬 Long Division Workshop'),el('span',{class:'tut-pn'}),el('div',{class:'tut-bar'},bar),
+    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,`🎬 Workshop · Day ${ep}: ${D.title}`),el('span',{class:'tut-pn'}),el('div',{class:'tut-bar'},bar),
       el('button',{class:'tut-exit',type:'button',onclick:()=>this.close()},'⏸ Finish later'));
     const board=el('div',{class:'tut-board'}),legend=el('div',{class:'tut-legend'},...[['D','Divide','#3fa7ff'],['M','Multiply','#3fbf5f'],['S','Subtract','#ffd23f'],['C','Check','#c084fc'],['B','Bring down','#ff4d6d']].map(([k,n,c])=>el('div',{class:'tut-lg','data-k':k,style:`--c:${c}`},el('b',null,k),el('span',null,n))));
     const side=el('div',{class:'tut-side'});
@@ -25,7 +32,7 @@ const Tut={
     // Ellie's toon portrait when the 3D engine is available
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const sp=Cin3.sprites().dog;const c=Cine3D.portrait(sp,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
     // resume at the start of the problem he was on
-    let i=Math.min(S.i,D.steps.length-1);while(i>0&&D.steps[i].kind!=='problem')i--;if(S.done||o.replay)i=0;this.i=i;this.alive=true;this.run();},
+    let i=S.cur===ep?Math.min(S.i,D.steps.length-1):0;while(i>0&&D.steps[i].kind!=='problem')i--;if(this.epDone(ep))i=0;this.i=i;this.alive=true;this.run();},
   close(){this.alive=false;this.stopAudio();if(this.el){this.el.remove();this.el=null;}if(this.f&&Pad.active===this.f)Pad.active=null;
     try{if(typeof renderMap==='function'&&!$('#scr-map').hidden)renderMap();}catch(e){}},
   // ---- narration: a clip per line (subtitles always on; when sound is off, wait about as long as reading takes)
@@ -99,24 +106,31 @@ const Tut={
   // ---- the script
   async run(){const D=this.D;
     while(this.alive&&this.i<D.steps.length){const s=D.steps[this.i];const S=this.st();
-      if(s.kind==='problem'){S.i=this.i;saveState();this.side.innerHTML='';this.pn.textContent=`Problem ${s.p+1} of ${D.problems.length}`;}
+      if(s.kind==='problem'){S.cur=this.ep;S.i=this.i;saveState();this.side.innerHTML='';this.pn.textContent=`Problem ${s.p+1} of ${D.problems.length}`;}
       this.bar.style.width=(100*this.i/D.steps.length).toFixed(1)+'%';this.legendOn(s.tag||null);
       this.vis(s.vis);await this.lines(s.say);if(!this.alive)return;
       if(s.kind==='ask'){await this.ask1(s);if(!this.alive)return;this.vis(s.afterVis);
         const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);}
       this.i++;}
-    if(!this.alive)return;const S=this.st();const first=!S.done;S.done=true;S.doneAt=new Date().toISOString();S.i=0;
-    if(first){state.coins=(state.coins||0)+50;try{updateTop();}catch(e){}}saveState();
-    this.ask.hidden=false;this.ask.innerHTML='';this.ask.append(el('div',{class:'tut-win'},first?'+50 coins · Class Practice unlocked!':'Great review!'),el('button',{class:'tut-go wide',type:'button',onclick:()=>{this.close();if(first&&typeof Dungeon!=='undefined')Dungeon.open();}},'Done'));}
+    if(!this.alive)return;const S=this.st();const ep=this.ep,first=!S.eps[ep];if(first)S.eps[ep]={doneAt:new Date().toISOString()};S.i=0;S.cur=null;
+    if(first){state.coins=(state.coins||0)+(ep===this.EPS?60:30);try{updateTop();}catch(e){}}saveState();
+    this.ask.hidden=false;this.ask.innerHTML='';this.ask.append(el('div',{class:'tut-win'},first?(ep===1?'+30 coins · Class Practice unlocked! Day 2 opens tomorrow.':ep<this.EPS?`+30 coins · Day ${ep+1} opens tomorrow.`:'+60 coins · Workshop complete!'):'Great review!'),el('button',{class:'tut-go wide',type:'button',onclick:()=>{this.close();if(first&&ep===1&&typeof Dungeon!=='undefined')Dungeon.open();}},'Done'));}
 };
 // ---- required before 3-digit division: the Dungeon opens the workshop first; Class Practice and 3-digit levels wait for it
 {const _op=Dungeon.open.bind(Dungeon);Dungeon.open=function(){_op.apply(this,arguments);try{const lvs=document.querySelector('.dv-modal .dv-lvs');if(!lvs)return;
-  const b=el('button',{class:'dv-lv dv-tut',type:'button'},el('b',null,Tut.done()?'🎬 Long Division Workshop':'🎬 Long Division Workshop (start here!)'),el('span',null,'Every step of 3-digit long division, with you doing each one'),el('i',null,Tut.done()?'✓ done · replay':'required'));
-  tapify(b,()=>{overlay(null);Tut.open({replay:Tut.done()});});lvs.before(b);
+  const nx=Tut.nextEp(),all=[1,2,3].every(n=>Tut.epDone(n));
+  const b=el('button',{class:'dv-lv dv-tut',type:'button'},el('b',null,nx?`🎬 Workshop · Day ${nx}: ${Tut.TITLES[nx-1]}`:'🎬 Long Division Workshop'),
+    el('span',null,nx?'About 10 minutes · every step of 3-digit long division':all?'All 3 days done · replay any day':'Today’s episode done · the next one opens tomorrow'),el('i',null,nx?(nx===1?'required':'today'):'✓ replay'));
+  tapify(b,()=>{overlay(null);if(nx)Tut.open({ep:nx});else Tut.menu();});lvs.before(b);
   if(!Tut.done()){const c=document.querySelector('.dv-class-drill');if(c){c.classList.add('locked');const i=c.querySelector('i');if(i)i.textContent='🔒 after the Workshop';
       c.replaceWith(c.cloneNode(true));const c2=document.querySelector('.dv-class-drill');tapify(c2,()=>{overlay(null);Tut.open();});}}
-    // first Dungeon visit each day until it's done: the Workshop opens by itself
-    const S=Tut.st();if(!Tut.done()&&S.autoDay!==dayStr()){S.autoDay=dayStr();saveState();setTimeout(()=>{overlay(null);Tut.open();},400);}
   }catch(e){console.error(e);}};}
 {const _sl=startLevel;startLevel=function(w,li){if(w&&w.id==='dungeon'&&li>=3&&li<5&&!Tut.done()){try{overlay(null);}catch(e){}Tut.open();return;}return _sl.apply(this,arguments);};}
+// each day's episode opens by itself on his first visit to the map that day (while the series lasts)
+setInterval(()=>{try{const S=Tut.st(),nx=Tut.nextEp();if(!nx||S.autoDay===dayStr()||Tut.el)return;const m=$('#scr-map');
+  if(!m||m.hidden||!$('#overlay').hidden||!$('#talk').hidden||!$('#cine').hidden||document.querySelector('.vp,#cine3d,.adv-panel'))return;
+  S.autoDay=dayStr();saveState();Tut.open({ep:nx});}catch(e){}},2500);
+Tut.menu=function(){overlay(el('div',{class:'modal'},el('h2',null,'🎬 Long Division Workshop'),el('p',null,'Replay any day you have done.'),
+  el('div',{class:'btns',style:'flex-direction:column'},...[1,2,3].map(n=>el('button',{class:'btn'+(Tut.epDone(n)?'':' btn-dark'),type:'button',disabled:!Tut.epDone(n),onclick:()=>{overlay(null);Tut.open({ep:n});}},`Day ${n}: ${Tut.TITLES[n-1]}${Tut.epDone(n)?'':' 🔒'}`)),
+    el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(null)},'Close'))));};
 window.__tut=Tut;

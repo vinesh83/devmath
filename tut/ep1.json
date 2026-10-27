@@ -1,0 +1,1711 @@
+{
+ "ep": 1,
+ "of": 3,
+ "title": "The Knight's Code",
+ "problems": [
+  [
+   857,
+   3
+  ],
+  [
+   247,
+   7
+  ],
+  [
+   739,
+   5
+  ]
+ ],
+ "steps": [
+  {
+   "kind": "intro",
+   "say": [
+    {
+     "t": "Welcome to day one of the Long Division Workshop! Three problems today, one step at a time.",
+     "a": "41c4ff3271",
+     "v": "N"
+    },
+    {
+     "t": "Every long division follows the Knight's Code: Divide, Multiply, Subtract, Bring down. Then we do it again!",
+     "a": "80b9a22402",
+     "v": "N"
+    },
+    {
+     "t": "Let's go!",
+     "a": "85915037d5",
+     "v": "E"
+    }
+   ],
+   "vis": [
+    {
+     "act": "legend"
+    }
+   ]
+  },
+  {
+   "kind": "problem",
+   "p": 0,
+   "n": 857,
+   "d": 3,
+   "say": [
+    {
+     "t": "Problem 1 of 3: 857 divided by 3.",
+     "a": "ace2383c89",
+     "v": "N"
+    }
+   ],
+   "vis": [
+    {
+     "act": "new",
+     "n": 857,
+     "d": 3
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "D",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "Divide: how many 3s fit into 8? Count by 3s if you need to.",
+     "a": "bf7b1595bf",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 3s: 3, 6, 9. Stop before you go past 8.",
+    "a": "70a3863c80",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0
+     ],
+     "row": 0
+    }
+   ],
+   "after": [
+    {
+     "t": "Yes! 2. Write it on top, above the 8.",
+     "a": "aa3bdf3530",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 0,
+     "v": 2
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "M",
+   "q": "num",
+   "ans": 6,
+   "say": [
+    {
+     "t": "Multiply: 2 times 3?",
+     "a": "7e6c56b935",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 groups of 3. Count by 3s 2 times.",
+    "a": "6cf7a9c887",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 0
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 0,
+     "col": 0,
+     "v": 6
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "S",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "Subtract: 8 minus 6?",
+     "a": "43433a072f",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 6 and count up to 8. How many did you count?",
+    "a": "9ba523d14f",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 0,
+     "cols": [
+      0
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 0,
+     "col": 0,
+     "v": 2
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 2 smaller than 3?",
+     "a": "fb007676d0",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 is smaller than 3. If it weren't, we could fit one more 3.",
+    "a": "2648a812ee",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 0,
+     "col": 0
+    }
+   ],
+   "after": [
+    {
+     "t": "Good. That means our Divide step was right.",
+     "a": "73c7dece50",
+     "v": "N"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "B",
+   "q": "num",
+   "ans": 25,
+   "say": [
+    {
+     "t": "Bring down the 5. What number do we have now?",
+     "a": "75611c29e9",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Put the 5 next to the 2. That makes 25.",
+    "a": "94d7c0f3a3",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlcol",
+     "col": 1
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "bring",
+     "row": 0,
+     "col": 1,
+     "v": "5"
+    }
+   ],
+   "after": [
+    {
+     "t": "Now we do the Knight's Code again.",
+     "a": "b5e7e5e593",
+     "v": "E"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "D",
+   "q": "num",
+   "ans": 8,
+   "say": [
+    {
+     "t": "Divide: how many 3s fit into 25? Count by 3s if you need to.",
+     "a": "4e45400f82",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 3s: 3, 6, 9, 12, 15, 18, 21, 24, 27. Stop before you go past 25.",
+    "a": "ef28aec189",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0,
+      1
+     ],
+     "row": 1
+    }
+   ],
+   "after": [
+    {
+     "t": "Yes! 8. Write it on top, above the 5.",
+     "a": "d9220a8d10",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 1,
+     "v": 8
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "M",
+   "q": "num",
+   "ans": 24,
+   "say": [
+    {
+     "t": "Multiply: 8 times 3?",
+     "a": "d0c845312d",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "8 groups of 3. Count by 3s 8 times.",
+    "a": "5fc06ff82b",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 1
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 1,
+     "col": 1,
+     "v": 24
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "S",
+   "q": "num",
+   "ans": 1,
+   "say": [
+    {
+     "t": "Subtract: 25 minus 24?",
+     "a": "b3d8e9aebf",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 24 and count up to 25. How many did you count?",
+    "a": "189922be77",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 1,
+     "cols": [
+      0,
+      1
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 1,
+     "col": 1,
+     "v": 1
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 1 smaller than 3?",
+     "a": "6422cc5acf",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "1 is smaller than 3. If it weren't, we could fit one more 3.",
+    "a": "0b13c6f893",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 1,
+     "col": 1
+    }
+   ],
+   "after": [
+    {
+     "t": "Good. That means our Divide step was right.",
+     "a": "73c7dece50",
+     "v": "N"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "B",
+   "q": "num",
+   "ans": 17,
+   "say": [
+    {
+     "t": "Bring down the 7. What number do we have now?",
+     "a": "e213bbc415",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Put the 7 next to the 1. That makes 17.",
+    "a": "814981bc07",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlcol",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "bring",
+     "row": 1,
+     "col": 2,
+     "v": "7"
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "D",
+   "q": "num",
+   "ans": 5,
+   "say": [
+    {
+     "t": "Divide: how many 3s fit into 17? Count by 3s if you need to.",
+     "a": "3542155494",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 3s: 3, 6, 9, 12, 15, 18. Stop before you go past 17.",
+    "a": "1af44721fa",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      1,
+      2
+     ],
+     "row": 2
+    }
+   ],
+   "after": [
+    {
+     "t": "Yes! 5. Write it on top, above the 7.",
+     "a": "6c3554a603",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 2,
+     "v": 5
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "M",
+   "q": "num",
+   "ans": 15,
+   "say": [
+    {
+     "t": "Multiply: 5 times 3?",
+     "a": "7d0e04757b",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "5 groups of 3. Count by 3s 5 times.",
+    "a": "153b0f8b7c",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 2,
+     "col": 2,
+     "v": 15
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "S",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "Subtract: 17 minus 15?",
+     "a": "3d13e67b16",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 15 and count up to 17. How many did you count?",
+    "a": "2a0144e65a",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 2,
+     "cols": [
+      1,
+      2
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 2,
+     "col": 2,
+     "v": 2
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 2 smaller than 3?",
+     "a": "fb007676d0",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 is smaller than 3. If it weren't, we could fit one more 3.",
+    "a": "2648a812ee",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 2,
+     "col": 2
+    }
+   ],
+   "after": [
+    {
+     "t": "Good. That means our Divide step was right.",
+     "a": "73c7dece50",
+     "v": "N"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "R",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "There are no more digits to bring down. What's the remainder?",
+     "a": "e59368f6c8",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "The remainder is the number left at the bottom: 2.",
+    "a": "1535dc7ac3",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlrem"
+    }
+   ],
+   "after": [
+    {
+     "t": "So 857 divided by 3 is 285, remainder 2!",
+     "a": "5084b5ab24",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "answer",
+     "v": "285 R 2"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 0,
+   "tag": "K",
+   "q": "num",
+   "ans": 857,
+   "say": [
+    {
+     "t": "Let's check it. 285 times 3 is 855. Add the remainder: 855 plus 2 is?",
+     "a": "ab48e208c9",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "855 plus 2. Count up 2 from 855.",
+    "a": "26a5b40d17",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "check",
+     "Q": 285,
+     "d": 3,
+     "R": 2
+    }
+   ],
+   "after": [
+    {
+     "t": "That's the number we started with. Perfect!",
+     "a": "a5c9ccace6",
+     "v": "E"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "done"
+    }
+   ]
+  },
+  {
+   "kind": "problem",
+   "p": 1,
+   "n": 247,
+   "d": 7,
+   "say": [
+    {
+     "t": "Problem 2 of 3: 247 divided by 7.",
+     "a": "51f70b41d6",
+     "v": "N"
+    }
+   ],
+   "vis": [
+    {
+     "act": "new",
+     "n": 247,
+     "d": 7
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "D",
+   "q": "yn",
+   "ans": "no",
+   "say": [
+    {
+     "t": "First look at the 2. Can a 7 fit into 2?",
+     "a": "3beab3a250",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 is smaller than 7, so a 7 can't fit into it.",
+    "a": "144ae5aa06",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0
+     ]
+    }
+   ],
+   "after": [
+    {
+     "t": "Right! So we use the first two digits together: 24.",
+     "a": "c71e1bda4b",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "hl",
+     "cols": [
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "D",
+   "q": "num",
+   "ans": 3,
+   "say": [
+    {
+     "t": "Divide: how many 7s fit into 24?",
+     "a": "a8e68658af",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 7s: 7, 14, 21, 28. Stop before you go past 24.",
+    "a": "3fffe5684c",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0,
+      1
+     ],
+     "row": 0
+    }
+   ],
+   "after": [],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 1,
+     "v": 3
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "M",
+   "q": "num",
+   "ans": 21,
+   "say": [
+    {
+     "t": "Multiply: 3 times 7?",
+     "a": "18192c77fd",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "3 groups of 7. Count by 7s 3 times.",
+    "a": "50c95cc105",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 1
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 0,
+     "col": 1,
+     "v": 21
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "S",
+   "q": "num",
+   "ans": 3,
+   "say": [
+    {
+     "t": "Subtract: 24 minus 21?",
+     "a": "1c1771d998",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 21 and count up to 24. How many did you count?",
+    "a": "2297469d82",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 0,
+     "cols": [
+      0,
+      1
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 0,
+     "col": 1,
+     "v": 3
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 3 smaller than 7?",
+     "a": "d55e97f770",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "3 is smaller than 7. If it weren't, we could fit one more 7.",
+    "a": "a7e7168577",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 0,
+     "col": 1
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "B",
+   "q": "num",
+   "ans": 37,
+   "say": [
+    {
+     "t": "Bring down the 7. What number do we have now?",
+     "a": "e213bbc415",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Put the 7 next to the 3. That makes 37.",
+    "a": "a7dbad2aa2",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlcol",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "bring",
+     "row": 0,
+     "col": 2,
+     "v": "7"
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "D",
+   "q": "num",
+   "ans": 5,
+   "say": [
+    {
+     "t": "Divide: how many 7s fit into 37?",
+     "a": "89e68e9aab",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 7s: 7, 14, 21, 28, 35, 42. Stop before you go past 37.",
+    "a": "8297944690",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      1,
+      2
+     ],
+     "row": 1
+    }
+   ],
+   "after": [],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 2,
+     "v": 5
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "M",
+   "q": "num",
+   "ans": 35,
+   "say": [
+    {
+     "t": "Multiply: 5 times 7?",
+     "a": "5164a95c91",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "5 groups of 7. Count by 7s 5 times.",
+    "a": "40fc76e387",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 1,
+     "col": 2,
+     "v": 35
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "S",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "Subtract: 37 minus 35?",
+     "a": "5e5c965b8f",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 35 and count up to 37. How many did you count?",
+    "a": "6574a76d9c",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 1,
+     "cols": [
+      1,
+      2
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 1,
+     "col": 2,
+     "v": 2
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 2 smaller than 7?",
+     "a": "4b6cdc0723",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 is smaller than 7. If it weren't, we could fit one more 7.",
+    "a": "5ca6c59659",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 1,
+     "col": 2
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "R",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "There are no more digits to bring down. What's the remainder?",
+     "a": "e59368f6c8",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "The remainder is the number left at the bottom: 2.",
+    "a": "1535dc7ac3",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlrem"
+    }
+   ],
+   "after": [
+    {
+     "t": "So 247 divided by 7 is 35, remainder 2!",
+     "a": "3227d23804",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "answer",
+     "v": "35 R 2"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 1,
+   "tag": "K",
+   "q": "num",
+   "ans": 247,
+   "say": [
+    {
+     "t": "Let's check it. 35 times 7 is 245. Add the remainder: 245 plus 2 is?",
+     "a": "e9ce72cc40",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "245 plus 2. Count up 2 from 245.",
+    "a": "3b669e0add",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "check",
+     "Q": 35,
+     "d": 7,
+     "R": 2
+    }
+   ],
+   "after": [
+    {
+     "t": "That's the number we started with. Perfect!",
+     "a": "a5c9ccace6",
+     "v": "E"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "done"
+    }
+   ]
+  },
+  {
+   "kind": "problem",
+   "p": 2,
+   "n": 739,
+   "d": 5,
+   "say": [
+    {
+     "t": "Problem 3 of 3: 739 divided by 5.",
+     "a": "311e2d288d",
+     "v": "N"
+    }
+   ],
+   "vis": [
+    {
+     "act": "new",
+     "n": 739,
+     "d": 5
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "D",
+   "q": "num",
+   "ans": 1,
+   "say": [
+    {
+     "t": "Divide: how many 5s fit into 7?",
+     "a": "8dbecaf39b",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 5s: 5, 10. Stop before you go past 7.",
+    "a": "2a8dd2e8f8",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0
+     ],
+     "row": 0
+    }
+   ],
+   "after": [],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 0,
+     "v": 1
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "M",
+   "q": "num",
+   "ans": 5,
+   "say": [
+    {
+     "t": "Multiply: 1 times 5?",
+     "a": "4562311f92",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "1 groups of 5. Count by 5s 1 times.",
+    "a": "7001e1ecc8",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 0
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 0,
+     "col": 0,
+     "v": 5
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "S",
+   "q": "num",
+   "ans": 2,
+   "say": [
+    {
+     "t": "Subtract: 7 minus 5?",
+     "a": "870deec017",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 5 and count up to 7. How many did you count?",
+    "a": "3b9f1a9a66",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 0,
+     "cols": [
+      0
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 0,
+     "col": 0,
+     "v": 2
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 2 smaller than 5?",
+     "a": "3d84a15f86",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "2 is smaller than 5. If it weren't, we could fit one more 5.",
+    "a": "c0ab586f24",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 0,
+     "col": 0
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "B",
+   "q": "num",
+   "ans": 23,
+   "say": [
+    {
+     "t": "Bring down the 3. What number do we have now?",
+     "a": "a815e79f9f",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Put the 3 next to the 2. That makes 23.",
+    "a": "8ef776ae62",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlcol",
+     "col": 1
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "bring",
+     "row": 0,
+     "col": 1,
+     "v": "3"
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "D",
+   "q": "num",
+   "ans": 4,
+   "say": [
+    {
+     "t": "Divide: how many 5s fit into 23?",
+     "a": "13d6f1ced6",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 5s: 5, 10, 15, 20, 25. Stop before you go past 23.",
+    "a": "0896d81458",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      0,
+      1
+     ],
+     "row": 1
+    }
+   ],
+   "after": [],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 1,
+     "v": 4
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "M",
+   "q": "num",
+   "ans": 20,
+   "say": [
+    {
+     "t": "Multiply: 4 times 5?",
+     "a": "71705cc109",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "4 groups of 5. Count by 5s 4 times.",
+    "a": "941f345a43",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 1
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 1,
+     "col": 1,
+     "v": 20
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "S",
+   "q": "num",
+   "ans": 3,
+   "say": [
+    {
+     "t": "Subtract: 23 minus 20?",
+     "a": "584f8f3b0c",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 20 and count up to 23. How many did you count?",
+    "a": "7ddbbe1d34",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 1,
+     "cols": [
+      0,
+      1
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 1,
+     "col": 1,
+     "v": 3
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 3 smaller than 5?",
+     "a": "b0d2c96773",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "3 is smaller than 5. If it weren't, we could fit one more 5.",
+    "a": "d22234af46",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 1,
+     "col": 1
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "B",
+   "q": "num",
+   "ans": 39,
+   "say": [
+    {
+     "t": "Bring down the 9. What number do we have now?",
+     "a": "112ebb7d1d",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Put the 9 next to the 3. That makes 39.",
+    "a": "b0ccd13102",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlcol",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "bring",
+     "row": 1,
+     "col": 2,
+     "v": "9"
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "D",
+   "q": "num",
+   "ans": 7,
+   "say": [
+    {
+     "t": "Divide: how many 5s fit into 39?",
+     "a": "458f085f25",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Count by 5s: 5, 10, 15, 20, 25, 30, 35, 40. Stop before you go past 39.",
+    "a": "5756016c28",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hl",
+     "cols": [
+      1,
+      2
+     ],
+     "row": 2
+    }
+   ],
+   "after": [],
+   "afterVis": [
+    {
+     "act": "quot",
+     "col": 2,
+     "v": 7
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "M",
+   "q": "num",
+   "ans": 35,
+   "say": [
+    {
+     "t": "Multiply: 7 times 5?",
+     "a": "36bd23b11e",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "7 groups of 5. Count by 5s 7 times.",
+    "a": "ec6026c5f9",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlq",
+     "col": 2
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "prod",
+     "row": 2,
+     "col": 2,
+     "v": 35
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "S",
+   "q": "num",
+   "ans": 4,
+   "say": [
+    {
+     "t": "Subtract: 39 minus 35?",
+     "a": "1a8553feb4",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "Start at 35 and count up to 39. How many did you count?",
+    "a": "921146b36f",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "line",
+     "row": 2,
+     "cols": [
+      1,
+      2
+     ]
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "diff",
+     "row": 2,
+     "col": 2,
+     "v": 4
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "C",
+   "q": "yn",
+   "ans": "yes",
+   "say": [
+    {
+     "t": "Check: is 4 smaller than 5?",
+     "a": "8db90ed042",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "4 is smaller than 5. If it weren't, we could fit one more 5.",
+    "a": "18b6e1fff3",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hld",
+     "row": 2,
+     "col": 2
+    }
+   ],
+   "after": []
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "R",
+   "q": "num",
+   "ans": 4,
+   "say": [
+    {
+     "t": "There are no more digits to bring down. What's the remainder?",
+     "a": "e59368f6c8",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "The remainder is the number left at the bottom: 4.",
+    "a": "8e956e340f",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "hlrem"
+    }
+   ],
+   "after": [
+    {
+     "t": "So 739 divided by 5 is 147, remainder 4!",
+     "a": "d1bcdec808",
+     "v": "N"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "answer",
+     "v": "147 R 4"
+    }
+   ]
+  },
+  {
+   "kind": "ask",
+   "p": 2,
+   "tag": "K",
+   "q": "num",
+   "ans": 739,
+   "say": [
+    {
+     "t": "Let's check it. 147 times 5 is 735. Add the remainder: 735 plus 4 is?",
+     "a": "a5095f82d1",
+     "v": "N"
+    }
+   ],
+   "hint": {
+    "t": "735 plus 4. Count up 4 from 735.",
+    "a": "6f04e7d18d",
+    "v": "N"
+   },
+   "vis": [
+    {
+     "act": "check",
+     "Q": 147,
+     "d": 5,
+     "R": 4
+    }
+   ],
+   "after": [
+    {
+     "t": "That's the number we started with. Perfect!",
+     "a": "a5c9ccace6",
+     "v": "E"
+    }
+   ],
+   "afterVis": [
+    {
+     "act": "done"
+    }
+   ]
+  },
+  {
+   "kind": "outro",
+   "say": [
+    {
+     "t": "Day one done! Tomorrow: the Zero Trap. Can you spot it?",
+     "a": "45187e1108",
+     "v": "E"
+    }
+   ],
+   "vis": [
+    {
+     "act": "outro"
+    }
+   ]
+  }
+ ],
+ "shared": {
+  "yes": [
+   {
+    "t": "Yes!",
+    "a": "2f7c428eac",
+    "v": "E"
+   },
+   {
+    "t": "Nice!",
+    "a": "68795f2fe5",
+    "v": "E"
+   },
+   {
+    "t": "That's it!",
+    "a": "b155c5395e",
+    "v": "E"
+   },
+   {
+    "t": "Great job!",
+    "a": "562e1324f9",
+    "v": "E"
+   },
+   {
+    "t": "Exactly!",
+    "a": "4e5d3497be",
+    "v": "E"
+   }
+  ],
+  "miss": {
+   "t": "Not quite. Here's a hint.",
+   "a": "1abc557c2e",
+   "v": "N"
+  },
+  "show": {
+   "t": "Let's look together. Write this number to keep going.",
+   "a": "5fd2e7ba09",
+   "v": "N"
+  }
+ }
+}
