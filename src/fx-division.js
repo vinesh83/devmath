@@ -48,7 +48,7 @@ function divPlan(n,d){const s=String(n);let i=0,cur=+s[0];while(cur<d&&i<s.lengt
   const rows=[];let col=i;for(;;){const q=Math.floor(cur/d),prod=q*d,diff=cur-prod;rows.push({col,cur,q,prod,diff});if(col>=s.length-1)break;col++;cur=diff*10+ +s[col];}
   return {s,start:i,rows,rem:rows[rows.length-1].diff};}
 const DivVoice=id=>{try{Slip.voice(id);}catch(e){}};
-function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,short=p.L>=4,cue=p.L<=2&&run&&run.idx<2;card.classList.add('tall');
+function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,short=p.L>=4&&!p.guided,cue=(p.L<=2||p.guided)&&run&&run.idx<2;card.classList.add('tall');
   card.append(cardHead('Long division'),el('div',{class:'expr'},`${fmtStr(String(p.n))} ÷ ${p.d} = ?`));
   const coach=el('div',{class:'dv-coach'});const tipEl=el('div',{class:'dv-tip'});
   // the bracket: col 1 = divisor, col 2 = bracket wall, cols 3.. = dividend digits

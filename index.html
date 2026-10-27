@@ -993,6 +993,12 @@ html,body{touch-action:manipulation}
 @keyframes ellieMark{50%{transform:scale(1.07);box-shadow:0 0 0 10px #ffd23f33,0 0 26px #ffb703}}
 #inkPad.rc-reading .ink-read{color:#7a5cff;animation:rcPulse .8s ease-in-out infinite}
 @keyframes rcPulse{50%{opacity:.45}}
+.story.mk-on{position:relative;padding-right:54px}
+.mk-cv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.mk-tools{position:absolute;top:4px;right:4px;display:flex;flex-direction:column;gap:6px;z-index:3}
+.mk-btn{border:0;border-radius:12px;width:40px;height:40px;padding:0;font-size:20px;background:#f1e9d4;color:#3a2f1a;font:700 14px var(--f-body,Lexend);box-shadow:0 2px 0 #d8c9a3;cursor:pointer;white-space:nowrap}
+.mk-btn.on{background:#e8345a;color:#fff;box-shadow:0 2px 0 #a3203d}
+.story.mk-finger{outline:3px dashed #e8345a55;outline-offset:2px;touch-action:none}
 </style>
 
 <div id="app">
@@ -4044,7 +4050,7 @@ function divPlan(n,d){const s=String(n);let i=0,cur=+s[0];while(cur<d&&i<s.lengt
   const rows=[];let col=i;for(;;){const q=Math.floor(cur/d),prod=q*d,diff=cur-prod;rows.push({col,cur,q,prod,diff});if(col>=s.length-1)break;col++;cur=diff*10+ +s[col];}
   return {s,start:i,rows,rem:rows[rows.length-1].diff};}
 const DivVoice=id=>{try{Slip.voice(id);}catch(e){}};
-function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,short=p.L>=4,cue=p.L<=2&&run&&run.idx<2;card.classList.add('tall');
+function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,short=p.L>=4&&!p.guided,cue=(p.L<=2||p.guided)&&run&&run.idx<2;card.classList.add('tall');
   card.append(cardHead('Long division'),el('div',{class:'expr'},`${fmtStr(String(p.n))} ÷ ${p.d} = ?`));
   const coach=el('div',{class:'dv-coach'});const tipEl=el('div',{class:'dv-tip'});
   // the bracket: col 1 = divisor, col 2 = bracket wall, cols 3.. = dividend digits
@@ -4228,6 +4234,26 @@ function renderFF(p,a){const card=$('#card'),L=Flip.lvl(p.fam),isDiv=p.part==='d
    tapify(b,()=>{overlay(null);Snd.init();Flip.pending=null;startRun({title:'Flip It · Fact Families',mode:'drill',color:'#e0457b',problems:Array.from({length:10},()=>genFF())});});lvs.after(b);}catch(e){}};}
 // each level starts its own times/division pairs (a level that ended on a times fact must not hand its twin to the next one)
 {const _sl=startLevel;startLevel=function(){Flip.pending=null;return _sl.apply(this,arguments);};}
+
+/* =========================================================
+   Class practice: long division the way Dev's 4th-grade class is doing it now. 2- and 3-digit numbers
+   divided by a 1-digit number, almost always with a remainder, some with a zero in the answer (412 ÷ 4 = 103).
+   Every step stays guided (Divide, Multiply, Subtract, Bring down). Always open in the Division Dungeon.
+   ========================================================= */
+function genClassDiv(i){
+  for(let t=0;t<500;t++){let d,n;
+    if(i<3){d=rint(3,9);n=rint(d*10+1,99);if(n%d===0&&Math.random()<0.85)continue;}           // warm up: 2-digit (75 ÷ 4)
+    else if(i<5){d=rint(2,9);n=rint(100,999);if(Math.floor(n/100)<d)continue;if(n%d===0&&Math.random()<0.85)continue;}   // 3-digit, first digit big enough (857 ÷ 3)
+    else if(i===6||i===8){d=rint(2,6);const q=rint(1,9)*100+rint(1,9);n=q*d+rint(1,d-1);if(n>999)continue;}  // a zero in the answer (412 ÷ 4 = 103)
+    else{d=rint(3,9);n=rint(Math.max(100,d*12),999);if(n%d===0&&Math.random()<0.85)continue;}   // 3-digit, first digit may be too small (245 ÷ 7)
+    const q=Math.floor(n/d),rem=n%d;return {kind:'div',skill:'div',op:'÷',n,d,answer:q,rem,L:n>99?4:3,guided:true,cls:true,nums:[String(n),String(d)],dp:0};}
+  return {kind:'div',skill:'div',op:'÷',n:857,d:3,answer:285,rem:2,L:4,guided:true,cls:true,nums:['857','3'],dp:0};}
+{const _op=Dungeon.open.bind(Dungeon);Dungeon.open=function(){_op();try{const lvs=document.querySelector('.dv-modal .dv-lvs');if(!lvs)return;
+  const b=el('button',{class:'dv-lv dv-class-drill',type:'button'},el('b',null,'📝 Class practice'),el('span',null,'2- and 3-digit long division with remainders, like school'),el('i',null,'10 problems'));
+  tapify(b,()=>{overlay(null);Snd.init();if(typeof Flip!=='undefined')Flip.pending=null;
+    startRun({title:'Class Practice · Long Division',mode:'drill',color:'#e0457b',problems:Array.from({length:10},(_,i)=>genClassDiv(i))});});
+  lvs.after(b);}catch(e){console.error(e);}};}
+window.__classRun=(idx)=>startRun({title:'Class Practice · Long Division',mode:'drill',color:'#e0457b',problems:idx.map(i=>genClassDiv(i))});
 
 /* =========================================================
    Surprises: one-time drops from home. Each plays once, on the first map visit after it ships:
@@ -4584,6 +4610,41 @@ setTimeout(()=>{try{
 window.__readcheck=ReadCheck;
 
 /* =========================================================
+   Mark up word problems: Dev writes right on the story with his Pencil (a + over "more", a circle around
+   the question, an underline under a number). The Pencil draws; a finger still taps the words as before.
+   "✏️ Mark" lets a finger draw too, and 🧽 clears the marks. Marks stay until the next problem.
+   ========================================================= */
+const Markup={
+  attach(box){if(!box||box.querySelector('.mk-cv'))return;box.classList.add('mk-on');
+    const cv=el('canvas',{class:'mk-cv'}),g=cv.getContext('2d');
+    const tools=el('div',{class:'mk-tools'});const fingerBtn=el('button',{class:'mk-btn',type:'button','aria-label':'Draw with finger'},'✏️');
+    const clr=el('button',{class:'mk-btn',type:'button','aria-label':'Clear marks'},'🧽');tools.append(fingerBtn,clr);box.append(cv,tools);
+    const S={strokes:[],cur:null,finger:false,W:0,H:0};
+    const size=()=>{const r=box.getBoundingClientRect();if(!r.width)return;const d=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);S.W=r.width;S.H=r.height;g.setTransform(d,0,0,d,0,0);draw();};
+    const draw=()=>{g.clearRect(0,0,S.W,S.H);g.strokeStyle='#e8345a';g.lineCap='round';g.lineJoin='round';
+      for(const s of S.strokes.concat(S.cur?[S.cur]:[])){g.lineWidth=3.2;g.beginPath();s.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));if(s.length===1)g.lineTo(s[0][0]+0.1,s[0][1]);g.stroke();}};
+    const pt=e=>{const r=box.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+    // the Pencil always draws here; a finger draws only when "Mark" is on, otherwise its taps reach the words
+    box.addEventListener('pointerdown',e=>{if(e.target.closest('.mk-tools'))return;if(!(e.pointerType==='pen'||S.finger))return;
+      e.preventDefault();e.stopPropagation();S.cur=[pt(e)];S.pid=e.pointerId;try{box.setPointerCapture(e.pointerId);}catch(_){}},true);
+    box.addEventListener('pointermove',e=>{if(!S.cur||e.pointerId!==S.pid)return;e.preventDefault();e.stopPropagation();
+      let evs=e.getCoalescedEvents?e.getCoalescedEvents():[];if(!evs.length)evs=[e];for(const v of evs)S.cur.push(pt(v));draw();},true);
+    const up=e=>{if(!S.cur||e.pointerId!==S.pid)return;e.stopPropagation();S.strokes.push(S.cur);S.cur=null;draw();Markup.used=(Markup.used||0)+1;};
+    ['pointerup','pointercancel'].forEach(t=>box.addEventListener(t,up,true));
+    // a pen stroke must not also count as a tap on a word
+    box.addEventListener('click',e=>{if(e.target.closest('.mk-tools'))return;if(S.drewAt&&Date.now()-S.drewAt<350){e.stopPropagation();e.preventDefault();}},true);
+    box.addEventListener('pointerup',e=>{if(e.pointerType==='pen'||S.finger)S.drewAt=Date.now();},true);
+    box.addEventListener('touchstart',e=>{if(S.finger)e.preventDefault();},{passive:false});
+    fingerBtn.addEventListener('click',e=>{e.stopPropagation();S.finger=!S.finger;fingerBtn.classList.toggle('on',S.finger);box.classList.toggle('mk-finger',S.finger);});
+    clr.addEventListener('click',e=>{e.stopPropagation();S.strokes=[];draw();});
+    new ResizeObserver(size).observe(box);setTimeout(size,0);box.__mk=S;}
+};
+// every word-problem story gets a markup layer
+{const _rs=renderStory;renderStory=function(p){const box=_rs.apply(this,arguments);try{Markup.attach(box);}catch(e){console.error(e);}return box;};}
+window.__markup=Markup;
+window.__go=(id,li)=>startLevel(WORLDS.find(w=>w.id===id),li,{go:true});
+
+/* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
    Pair once with  ...devmath/#sync=TOKEN  (or paste the token in Report)
    ========================================================= */
@@ -4708,7 +4769,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261027020013';
+const BUILD='20261027021023';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
@@ -4916,7 +4977,9 @@ const BigPad={
   ans(){if(typeof run==='undefined'||!run||!run.spec||run.spec.mode==='dojo')return null;const p=run.queue[run.idx];if(!p)return null;const a=p.answer!=null?p.answer:(p.base&&p.base.answer);return a==null||isNaN(a)?null:+a;},
   digits(){const a=this.ans();return a==null?0:String(Math.abs(a)).replace('.','').length;},
   wants(f){return !!f&&!f.locked&&this.digits()>=4;},
-  hint(){if(InkBox.pad){const a=this.ans(),d=this.digits();InkBox.pad.setBoxes(this.wants(Pad.active)?0:(d>=3||String(a).includes('.')?3:2));}
+  hint(){if(InkBox.pad){const a=this.ans(),d=this.digits();let n=this.wants(Pad.active)?0:(d>=3||String(a).includes('.')?3:2);
+    // a step box that takes one digit (long division steps) gets one open space, not 2 or 3 boxes
+    const fm=Pad.active&&Pad.active.max;if(n&&fm&&fm<n)n=fm<=1?0:fm;InkBox.pad.setBoxes(n);}
     const h=document.querySelector('#inkPad .ink-hint');if(h)h.textContent=this.wants(Pad.active)?'✏️ Tap to write it big':'✏️ Write your answer';
     const host=$('#inkPad');if(host)host.classList.toggle('to-big',this.wants(Pad.active));},
   init(){const host=$('#inkPad');if(!host)return;
