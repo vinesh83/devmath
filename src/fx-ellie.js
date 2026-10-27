@@ -22,7 +22,7 @@ const Walkie={
     b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
     return b;},
   // battles, mini-games and videos have their own buttons: the walkie-talkie steps aside
-  inFight(){return [...document.querySelectorAll('.bb-ctl,.ag-pad,.ap-grid,.spd-wrap,#catch,#dash,#whack,.vp,#cine3d')].some(x=>x.getClientRects().length);},
+  inFight(){return [...document.querySelectorAll('.bb-ctl,.ag-pad,.ap-grid,.spd-wrap,#catch,#dash,#whack,.vp,#cine3d,.adv-panel')].some(x=>x.getClientRects().length);},
   show(){const b=this.btn();const fight=this.inFight(),lvl=!$('#scr-level').hidden&&!fight,map=!$('#scr-map').hidden&&$('#overlay').hidden&&!fight;b.hidden=!this.on()||!(lvl||map);if(fight&&!this.busy){this.hush();this.unring();}if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
   // on a problem, the chat sits on the empty right side of the problem card, clear of the scratch paper
   place(){const p=this.panel,c=$('#card');if(!p)return;if($('#scr-level').hidden||!c){p.style.cssText='';return;}const r=c.getBoundingClientRect();if(!r.width){p.style.cssText='';return;}
