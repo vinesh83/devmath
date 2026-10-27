@@ -1022,6 +1022,41 @@ html,body{touch-action:manipulation}
 .adv-cell{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:#fff7e0;color:#3a2f1a}.adv-cell span{font-size:30px}.adv-cell small{font-size:12px;text-align:center}
 .adv-cell.none{opacity:.45}.adv-tip{color:#7a6a4a;font-size:14px}
 .adv-ink .ink-cv{height:64px!important}.adv-ink .ink-hint{font-size:15px}
+/* Long Division Workshop */
+.tut{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;background:radial-gradient(ellipse at 30% 20%,#2c2470,#120d33 70%);color:#fff;font-family:var(--f-body,Lexend);overflow:hidden}
+.tut-head{display:flex;align-items:center;gap:14px;padding:12px 16px}.tut-head b{font:800 22px var(--f-display,Lexend);color:#ffe066}.tut-pn{color:#c8cbe8;font-weight:700}
+.tut-bar{flex:1;height:10px;border-radius:6px;background:#ffffff1f;overflow:hidden}.tut-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3fdc6b,#ffe066);transition:width .4s}
+.tut-exit{border:0;border-radius:12px;padding:8px 12px;background:#ffffff22;color:#fff;font-weight:700}
+.tut-stage{flex:1;display:flex;gap:12px;padding:0 16px;min-height:0}
+.tut-board{position:relative;flex:1;border-radius:22px;background:#0d0a28aa;box-shadow:inset 0 0 0 2px #ffffff14;overflow:hidden}
+.tut-right{width:min(260px,30%);display:flex;flex-direction:column;gap:10px}
+.tut-legend{display:grid;gap:6px}.tut-lg{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:#ffffff10;transition:transform .25s,background .25s}
+.tut-lg b{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--c);color:#14102e;font:900 20px var(--f-display,Lexend)}.tut-lg span{font-weight:700}
+.tut-lg.on{background:#ffffff30;transform:scale(1.06);box-shadow:0 0 0 3px var(--c)}
+.tut-side{display:grid;gap:8px}.tut-ans,.tut-chk{padding:12px;border-radius:16px;background:#ffffff14;font:800 20px var(--f-display,Lexend);text-align:center}.tut-ans b{display:block;font-size:34px;color:#7dff5a}
+.tut-c{position:absolute;width:64px;height:60px;display:grid;place-items:center;font:800 46px "JetBrains Mono",ui-monospace,monospace;color:#fff;border-radius:12px;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .7s,background .2s,box-shadow .2s}
+.tut-c.tut-top{color:#ffe066}.tut-c.tut-dv{color:#5ef2ff}.tut-c.tut-q{color:#7dff5a}.tut-c.tut-p{color:#ffffff}.tut-c.tut-d{color:#ff9f43}.tut-c.tut-bd{color:#ffe066}.tut-c.tut-minus{color:#ff4d6d;font-size:38px}
+.tut-c.hl{background:#ffffff26;box-shadow:0 0 0 3px #ffe066,0 0 22px #ffe06688}
+.tut-br{position:absolute;height:60px;border-top:5px solid #fff;border-left:5px solid #fff;border-top-left-radius:14px}
+.tut-ln{position:absolute;height:0;border-top:4px solid #fff;animation:tutIn .4s}
+.tut-arrow{position:absolute;width:0;border-left:3px dashed #ffe06699;font-size:0}
+.tut-big{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:900 40px var(--f-display,Lexend);color:#ffe066;padding:20px}.tut-big.win{font-size:52px}
+.pop{animation:tutPop .45s cubic-bezier(.2,1.6,.4,1)}@keyframes tutPop{from{transform:scale(.3);opacity:0}}@keyframes tutIn{from{opacity:0;transform:scaleX(0)}}
+.tut-foot{display:flex;align-items:center;gap:12px;padding:10px 16px 12px}
+.tut-face{width:84px;height:84px;flex:none;border-radius:50%;background:#ffffff18;display:grid;place-items:center;font-size:44px;overflow:hidden}.tut-face canvas{width:110%;height:110%}
+.tut-face.talk{animation:tutTalk .35s ease-in-out infinite alternate}@keyframes tutTalk{to{transform:translateY(-4px) scale(1.04)}}
+.tut-sub{flex:1;min-height:56px;padding:12px 16px;border-radius:18px;background:#fff;color:#1a1530;font:700 21px/1.35 var(--f-body,Lexend)}.tut-sub.ellie{background:#fff3c4}
+.tut-show{display:inline-block;margin-left:6px;padding:2px 12px;border-radius:10px;background:#3fdc6b;color:#10301a;font-size:26px}
+.tut-again{width:48px;height:48px;border:0;border-radius:50%;background:#ffffff22;color:#fff;font-size:22px}
+.tut-ask{position:absolute;right:16px;bottom:112px;width:min(520px,calc(100% - 32px));padding:12px;border-radius:20px;background:#1f2347f5;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.tut-row{display:flex;gap:10px}.tut-row .field{min-width:110px;height:70px;font-size:34px}.tut-ink{flex:1;height:70px!important;min-height:0!important;max-height:70px;border-radius:14px;background:#fffaf0;position:relative;overflow:hidden}.tut-ink .ink-cv{height:70px!important}
+.tut-keys{display:grid;grid-template-columns:repeat(11,1fr) 1.6fr;gap:5px;margin-top:8px}.tut-key{border:0;border-radius:10px;height:48px;padding:0;background:#2d3266;color:#fff;font:800 22px var(--f-display,Lexend);box-shadow:0 3px 0 #161a3d}
+.tut-go{border:0;border-radius:10px;min-height:48px;background:#3fdc6b;color:#10301a;font:900 24px var(--f-display,Lexend);box-shadow:0 3px 0 #1f8a3e}.tut-go.wide{width:100%;margin-top:8px}
+.tut-yn{width:calc(50% - 6px);height:72px;margin:0 3px;border:0;border-radius:16px;font:800 26px var(--f-display,Lexend);color:#fff}.tut-yn.yes{background:#3fbf5f}.tut-yn.no{background:#e8345a}
+.tut-win{font:800 22px var(--f-display,Lexend);color:#ffe066;text-align:center}
+.dv-lv.dv-tut{background:linear-gradient(90deg,#ffd23f33,#ff9f4333);box-shadow:0 0 0 3px #ffd23f}
+.dv-class-drill.locked{opacity:.6}
+.vp.tut{display:flex;place-items:stretch;align-items:stretch;justify-items:stretch;background:radial-gradient(ellipse at 30% 20%,#2c2470,#120d33 70%)}
 </style>
 
 <div id="app">
@@ -4289,6 +4324,129 @@ function genClassDiv(i){
 window.__classRun=(idx)=>startRun({title:'Class Practice · Long Division',mode:'drill',color:'#e0457b',problems:idx.map(i=>genClassDiv(i))});
 
 /* =========================================================
+   Long Division Workshop: a required, video-style tutorial for 3-digit ÷ 1-digit long division.
+   Four problems (857÷3, 645÷4, 247÷7 first digit too small, 614÷3 zero in the answer). The board draws itself
+   and a narrator talks him through it, but every step is a question he answers: Divide, Multiply, Subtract,
+   Check, Bring down, then the remainder and a multiply-back check. A miss gives a hint; a second miss shows
+   the answer and he writes it. Progress is saved by problem. Class Practice and the 3-digit Dungeon levels
+   stay locked until he finishes. Script and narration: tut/longdiv3.json, tut/a/*.mp3 (made by tut/gen.py).
+   ========================================================= */
+const Tut={
+  st(){const s=state.tut3=state.tut3||{};s.i=s.i||0;s.log=s.log||[];return s;},
+  done(){return !!this.st().done;},
+  async data(){if(!this.D){const r=await fetch('tut/longdiv3.json',{cache:'no-cache'});this.D=await r.json();}return this.D;},
+  // ---- the screen
+  async open(o){o=o||{};if(this.el)return;const D=await this.data();const S=this.st();
+    if(typeof Music!=='undefined')Music.stop();try{speechSynthesis.cancel();}catch(e){}
+    const root=el('div',{class:'vp tut'});this.el=root;
+    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,'🎬 Long Division Workshop'),el('span',{class:'tut-pn'}),el('div',{class:'tut-bar'},bar),
+      el('button',{class:'tut-exit',type:'button',onclick:()=>this.close()},'⏸ Finish later'));
+    const board=el('div',{class:'tut-board'}),legend=el('div',{class:'tut-legend'},...[['D','Divide','#3fa7ff'],['M','Multiply','#3fbf5f'],['S','Subtract','#ffd23f'],['C','Check','#c084fc'],['B','Bring down','#ff4d6d']].map(([k,n,c])=>el('div',{class:'tut-lg','data-k':k,style:`--c:${c}`},el('b',null,k),el('span',null,n))));
+    const side=el('div',{class:'tut-side'});
+    const face=el('div',{class:'tut-face'},'🐶'),sub=el('div',{class:'tut-sub'}),again=el('button',{class:'tut-again',type:'button','aria-label':'Hear it again'},'🔁');
+    const ask=el('div',{class:'tut-ask',hidden:true});
+    root.append(head,el('div',{class:'tut-stage'},board,el('div',{class:'tut-right'},legend,side)),el('div',{class:'tut-foot'},face,sub,again),ask);document.body.append(root);
+    Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),face});again.addEventListener('click',()=>this.replay());
+    // Ellie's toon portrait when the 3D engine is available
+    try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const sp=Cin3.sprites().dog;const c=Cine3D.portrait(sp,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
+    // resume at the start of the problem he was on
+    let i=Math.min(S.i,D.steps.length-1);while(i>0&&D.steps[i].kind!=='problem')i--;if(S.done||o.replay)i=0;this.i=i;this.alive=true;this.run();},
+  close(){this.alive=false;this.stopAudio();if(this.el){this.el.remove();this.el=null;}if(this.f&&Pad.active===this.f)Pad.active=null;
+    try{if(typeof renderMap==='function'&&!$('#scr-map').hidden)renderMap();}catch(e){}},
+  // ---- narration: a clip per line (subtitles always on; when sound is off, wait about as long as reading takes)
+  stopAudio(){if(this.au){try{this.au.pause();}catch(e){}this.au=null;}if(this.wt){clearTimeout(this.wt);this.wt=null;}if(this.sayDone){this.sayDone();this.sayDone=null;}},
+  speak(line){return new Promise(res=>{if(!this.alive)return res();this.last=line;this.sub.textContent=line.t;this.sub.className='tut-sub'+(line.v==='E'?' ellie':'');this.face.classList.toggle('talk',true);
+    const fin=()=>{this.face.classList.remove('talk');this.au=null;this.sayDone=null;res();};this.sayDone=fin;
+    if(window.__tutFast){this.wt=setTimeout(fin,20);return;}
+    if(state.mute){this.wt=setTimeout(fin,900+line.t.length*45);return;}
+    const a=new Audio('tut/a/'+line.a+'.mp3');this.au=a;a.onended=()=>setTimeout(fin,250);a.onerror=()=>{this.wt=setTimeout(fin,900+line.t.length*45);};
+    a.play().catch(()=>{this.wt=setTimeout(fin,900+line.t.length*45);});});},
+  async lines(list){for(const l of list||[]){if(!this.alive)return;await this.speak(l);}},
+  replay(){if(this.last&&!this.au)this.speak(this.last);},
+  // ---- the board: divisor, bracket, dividend digits, and the work rows under it
+  CW:64,RH:60,
+  cell(r,c,v,cls){const b=this.board,k=r+','+c;let e=b.querySelector(`[data-k="${k}"]`);if(!e){e=el('div',{class:'tut-c','data-k':k});b.append(e);}
+    e.textContent=v;e.className='tut-c '+(cls||'');e.style.left=(this.x0+c*this.CW)+'px';e.style.top=(this.y0+r*this.RH)+'px';return e;},
+  digits(r,endCol,v,cls){const s=String(v);return [...s].map((ch,k)=>this.cell(r,endCol-s.length+1+k,ch,cls));},
+  newBoard(n,d){const b=this.board;b.innerHTML='';const s=String(n);this.n=n;this.d=d;this.s=s;this.rowsCur=[];
+    this.x0=Math.max(120,(b.clientWidth-s.length*this.CW)/2);this.y0=30;
+    const dv=el('div',{class:'tut-c tut-dv'},String(d));dv.style.left=(this.x0-this.CW*1.15)+'px';dv.style.top=(this.y0+this.RH)+'px';b.append(dv);
+    const br=el('div',{class:'tut-br'});br.style.left=(this.x0-10)+'px';br.style.top=(this.y0+this.RH-4)+'px';br.style.width=(s.length*this.CW+16)+'px';b.append(br);
+    [...s].forEach((ch,c)=>this.cell(1,c,ch,'tut-top'));
+    this.curCells=null;},
+  hl(list){this.board.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl'));(list||[]).forEach(e=>e&&e.classList.add('hl'));},
+  at(r,c){return this.board.querySelector(`[data-k="${r},${c}"]`);},
+  // where the number being divided sits for row ri (row 1 for the first, then the line under the last subtraction)
+  curRow(ri){return ri===0?1:3+2*(ri-1);},
+  vis(acts){for(const v of acts||[]){const k=v.act;
+    if(k==='new')this.newBoard(v.n,v.d);
+    else if(k==='legend'){this.board.innerHTML='';this.board.append(el('div',{class:'tut-big'},'Divide · Multiply · Subtract · Bring down'));}
+    else if(k==='hl'){const r=v.row==null||v.row===0?1:this.curRow(v.row);this.hl(v.cols.map(c=>this.at(r,c)).concat([this.board.querySelector('.tut-dv')]));}
+    else if(k==='quot'){this.digits(0,v.col,v.v,'tut-q pop');}
+    else if(k==='hlq'){this.hl([this.at(0,v.col),this.board.querySelector('.tut-dv')]);}
+    else if(k==='prod'){this.hl([]);this.digits(2+2*v.row,v.col,v.v,'tut-p pop');}
+    else if(k==='line'){const r=2+2*v.row,c0=Math.min(...v.cols),c1=Math.max(...v.cols);const ln=el('div',{class:'tut-ln'});ln.style.left=(this.x0+c0*this.CW-4)+'px';ln.style.width=((c1-c0+1)*this.CW+8)+'px';ln.style.top=(this.y0+(r+1)*this.RH-4)+'px';
+      const mn=el('div',{class:'tut-c tut-minus'},'−');mn.style.left=(this.x0+c0*this.CW-this.CW*0.6)+'px';mn.style.top=(this.y0+r*this.RH)+'px';this.board.append(ln,mn);
+      this.hl(v.cols.map(c=>this.at(this.curRow(v.row),c)).concat(v.cols.map(c=>this.at(r,c))));}
+    else if(k==='diff'){this.hl([]);this.digits(3+2*v.row,v.col,v.v,'tut-d pop');}
+    else if(k==='hld'){this.hl([...this.board.querySelectorAll(`[data-k^="${3+2*v.row},"]`),this.board.querySelector('.tut-dv')]);}
+    else if(k==='hlcol'){this.hl([this.at(1,v.col)]);}
+    else if(k==='bring'){const from=this.at(1,v.col),r=3+2*v.row;const e=this.cell(r,v.col,v.v,'tut-bd');e.style.transform=`translateY(${-(r-1)*this.RH}px)`;e.style.opacity='0.2';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{e.style.transform='';e.style.opacity='';}));
+      const ar=el('div',{class:'tut-arrow'},'↓');ar.style.left=(this.x0+v.col*this.CW+this.CW*0.62)+'px';ar.style.top=(this.y0+1.6*this.RH)+'px';ar.style.height=((r-1.4)*this.RH)+'px';this.board.append(ar);this.hl([e]);}
+    else if(k==='hlrem'){const last=[...this.board.querySelectorAll('.tut-d,.tut-bd')].filter(x=>+x.dataset.k.split(',')[0]===Math.max(...[...this.board.querySelectorAll('.tut-d')].map(y=>+y.dataset.k.split(',')[0])));this.hl(last);}
+    else if(k==='answer'){this.side.innerHTML='';this.side.append(el('div',{class:'tut-ans pop'},`${this.n} ÷ ${this.d} =`,el('b',null,v.v)));}
+    else if(k==='check'){this.side.append(el('div',{class:'tut-chk pop'},`${v.Q} × ${v.d} = ${v.Q*v.d}`,el('br'),`${v.Q*v.d} + ${v.R} = ?`));}
+    else if(k==='done'){const c=this.side.querySelector('.tut-chk');if(c)c.innerHTML=c.innerHTML.replace('?',String(this.n)+' ✓');this.hl([]);}
+    else if(k==='outro'){this.board.innerHTML='';this.side.innerHTML='';this.board.append(el('div',{class:'tut-big win'},'🏆 Long Division Knight!'));}}},
+  legendOn(tag){this.legend.querySelectorAll('.tut-lg').forEach(x=>x.classList.toggle('on',x.dataset.k===tag));},
+  // ---- answers: keypad and Pencil for numbers, two big buttons for yes/no
+  askNum(){return new Promise(res=>{const A=this.ask;A.innerHTML='';A.hidden=false;const f=Pad.make({max:4,allowDot:false,ph:'?'});this.f=f;
+    const ink=el('div',{class:'tut-ink'});const keys=el('div',{class:'tut-keys'});
+    '1234567890'.split('').concat(['⌫']).forEach(k=>{const b=el('button',{class:'tut-key',type:'button'},k);tapify(b,()=>{Pad.focus(f);Pad.key(k==='⌫'?'del':k);},{down:true});keys.append(b);});
+    const go=el('button',{class:'tut-go',type:'button'},'✓');keys.append(go);A.append(el('div',{class:'tut-row'},f.el,ink),keys);
+    try{this.ink=InkBox.make(ink,{big:true});}catch(e){}Pad.focus(f);let last=0;
+    const sub=()=>{if(Date.now()-last<500)return;const v=Pad.val(f);if(v==null)return;last=Date.now();res({v,clear:()=>{f.val='';Pad.render(f);if(this.ink&&this.ink.clear)this.ink.clear();Pad.focus(f);}});};
+    tapify(go,sub);f.onEnter=sub;});},
+  askYN(){return new Promise(res=>{const A=this.ask;A.innerHTML='';A.hidden=false;
+    const y=el('button',{class:'tut-yn yes',type:'button'},'👍 Yes'),n=el('button',{class:'tut-yn no',type:'button'},'👎 No');
+    tapify(y,()=>res({v:'yes',clear:()=>{}}));tapify(n,()=>res({v:'no',clear:()=>{}}));A.append(y,n);});},
+  async ask1(step){const t0=Date.now();let tries=0;
+    for(;;){const r=step.q==='yn'?await this.askYN():await this.askNum();if(!this.alive)return;
+      if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);
+        this.st().log.push({i:this.i,p:step.p,tag:step.tag,tries,ms:Date.now()-t0});if(this.st().log.length>400)this.st().log.shift();return;}
+      tries++;this.chime(false);r.clear();this.ask.hidden=true;
+      if(tries===1){await this.lines([this.D.shared.miss,step.hint]);}
+      else{this.sub.innerHTML='';this.sub.append(document.createTextNode(step.hint.t+' '),el('b',{class:'tut-show'},step.q==='yn'?(step.ans==='yes'?'Yes':'No'):String(step.ans)));await this.speak(this.D.shared.show);this.sub.textContent='';
+        this.sub.append(document.createTextNode('Write: '),el('b',{class:'tut-show'},step.q==='yn'?(step.ans==='yes'?'Yes':'No'):String(step.ans)));}
+      if(!this.alive)return;}},
+  chime(ok){try{if(ok){Snd.tone(784,0.07,'square',0.035);Snd.tone(1046,0.1,'square',0.035,0.07);}else Snd.tone(220,0.15,'triangle',0.04);}catch(e){}},
+  // ---- the script
+  async run(){const D=this.D;
+    while(this.alive&&this.i<D.steps.length){const s=D.steps[this.i];const S=this.st();
+      if(s.kind==='problem'){S.i=this.i;saveState();this.side.innerHTML='';this.pn.textContent=`Problem ${s.p+1} of ${D.problems.length}`;}
+      this.bar.style.width=(100*this.i/D.steps.length).toFixed(1)+'%';this.legendOn(s.tag||null);
+      this.vis(s.vis);await this.lines(s.say);if(!this.alive)return;
+      if(s.kind==='ask'){await this.ask1(s);if(!this.alive)return;this.vis(s.afterVis);
+        const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);}
+      this.i++;}
+    if(!this.alive)return;const S=this.st();const first=!S.done;S.done=true;S.doneAt=new Date().toISOString();S.i=0;
+    if(first){state.coins=(state.coins||0)+50;try{updateTop();}catch(e){}}saveState();
+    this.ask.hidden=false;this.ask.innerHTML='';this.ask.append(el('div',{class:'tut-win'},first?'+50 coins · Class Practice unlocked!':'Great review!'),el('button',{class:'tut-go wide',type:'button',onclick:()=>{this.close();if(first&&typeof Dungeon!=='undefined')Dungeon.open();}},'Done'));}
+};
+// ---- required before 3-digit division: the Dungeon opens the workshop first; Class Practice and 3-digit levels wait for it
+{const _op=Dungeon.open.bind(Dungeon);Dungeon.open=function(){_op.apply(this,arguments);try{const lvs=document.querySelector('.dv-modal .dv-lvs');if(!lvs)return;
+  const b=el('button',{class:'dv-lv dv-tut',type:'button'},el('b',null,Tut.done()?'🎬 Long Division Workshop':'🎬 Long Division Workshop (start here!)'),el('span',null,'Every step of 3-digit long division, with you doing each one'),el('i',null,Tut.done()?'✓ done · replay':'required'));
+  tapify(b,()=>{overlay(null);Tut.open({replay:Tut.done()});});lvs.before(b);
+  if(!Tut.done()){const c=document.querySelector('.dv-class-drill');if(c){c.classList.add('locked');const i=c.querySelector('i');if(i)i.textContent='🔒 after the Workshop';
+      c.replaceWith(c.cloneNode(true));const c2=document.querySelector('.dv-class-drill');tapify(c2,()=>{overlay(null);Tut.open();});}}
+    // first Dungeon visit each day until it's done: the Workshop opens by itself
+    const S=Tut.st();if(!Tut.done()&&S.autoDay!==dayStr()){S.autoDay=dayStr();saveState();setTimeout(()=>{overlay(null);Tut.open();},400);}
+  }catch(e){console.error(e);}};}
+{const _sl=startLevel;startLevel=function(w,li){if(w&&w.id==='dungeon'&&li>=3&&li<5&&!Tut.done()){try{overlay(null);}catch(e){}Tut.open();return;}return _sl.apply(this,arguments);};}
+window.__tut=Tut;
+
+/* =========================================================
    Surprises: one-time drops from home. Each plays once, on the first map visit after it ships:
    the Knight reads a message from home, then golden chests open with prizes chosen ahead of time.
    ========================================================= */
@@ -4908,7 +5066,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261027023708';
+const BUILD='20261027223521';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
