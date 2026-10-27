@@ -476,5 +476,7 @@ class Adventure{
   respawn(f){this.addFoe(f);}
   remove(){for(const s of this.digs)this.sc.remove(s.g);for(const s of this.gems)this.sc.remove(s.g);for(const f of this.foes)this.sc.remove(f.g);}
 }
+// shared with the cutscenes and boss battles, so every 3D scene uses the same toon characters
+export {makeHero,makeDog,makeBug,makeSword,M as toonMesh,toon as toonMat,outline as toonOutline};
 export const World3D={ok(){try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(e){return false;}},
   start(host,o){return new World(host,o);}};
