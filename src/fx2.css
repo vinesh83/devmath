@@ -563,3 +563,5 @@ html,body{touch-action:manipulation}
 .ellie-mark{position:absolute;pointer-events:none;border:4px dashed #ffb703;border-radius:50%;box-shadow:0 0 0 6px #ffd23f55,0 0 18px #ffb70399;animation:ellieMark 1.1s ease-in-out infinite}
 .ellie-mark span{position:absolute;right:-14px;top:-18px;font-size:24px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 @keyframes ellieMark{50%{transform:scale(1.07);box-shadow:0 0 0 10px #ffd23f33,0 0 26px #ffb703}}
+#inkPad.rc-reading .ink-read{color:#7a5cff;animation:rcPulse .8s ease-in-out infinite}
+@keyframes rcPulse{50%{opacity:.45}}

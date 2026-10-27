@@ -21,7 +21,9 @@ const Walkie={
     const panel=el('div',{class:'ellie-panel',hidden:true});document.body.append(b,panel);this.panel=panel;
     b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
     return b;},
-  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
+  // battles, mini-games and videos have their own buttons: the walkie-talkie steps aside
+  inFight(){return [...document.querySelectorAll('.bb-ctl,.ag-pad,.ap-grid,.spd-wrap,#catch,#dash,#whack,.vp,#cine3d')].some(x=>x.getClientRects().length);},
+  show(){const b=this.btn();const fight=this.inFight(),lvl=!$('#scr-level').hidden&&!fight,map=!$('#scr-map').hidden&&$('#overlay').hidden&&!fight;b.hidden=!this.on()||!(lvl||map);if(fight&&!this.busy){this.hush();this.unring();}if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
   // on a problem, the chat sits on the empty right side of the problem card, clear of the scratch paper
   place(){const p=this.panel,c=$('#card');if(!p)return;if($('#scr-level').hidden||!c){p.style.cssText='';return;}const r=c.getBoundingClientRect();if(!r.width){p.style.cssText='';return;}
     const w=Math.min(420,r.width*0.52);p.style.cssText=`left:${r.right-w-14}px;top:${r.top+14}px;bottom:auto;width:${w}px;transform:none`;},
@@ -104,7 +106,7 @@ const Walkie={
     const o=c.createOscillator(),og=c.createGain();o.frequency.value=1400;og.gain.setValueAtTime(0.06,c.currentTime+0.16);og.gain.setValueAtTime(0,c.currentTime+0.22);og.gain.setValueAtTime(0,c.currentTime);og.gain.setValueAtTime(0.06,c.currentTime+0.16);o.connect(og).connect(c.destination);o.start();o.stop(c.currentTime+0.23);}catch(e){}
     return new Promise(r=>setTimeout(r,260));},
   // music drops while Ellie talks
-  duck(on){this.talking=on;try{if(Snd.musG)Snd.musG.gain.value=on?0.25:1;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
+  duck(on){this.talking=on;try{Snd.levels();if(on&&Snd.musG)Snd.musG.gain.value*=0.3;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
   async send(said){this.mark=null;const c=this.ctx(),k=(run&&run.idx)+'|'+c.text;if(k!==this.key){this.key=k;this.hist=[];}
     this.busy=true;this.unring();this.snapBox=null;const image=this.snap();const out=this.bubble('ellie',image?'👀 Looking at your paper…':'…');let reply='',spoken=0,ringed=false;const filled=this.fill(image?'look':'talk');
     try{const body=JSON.stringify({code:state.ellieCode,problem:c,history:this.hist,said,image}),ask=()=>this.tfetch(this.URL,{method:'POST',headers:{'content-type':'application/json'},body},15000);

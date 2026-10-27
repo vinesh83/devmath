@@ -991,6 +991,8 @@ html,body{touch-action:manipulation}
 .ellie-mark{position:absolute;pointer-events:none;border:4px dashed #ffb703;border-radius:50%;box-shadow:0 0 0 6px #ffd23f55,0 0 18px #ffb70399;animation:ellieMark 1.1s ease-in-out infinite}
 .ellie-mark span{position:absolute;right:-14px;top:-18px;font-size:24px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 @keyframes ellieMark{50%{transform:scale(1.07);box-shadow:0 0 0 10px #ffd23f33,0 0 26px #ffb703}}
+#inkPad.rc-reading .ink-read{color:#7a5cff;animation:rcPulse .8s ease-in-out infinite}
+@keyframes rcPulse{50%{opacity:.45}}
 </style>
 
 <div id="app">
@@ -4355,7 +4357,9 @@ const Walkie={
     const panel=el('div',{class:'ellie-panel',hidden:true});document.body.append(b,panel);this.panel=panel;
     b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
     return b;},
-  show(){const b=this.btn();const lvl=!$('#scr-level').hidden,map=!$('#scr-map').hidden&&$('#overlay').hidden;b.hidden=!this.on()||!(lvl||map);if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
+  // battles, mini-games and videos have their own buttons: the walkie-talkie steps aside
+  inFight(){return [...document.querySelectorAll('.bb-ctl,.ag-pad,.ap-grid,.spd-wrap,#catch,#dash,#whack,.vp,#cine3d')].some(x=>x.getClientRects().length);},
+  show(){const b=this.btn();const fight=this.inFight(),lvl=!$('#scr-level').hidden&&!fight,map=!$('#scr-map').hidden&&$('#overlay').hidden&&!fight;b.hidden=!this.on()||!(lvl||map);if(fight&&!this.busy){this.hush();this.unring();}if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
   // on a problem, the chat sits on the empty right side of the problem card, clear of the scratch paper
   place(){const p=this.panel,c=$('#card');if(!p)return;if($('#scr-level').hidden||!c){p.style.cssText='';return;}const r=c.getBoundingClientRect();if(!r.width){p.style.cssText='';return;}
     const w=Math.min(420,r.width*0.52);p.style.cssText=`left:${r.right-w-14}px;top:${r.top+14}px;bottom:auto;width:${w}px;transform:none`;},
@@ -4438,7 +4442,7 @@ const Walkie={
     const o=c.createOscillator(),og=c.createGain();o.frequency.value=1400;og.gain.setValueAtTime(0.06,c.currentTime+0.16);og.gain.setValueAtTime(0,c.currentTime+0.22);og.gain.setValueAtTime(0,c.currentTime);og.gain.setValueAtTime(0.06,c.currentTime+0.16);o.connect(og).connect(c.destination);o.start();o.stop(c.currentTime+0.23);}catch(e){}
     return new Promise(r=>setTimeout(r,260));},
   // music drops while Ellie talks
-  duck(on){this.talking=on;try{if(Snd.musG)Snd.musG.gain.value=on?0.25:1;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
+  duck(on){this.talking=on;try{Snd.levels();if(on&&Snd.musG)Snd.musG.gain.value*=0.3;}catch(e){}try{const a=typeof Isle!=='undefined'&&Isle.aud;if(a)a.volume=on?0.15:0.55;}catch(e){}},
   async send(said){this.mark=null;const c=this.ctx(),k=(run&&run.idx)+'|'+c.text;if(k!==this.key){this.key=k;this.hist=[];}
     this.busy=true;this.unring();this.snapBox=null;const image=this.snap();const out=this.bubble('ellie',image?'👀 Looking at your paper…':'…');let reply='',spoken=0,ringed=false;const filled=this.fill(image?'look':'talk');
     try{const body=JSON.stringify({code:state.ellieCode,problem:c,history:this.hist,said,image}),ask=()=>this.tfetch(this.URL,{method:'POST',headers:{'content-type':'application/json'},body},15000);
@@ -4530,6 +4534,54 @@ const Tips={
 document.addEventListener('click',e=>{try{const m=Isle.map();if(!m||!m.contains(e.target))return;const b=e.target.closest('button,[aria-label]');if(!b)return;
   for(const s of Isle.sites()){const hit=(s.q&&b.matches(s.q))||((s.world||s.aria)&&(b.getAttribute('aria-label')||'').startsWith(s.name));if(hit){Tips.went(s.id);break;}}}catch(err){}},true);
 window.__tips=Tips;
+
+/* =========================================================
+   Second reader for handwritten answers. The iPad's digit reader is quick but misreads some of Dev's digits,
+   and a misread answer gets marked wrong. When the quick reader's answer would be wrong (or it isn't sure),
+   a picture of his ink goes to Claude (server /api/read), which reads the number without knowing the right
+   answer. If it reads something different, the answer box is corrected. While it reads (about a second, never
+   more than 3), Submit waits. Needs the walkie-talkie code; without it the quick reader works alone.
+   ========================================================= */
+const ReadCheck={
+  URL:'https://ellie-walkie.vercel.app/api/read',
+  pads:[],
+  // the right answer for the problem on screen, when there is a single one
+  ans(){try{const p=run&&run.queue&&run.queue[run.idx];if(!p)return null;const a=p.answer!=null?p.answer:(p.base&&p.base.answer);return a==null||isNaN(a)?null:String(+a);}catch(e){return null;}},
+  // his strokes as a clean black-on-white picture, cropped to the ink
+  image(I){const S=I.strokes;if(!S||!S.length)return null;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    for(const s of S)for(const p of s){x0=Math.min(x0,p.x);y0=Math.min(y0,p.y);x1=Math.max(x1,p.x);y1=Math.max(y1,p.y);}
+    const m=14,w=x1-x0+2*m,h=y1-y0+2*m,k=Math.min(120/h,480/w,3),c=document.createElement('canvas');c.width=Math.max(40,Math.round(w*k));c.height=Math.max(40,Math.round(h*k));
+    const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.strokeStyle='#000';g.lineWidth=Math.max(3,5*k/1.5);g.lineCap='round';g.lineJoin='round';
+    for(const s of S){g.beginPath();s.forEach((p,i)=>{const X=(p.x-x0+m)*k,Y=(p.y-y0+m)*k;i?g.lineTo(X,Y):g.moveTo(X,Y);});if(s.length===1)g.lineTo((s[0].x-x0+m)*k+0.5,(s[0].y-y0+m)*k);g.stroke();}
+    return c.toDataURL('image/png');},
+  hold(on){const B=[...document.querySelectorAll('#actions .btn')];B.forEach(b=>{if(on){if(b.dataset.rc==null){b.dataset.rc=b.disabled?'1':'0';b.disabled=true;}}else if(b.dataset.rc!=null){b.disabled=b.dataset.rc==='1';delete b.dataset.rc;}});
+    const host=document.querySelector('#inkPad');if(host)host.classList.toggle('rc-reading',on);},
+  async check(f,txt,minP,I){if(!state.ellieCode||!f||f.locked||!I)return;const want=this.ans(),at=I.lastAt;
+    if(want!=null&&String(txt)===want&&minP>=0.9)return;                    // read as right, and sure of it: nothing to check
+    if(!I.strokes.length)return;const img=this.image(I);if(!img)return;
+    const my=(this.n=(this.n||0)+1);this.hold(true);const lab=I.host.querySelector('.ink-read');if(lab)lab.textContent='Reading your writing…';
+    let got=null;try{const ac=new AbortController(),t=setTimeout(()=>ac.abort(),3000);
+      const r=await fetch(this.URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code:state.ellieCode,image:img,dot:!!f.allowDot}),signal:ac.signal});clearTimeout(t);
+      if(r.ok)got=(await r.json()).text;}catch(e){}
+    if(my!==this.n)return;this.hold(false);
+    // only change the box if he hasn't written more since, and the second reader is sure
+    // trust the second reader when both count the same number of digits, or the quick reader wasn't sure
+    const agreeLen=got&&got.replace('.','').length===String(txt).replace('.','').length;
+    const fresh=I.lastAt===at&&I.target===f;
+    if(got&&fresh&&!f.locked&&got!==String(f.val)&&(agreeLen||minP<0.6)){f.val=got.slice(0,f.max+1);f.src='ink2';Pad.render(f);if(typeof ANS!=='undefined'&&!ANS.firstInput)ANS.firstInput=Date.now();}
+    if(lab){lab.textContent=f.val?'I read: '+f.val:'Hmm, write it a bit bigger?';lab.className='ink-read'+(f.val?'':' meh');}
+    (state.readLog=state.readLog||[]).push({t:Date.now(),quick:String(txt),second:got,p:+(+minP).toFixed(2)});if(state.readLog.length>100)state.readLog.shift();}
+};
+// Pad and InkBox are defined further down this script: hook in once everything has loaded
+setTimeout(()=>{try{
+  const hook=I=>{if(!I||I.__rc)return;I.__rc=1;ReadCheck.pads.push(I);const rd=I.read.bind(I);
+    I.read=function(){const f=this.target,before=f&&f.lastAt;rd();if(!f||f.locked)return;
+      // the quick reader filled the box, or gave up: either way, let the second reader look
+      if(f.lastAt!==before&&f.src==='ink')ReadCheck.check(f,f.val,f.inkP==null?0:f.inkP,this);else if(f.lastAt===before)ReadCheck.check(f,'',0,this);};};
+  const mk=InkBox.make.bind(InkBox);InkBox.make=function(){const I=mk.apply(this,arguments);hook(I);return I;};
+  hook(InkBox.pad);
+}catch(e){console.error(e);}},0);
+window.__readcheck=ReadCheck;
 
 /* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
@@ -4656,13 +4708,18 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261027000027';
+const BUILD='20261027020013';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
     if(safe&&$('#overlay').hidden&&$('#cine').hidden&&$('#talk').hidden){saveState();lsSet('nk-upd',this.want);location.replace(location.pathname+'?v='+this.want);}else{clearTimeout(this.tm);this.tm=setTimeout(()=>this.apply(),3000);}},
   init(){document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.check();});setInterval(()=>this.check(),10*60*1000);setTimeout(()=>this.check(),5000);}
 };
+// Music guard: some screens (lesson videos, cutscenes) stop the music and never restart it.
+// While a level is running and nothing is covering it, make sure its music is playing.
+setInterval(()=>{try{if(typeof Music==='undefined'||!Snd.ctx||state.musicOff||Pause.on||!Pause.active()||document.querySelector('.vp,#cine3d'))return;
+  if(!Music.song)Music.play(run.spec&&run.spec.mech?'boss':'battle');}catch(e){}},1500);
+Object.defineProperty(window,'__snd',{get:()=>({Music,Snd,state})});
 
 /* =========================================================
    Dogs! A pack of breeds for the Shop, and a free starter dog.

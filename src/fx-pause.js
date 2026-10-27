@@ -40,3 +40,8 @@ const Updater={want:false,
     if(safe&&$('#overlay').hidden&&$('#cine').hidden&&$('#talk').hidden){saveState();lsSet('nk-upd',this.want);location.replace(location.pathname+'?v='+this.want);}else{clearTimeout(this.tm);this.tm=setTimeout(()=>this.apply(),3000);}},
   init(){document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.check();});setInterval(()=>this.check(),10*60*1000);setTimeout(()=>this.check(),5000);}
 };
+// Music guard: some screens (lesson videos, cutscenes) stop the music and never restart it.
+// While a level is running and nothing is covering it, make sure its music is playing.
+setInterval(()=>{try{if(typeof Music==='undefined'||!Snd.ctx||state.musicOff||Pause.on||!Pause.active()||document.querySelector('.vp,#cine3d'))return;
+  if(!Music.song)Music.play(run.spec&&run.spec.mech?'boss':'battle');}catch(e){}},1500);
+Object.defineProperty(window,'__snd',{get:()=>({Music,Snd,state})});
