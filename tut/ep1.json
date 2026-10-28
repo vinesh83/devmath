@@ -22,17 +22,17 @@
    "say": [
     {
      "t": "Welcome to day one of the Long Division Workshop! Three problems today, one step at a time.",
-     "a": "41c4ff3271",
-     "v": "N"
+     "a": "c228e32aee",
+     "v": "E"
     },
     {
      "t": "Every long division follows the Knight's Code: Divide, Multiply, Subtract, Bring down. Then we do it again!",
-     "a": "80b9a22402",
-     "v": "N"
+     "a": "155b527e0a",
+     "v": "E"
     },
     {
      "t": "Let's go!",
-     "a": "85915037d5",
+     "a": "01f1975ca4",
      "v": "E"
     }
    ],
@@ -50,8 +50,8 @@
    "say": [
     {
      "t": "Problem 1 of 3: 857 divided by 3.",
-     "a": "ace2383c89",
-     "v": "N"
+     "a": "2d5db98316",
+     "v": "E"
     }
    ],
    "vis": [
@@ -71,14 +71,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 8? Count by 3s if you need to.",
-     "a": "bf7b1595bf",
-     "v": "N"
+     "a": "f720d5a9c8",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 3s: 3, 6, 9. Stop before you go past 8.",
-    "a": "70a3863c80",
-    "v": "N"
+    "a": "256f0a56fc",
+    "v": "E"
    },
    "vis": [
     {
@@ -92,8 +92,8 @@
    "after": [
     {
      "t": "Yes! 2. Write it on top, above the 8.",
-     "a": "aa3bdf3530",
-     "v": "N"
+     "a": "e7ee221958",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -113,14 +113,14 @@
    "say": [
     {
      "t": "Multiply: 2 times 3?",
-     "a": "7e6c56b935",
-     "v": "N"
+     "a": "218023359e",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 groups of 3. Count by 3s 2 times.",
-    "a": "6cf7a9c887",
-    "v": "N"
+    "a": "8792941e95",
+    "v": "E"
    },
    "vis": [
     {
@@ -146,14 +146,14 @@
    "say": [
     {
      "t": "Subtract: 8 minus 6?",
-     "a": "43433a072f",
-     "v": "N"
+     "a": "116259d2f1",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 6 and count up to 8. How many did you count?",
-    "a": "9ba523d14f",
-    "v": "N"
+    "a": "9644c71ed2",
+    "v": "E"
    },
    "vis": [
     {
@@ -182,14 +182,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 3?",
-     "a": "fb007676d0",
-     "v": "N"
+     "a": "45bca2a612",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "2648a812ee",
-    "v": "N"
+    "a": "ec1eb718bb",
+    "v": "E"
    },
    "vis": [
     {
@@ -201,8 +201,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -215,14 +215,14 @@
    "say": [
     {
      "t": "Bring down the 5. What number do we have now?",
-     "a": "75611c29e9",
-     "v": "N"
+     "a": "3d67eb0303",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 5 next to the 2. That makes 25.",
-    "a": "94d7c0f3a3",
-    "v": "N"
+    "a": "1e171d02a4",
+    "v": "E"
    },
    "vis": [
     {
@@ -241,7 +241,26 @@
    "after": [
     {
      "t": "Now we do the Knight's Code again.",
-     "a": "b5e7e5e593",
+     "a": "e8179acec3",
+     "v": "E"
+    }
+   ]
+  },
+  {
+   "kind": "reward",
+   "r": "chest",
+   "p": 0,
+   "say": [
+    {
+     "t": "Whoa, wait! A treasure chest just dropped! Tap it to open it!",
+     "a": "900a501238",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Back to the problem, Knight!",
+     "a": "fd7950b64c",
      "v": "E"
     }
    ]
@@ -255,14 +274,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 25? Count by 3s if you need to.",
-     "a": "4e45400f82",
-     "v": "N"
+     "a": "3c3b93ebea",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 3s: 3, 6, 9, 12, 15, 18, 21, 24, 27. Stop before you go past 25.",
-    "a": "ef28aec189",
-    "v": "N"
+    "a": "82fd7c6118",
+    "v": "E"
    },
    "vis": [
     {
@@ -277,8 +296,8 @@
    "after": [
     {
      "t": "Yes! 8. Write it on top, above the 5.",
-     "a": "d9220a8d10",
-     "v": "N"
+     "a": "9d4bdf8c8a",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -298,14 +317,14 @@
    "say": [
     {
      "t": "Multiply: 8 times 3?",
-     "a": "d0c845312d",
-     "v": "N"
+     "a": "9996c1792c",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "8 groups of 3. Count by 3s 8 times.",
-    "a": "5fc06ff82b",
-    "v": "N"
+    "a": "393568b7a8",
+    "v": "E"
    },
    "vis": [
     {
@@ -331,14 +350,14 @@
    "say": [
     {
      "t": "Subtract: 25 minus 24?",
-     "a": "b3d8e9aebf",
-     "v": "N"
+     "a": "45ae8234c9",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 24 and count up to 25. How many did you count?",
-    "a": "189922be77",
-    "v": "N"
+    "a": "edc694418c",
+    "v": "E"
    },
    "vis": [
     {
@@ -368,14 +387,14 @@
    "say": [
     {
      "t": "Check: is 1 smaller than 3?",
-     "a": "6422cc5acf",
-     "v": "N"
+     "a": "22b0ce8239",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "0b13c6f893",
-    "v": "N"
+    "a": "da902b8bd9",
+    "v": "E"
    },
    "vis": [
     {
@@ -387,8 +406,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -401,14 +420,14 @@
    "say": [
     {
      "t": "Bring down the 7. What number do we have now?",
-     "a": "e213bbc415",
-     "v": "N"
+     "a": "486085ea5f",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 7 next to the 1. That makes 17.",
-    "a": "814981bc07",
-    "v": "N"
+    "a": "018bdd4459",
+    "v": "E"
    },
    "vis": [
     {
@@ -435,14 +454,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 17? Count by 3s if you need to.",
-     "a": "3542155494",
-     "v": "N"
+     "a": "df3fdd7ebd",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 3s: 3, 6, 9, 12, 15, 18. Stop before you go past 17.",
-    "a": "1af44721fa",
-    "v": "N"
+    "a": "70538f5704",
+    "v": "E"
    },
    "vis": [
     {
@@ -457,8 +476,8 @@
    "after": [
     {
      "t": "Yes! 5. Write it on top, above the 7.",
-     "a": "6c3554a603",
-     "v": "N"
+     "a": "7e2e563b37",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -478,14 +497,14 @@
    "say": [
     {
      "t": "Multiply: 5 times 3?",
-     "a": "7d0e04757b",
-     "v": "N"
+     "a": "1392785c50",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "5 groups of 3. Count by 3s 5 times.",
-    "a": "153b0f8b7c",
-    "v": "N"
+    "a": "2f51239bd9",
+    "v": "E"
    },
    "vis": [
     {
@@ -511,14 +530,14 @@
    "say": [
     {
      "t": "Subtract: 17 minus 15?",
-     "a": "3d13e67b16",
-     "v": "N"
+     "a": "15c4a31962",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 15 and count up to 17. How many did you count?",
-    "a": "2a0144e65a",
-    "v": "N"
+    "a": "11505f61d3",
+    "v": "E"
    },
    "vis": [
     {
@@ -548,14 +567,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 3?",
-     "a": "fb007676d0",
-     "v": "N"
+     "a": "45bca2a612",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "2648a812ee",
-    "v": "N"
+    "a": "ec1eb718bb",
+    "v": "E"
    },
    "vis": [
     {
@@ -567,8 +586,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -581,14 +600,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 2.",
-    "a": "1535dc7ac3",
-    "v": "N"
+    "a": "03c336f20a",
+    "v": "E"
    },
    "vis": [
     {
@@ -598,8 +617,8 @@
    "after": [
     {
      "t": "So 857 divided by 3 is 285, remainder 2!",
-     "a": "5084b5ab24",
-     "v": "N"
+     "a": "bfd733080f",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -618,14 +637,14 @@
    "say": [
     {
      "t": "Let's check it. 285 times 3 is 855. Add the remainder: 855 plus 2 is?",
-     "a": "ab48e208c9",
-     "v": "N"
+     "a": "74d6d7e543",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "855 plus 2. Count up 2 from 855.",
-    "a": "26a5b40d17",
-    "v": "N"
+    "a": "1b86674aa3",
+    "v": "E"
    },
    "vis": [
     {
@@ -638,7 +657,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -656,8 +675,8 @@
    "say": [
     {
      "t": "Problem 2 of 3: 247 divided by 7.",
-     "a": "51f70b41d6",
-     "v": "N"
+     "a": "86deba9337",
+     "v": "E"
     }
    ],
    "vis": [
@@ -677,14 +696,14 @@
    "say": [
     {
      "t": "First look at the 2. Can a 7 fit into 2?",
-     "a": "3beab3a250",
-     "v": "N"
+     "a": "468649a8ad",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 7, so a 7 can't fit into it.",
-    "a": "144ae5aa06",
-    "v": "N"
+    "a": "5ebbb62b05",
+    "v": "E"
    },
    "vis": [
     {
@@ -697,8 +716,8 @@
    "after": [
     {
      "t": "Right! So we use the first two digits together: 24.",
-     "a": "c71e1bda4b",
-     "v": "N"
+     "a": "d6b8f5974e",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -720,14 +739,14 @@
    "say": [
     {
      "t": "Divide: how many 7s fit into 24?",
-     "a": "a8e68658af",
-     "v": "N"
+     "a": "2f6367e151",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 7s: 7, 14, 21, 28. Stop before you go past 24.",
-    "a": "3fffe5684c",
-    "v": "N"
+    "a": "721c303a11",
+    "v": "E"
    },
    "vis": [
     {
@@ -757,14 +776,14 @@
    "say": [
     {
      "t": "Multiply: 3 times 7?",
-     "a": "18192c77fd",
-     "v": "N"
+     "a": "ee0763693e",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "3 groups of 7. Count by 7s 3 times.",
-    "a": "50c95cc105",
-    "v": "N"
+    "a": "e72c50cd2b",
+    "v": "E"
    },
    "vis": [
     {
@@ -790,14 +809,14 @@
    "say": [
     {
      "t": "Subtract: 24 minus 21?",
-     "a": "1c1771d998",
-     "v": "N"
+     "a": "4abc94626f",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 21 and count up to 24. How many did you count?",
-    "a": "2297469d82",
-    "v": "N"
+    "a": "ccd5c4b5f7",
+    "v": "E"
    },
    "vis": [
     {
@@ -827,14 +846,14 @@
    "say": [
     {
      "t": "Check: is 3 smaller than 7?",
-     "a": "d55e97f770",
-     "v": "N"
+     "a": "7e467af1ff",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "3 is smaller than 7. If it weren't, we could fit one more 7.",
-    "a": "a7e7168577",
-    "v": "N"
+    "a": "c6d63947dd",
+    "v": "E"
    },
    "vis": [
     {
@@ -854,14 +873,14 @@
    "say": [
     {
      "t": "Bring down the 7. What number do we have now?",
-     "a": "e213bbc415",
-     "v": "N"
+     "a": "486085ea5f",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 7 next to the 3. That makes 37.",
-    "a": "a7dbad2aa2",
-    "v": "N"
+    "a": "3028f942af",
+    "v": "E"
    },
    "vis": [
     {
@@ -880,6 +899,25 @@
    "after": []
   },
   {
+   "kind": "reward",
+   "r": "chest",
+   "p": 1,
+   "say": [
+    {
+     "t": "Halfway there, and look! Another treasure chest! Tap it!",
+     "a": "82be011e51",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Okay, where were we? Right, the problem!",
+     "a": "dc18246dfd",
+     "v": "E"
+    }
+   ]
+  },
+  {
    "kind": "ask",
    "p": 1,
    "tag": "D",
@@ -888,14 +926,14 @@
    "say": [
     {
      "t": "Divide: how many 7s fit into 37?",
-     "a": "89e68e9aab",
-     "v": "N"
+     "a": "2fd825042d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 7s: 7, 14, 21, 28, 35, 42. Stop before you go past 37.",
-    "a": "8297944690",
-    "v": "N"
+    "a": "f836dd72c5",
+    "v": "E"
    },
    "vis": [
     {
@@ -925,14 +963,14 @@
    "say": [
     {
      "t": "Multiply: 5 times 7?",
-     "a": "5164a95c91",
-     "v": "N"
+     "a": "50eb8fbc8d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "5 groups of 7. Count by 7s 5 times.",
-    "a": "40fc76e387",
-    "v": "N"
+    "a": "016b571540",
+    "v": "E"
    },
    "vis": [
     {
@@ -958,14 +996,14 @@
    "say": [
     {
      "t": "Subtract: 37 minus 35?",
-     "a": "5e5c965b8f",
-     "v": "N"
+     "a": "bb1300848b",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 35 and count up to 37. How many did you count?",
-    "a": "6574a76d9c",
-    "v": "N"
+    "a": "33126db0de",
+    "v": "E"
    },
    "vis": [
     {
@@ -995,14 +1033,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 7?",
-     "a": "4b6cdc0723",
-     "v": "N"
+     "a": "45ad7febed",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 7. If it weren't, we could fit one more 7.",
-    "a": "5ca6c59659",
-    "v": "N"
+    "a": "c123e9ac51",
+    "v": "E"
    },
    "vis": [
     {
@@ -1022,14 +1060,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 2.",
-    "a": "1535dc7ac3",
-    "v": "N"
+    "a": "03c336f20a",
+    "v": "E"
    },
    "vis": [
     {
@@ -1039,8 +1077,8 @@
    "after": [
     {
      "t": "So 247 divided by 7 is 35, remainder 2!",
-     "a": "3227d23804",
-     "v": "N"
+     "a": "c727cdafdc",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -1059,14 +1097,14 @@
    "say": [
     {
      "t": "Let's check it. 35 times 7 is 245. Add the remainder: 245 plus 2 is?",
-     "a": "e9ce72cc40",
-     "v": "N"
+     "a": "dad2fc6545",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "245 plus 2. Count up 2 from 245.",
-    "a": "3b669e0add",
-    "v": "N"
+    "a": "13cafdeb4a",
+    "v": "E"
    },
    "vis": [
     {
@@ -1079,7 +1117,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -1097,8 +1135,8 @@
    "say": [
     {
      "t": "Problem 3 of 3: 739 divided by 5.",
-     "a": "311e2d288d",
-     "v": "N"
+     "a": "203d56e2b3",
+     "v": "E"
     }
    ],
    "vis": [
@@ -1118,14 +1156,14 @@
    "say": [
     {
      "t": "Divide: how many 5s fit into 7?",
-     "a": "8dbecaf39b",
-     "v": "N"
+     "a": "e2f4df1d77",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 5s: 5, 10. Stop before you go past 7.",
-    "a": "2a8dd2e8f8",
-    "v": "N"
+    "a": "228a5502f2",
+    "v": "E"
    },
    "vis": [
     {
@@ -1154,14 +1192,14 @@
    "say": [
     {
      "t": "Multiply: 1 times 5?",
-     "a": "4562311f92",
-     "v": "N"
+     "a": "4642777659",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 groups of 5. Count by 5s 1 times.",
-    "a": "7001e1ecc8",
-    "v": "N"
+    "a": "c4aedc46e4",
+    "v": "E"
    },
    "vis": [
     {
@@ -1187,14 +1225,14 @@
    "say": [
     {
      "t": "Subtract: 7 minus 5?",
-     "a": "870deec017",
-     "v": "N"
+     "a": "7709325d75",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 5 and count up to 7. How many did you count?",
-    "a": "3b9f1a9a66",
-    "v": "N"
+    "a": "4304520325",
+    "v": "E"
    },
    "vis": [
     {
@@ -1223,14 +1261,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 5?",
-     "a": "3d84a15f86",
-     "v": "N"
+     "a": "f91e6ea02d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 5. If it weren't, we could fit one more 5.",
-    "a": "c0ab586f24",
-    "v": "N"
+    "a": "7f52a5186a",
+    "v": "E"
    },
    "vis": [
     {
@@ -1250,14 +1288,14 @@
    "say": [
     {
      "t": "Bring down the 3. What number do we have now?",
-     "a": "a815e79f9f",
-     "v": "N"
+     "a": "80dc319c4d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 3 next to the 2. That makes 23.",
-    "a": "8ef776ae62",
-    "v": "N"
+    "a": "9a2b81e6de",
+    "v": "E"
    },
    "vis": [
     {
@@ -1276,6 +1314,25 @@
    "after": []
   },
   {
+   "kind": "reward",
+   "r": "chest",
+   "p": 2,
+   "say": [
+    {
+     "t": "Ooh, a chest! You earned it. Tap it open!",
+     "a": "a319472c2b",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Nice loot! Now let's finish this one.",
+     "a": "d76f87182a",
+     "v": "E"
+    }
+   ]
+  },
+  {
    "kind": "ask",
    "p": 2,
    "tag": "D",
@@ -1284,14 +1341,14 @@
    "say": [
     {
      "t": "Divide: how many 5s fit into 23?",
-     "a": "13d6f1ced6",
-     "v": "N"
+     "a": "6467e283de",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 5s: 5, 10, 15, 20, 25. Stop before you go past 23.",
-    "a": "0896d81458",
-    "v": "N"
+    "a": "305f394426",
+    "v": "E"
    },
    "vis": [
     {
@@ -1321,14 +1378,14 @@
    "say": [
     {
      "t": "Multiply: 4 times 5?",
-     "a": "71705cc109",
-     "v": "N"
+     "a": "271207415e",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "4 groups of 5. Count by 5s 4 times.",
-    "a": "941f345a43",
-    "v": "N"
+    "a": "83c5a78884",
+    "v": "E"
    },
    "vis": [
     {
@@ -1354,14 +1411,14 @@
    "say": [
     {
      "t": "Subtract: 23 minus 20?",
-     "a": "584f8f3b0c",
-     "v": "N"
+     "a": "ed5884c62f",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 20 and count up to 23. How many did you count?",
-    "a": "7ddbbe1d34",
-    "v": "N"
+    "a": "94ba8c259f",
+    "v": "E"
    },
    "vis": [
     {
@@ -1391,14 +1448,14 @@
    "say": [
     {
      "t": "Check: is 3 smaller than 5?",
-     "a": "b0d2c96773",
-     "v": "N"
+     "a": "6d385d5ab3",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "3 is smaller than 5. If it weren't, we could fit one more 5.",
-    "a": "d22234af46",
-    "v": "N"
+    "a": "b3855e2f99",
+    "v": "E"
    },
    "vis": [
     {
@@ -1418,14 +1475,14 @@
    "say": [
     {
      "t": "Bring down the 9. What number do we have now?",
-     "a": "112ebb7d1d",
-     "v": "N"
+     "a": "9c35fe0673",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 9 next to the 3. That makes 39.",
-    "a": "b0ccd13102",
-    "v": "N"
+    "a": "e05ce67a16",
+    "v": "E"
    },
    "vis": [
     {
@@ -1452,14 +1509,14 @@
    "say": [
     {
      "t": "Divide: how many 5s fit into 39?",
-     "a": "458f085f25",
-     "v": "N"
+     "a": "91123d0cf7",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 5s: 5, 10, 15, 20, 25, 30, 35, 40. Stop before you go past 39.",
-    "a": "5756016c28",
-    "v": "N"
+    "a": "855bf5dd2e",
+    "v": "E"
    },
    "vis": [
     {
@@ -1489,14 +1546,14 @@
    "say": [
     {
      "t": "Multiply: 7 times 5?",
-     "a": "36bd23b11e",
-     "v": "N"
+     "a": "f37c00dd7d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "7 groups of 5. Count by 5s 7 times.",
-    "a": "ec6026c5f9",
-    "v": "N"
+    "a": "a3885b0f96",
+    "v": "E"
    },
    "vis": [
     {
@@ -1522,14 +1579,14 @@
    "say": [
     {
      "t": "Subtract: 39 minus 35?",
-     "a": "1a8553feb4",
-     "v": "N"
+     "a": "90f7c95af3",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 35 and count up to 39. How many did you count?",
-    "a": "921146b36f",
-    "v": "N"
+    "a": "eed7edc50f",
+    "v": "E"
    },
    "vis": [
     {
@@ -1559,14 +1616,14 @@
    "say": [
     {
      "t": "Check: is 4 smaller than 5?",
-     "a": "8db90ed042",
-     "v": "N"
+     "a": "94bae3347e",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "4 is smaller than 5. If it weren't, we could fit one more 5.",
-    "a": "18b6e1fff3",
-    "v": "N"
+    "a": "6670d0304e",
+    "v": "E"
    },
    "vis": [
     {
@@ -1586,14 +1643,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 4.",
-    "a": "8e956e340f",
-    "v": "N"
+    "a": "b8294302ce",
+    "v": "E"
    },
    "vis": [
     {
@@ -1603,8 +1660,8 @@
    "after": [
     {
      "t": "So 739 divided by 5 is 147, remainder 4!",
-     "a": "d1bcdec808",
-     "v": "N"
+     "a": "4d103099e7",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -1623,14 +1680,14 @@
    "say": [
     {
      "t": "Let's check it. 147 times 5 is 735. Add the remainder: 735 plus 4 is?",
-     "a": "a5095f82d1",
-     "v": "N"
+     "a": "8c882d297d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "735 plus 4. Count up 4 from 735.",
-    "a": "6f04e7d18d",
-    "v": "N"
+    "a": "f959a65eeb",
+    "v": "E"
    },
    "vis": [
     {
@@ -1643,7 +1700,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -1654,11 +1711,23 @@
    ]
   },
   {
+   "kind": "reward",
+   "r": "bigchest",
+   "say": [
+    {
+     "t": "You solved every problem today! That earns the giant golden chest!",
+     "a": "37a1445d33",
+     "v": "E"
+    }
+   ],
+   "after": []
+  },
+  {
    "kind": "outro",
    "say": [
     {
      "t": "Day one done! Tomorrow: the Zero Trap. Can you spot it?",
-     "a": "45187e1108",
+     "a": "b0ba4e8adb",
      "v": "E"
     }
    ],
@@ -1670,42 +1739,64 @@
   }
  ],
  "shared": {
+  "power": [
+   {
+    "t": "Power up! Five right answers! Bonus coins!",
+    "a": "0f852eccfc",
+    "v": "E"
+   },
+   {
+    "t": "Knight power! You're on fire! Bonus coins!",
+    "a": "9a28ac282f",
+    "v": "E"
+   },
+   {
+    "t": "Five in a row! Super bonus!",
+    "a": "7a6a367f81",
+    "v": "E"
+   },
+   {
+    "t": "Power up! Look at all those coins!",
+    "a": "a674ebff19",
+    "v": "E"
+   }
+  ],
   "yes": [
    {
     "t": "Yes!",
-    "a": "2f7c428eac",
+    "a": "c92e264d11",
     "v": "E"
    },
    {
     "t": "Nice!",
-    "a": "68795f2fe5",
+    "a": "70e936c5e4",
     "v": "E"
    },
    {
     "t": "That's it!",
-    "a": "b155c5395e",
+    "a": "fbf1d5a7b5",
     "v": "E"
    },
    {
     "t": "Great job!",
-    "a": "562e1324f9",
+    "a": "f36450c1a7",
     "v": "E"
    },
    {
     "t": "Exactly!",
-    "a": "4e5d3497be",
+    "a": "fbdfc3fbb6",
     "v": "E"
    }
   ],
   "miss": {
    "t": "Not quite. Here's a hint.",
-   "a": "1abc557c2e",
-   "v": "N"
+   "a": "0a6fe4ee4b",
+   "v": "E"
   },
   "show": {
    "t": "Let's look together. Write this number to keep going.",
-   "a": "5fd2e7ba09",
-   "v": "N"
+   "a": "0fe3a5d3e0",
+   "v": "E"
   }
  }
 }

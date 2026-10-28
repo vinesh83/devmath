@@ -22,17 +22,17 @@
    "say": [
     {
      "t": "Welcome back! Day two. Say the Knight's Code with me: Divide, Multiply, Subtract, Bring down.",
-     "a": "23b9513b64",
-     "v": "N"
+     "a": "8924667a4f",
+     "v": "E"
     },
     {
      "t": "Today there's a trap hiding in two of the problems. Watch for it!",
-     "a": "35be0cb1fe",
-     "v": "N"
+     "a": "fa0b5b795e",
+     "v": "E"
     },
     {
      "t": "Let's go!",
-     "a": "85915037d5",
+     "a": "01f1975ca4",
      "v": "E"
     }
    ],
@@ -50,8 +50,8 @@
    "say": [
     {
      "t": "Problem 1 of 3: 645 divided by 4.",
-     "a": "a90aa60302",
-     "v": "N"
+     "a": "658412de00",
+     "v": "E"
     }
    ],
    "vis": [
@@ -71,14 +71,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 6?",
-     "a": "2897e2762f",
-     "v": "N"
+     "a": "c85bf47e1c",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 4s: 4, 8. Stop before you go past 6.",
-    "a": "0d7284c5c5",
-    "v": "N"
+    "a": "65e15ca5a0",
+    "v": "E"
    },
    "vis": [
     {
@@ -107,14 +107,14 @@
    "say": [
     {
      "t": "Multiply: 1 times 4?",
-     "a": "d9d6eb3347",
-     "v": "N"
+     "a": "56020acf11",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 groups of 4. Count by 4s 1 times.",
-    "a": "137969bb01",
-    "v": "N"
+    "a": "f9099b34c9",
+    "v": "E"
    },
    "vis": [
     {
@@ -140,14 +140,14 @@
    "say": [
     {
      "t": "Subtract: 6 minus 4?",
-     "a": "a66c67381a",
-     "v": "N"
+     "a": "efe78ba6a6",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 4 and count up to 6. How many did you count?",
-    "a": "7d90e4e2b8",
-    "v": "N"
+    "a": "8380760efa",
+    "v": "E"
    },
    "vis": [
     {
@@ -176,14 +176,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 4?",
-     "a": "4e324a260d",
-     "v": "N"
+     "a": "7bf12c3069",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "d2d605d93b",
-    "v": "N"
+    "a": "783d424b6f",
+    "v": "E"
    },
    "vis": [
     {
@@ -203,14 +203,14 @@
    "say": [
     {
      "t": "Bring down the 4. What number do we have now?",
-     "a": "6c3ed2a9a8",
-     "v": "N"
+     "a": "da1ab48f11",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 4 next to the 2. That makes 24.",
-    "a": "29fe577e28",
-    "v": "N"
+    "a": "93414a36c9",
+    "v": "E"
    },
    "vis": [
     {
@@ -229,6 +229,25 @@
    "after": []
   },
   {
+   "kind": "reward",
+   "r": "chest",
+   "p": 0,
+   "say": [
+    {
+     "t": "Whoa, wait! A treasure chest just dropped! Tap it to open it!",
+     "a": "900a501238",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Back to the problem, Knight!",
+     "a": "fd7950b64c",
+     "v": "E"
+    }
+   ]
+  },
+  {
    "kind": "ask",
    "p": 0,
    "tag": "D",
@@ -237,14 +256,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 24?",
-     "a": "61b5b5e132",
-     "v": "N"
+     "a": "1262331cd8",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 4s: 4, 8, 12, 16, 20, 24, 28. Stop before you go past 24.",
-    "a": "044b37ec5c",
-    "v": "N"
+    "a": "09b58cf5f6",
+    "v": "E"
    },
    "vis": [
     {
@@ -274,14 +293,14 @@
    "say": [
     {
      "t": "Multiply: 6 times 4?",
-     "a": "469c2aa11f",
-     "v": "N"
+     "a": "c69f741541",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "6 groups of 4. Count by 4s 6 times.",
-    "a": "e7777a885c",
-    "v": "N"
+    "a": "bca8191cf1",
+    "v": "E"
    },
    "vis": [
     {
@@ -307,14 +326,14 @@
    "say": [
     {
      "t": "Subtract: 24 minus 24?",
-     "a": "a3215cd19c",
-     "v": "N"
+     "a": "40c9ed528c",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "24 minus 24: they're the same, so it's zero.",
-    "a": "f4f9469f0e",
-    "v": "N"
+    "a": "8bd42eab44",
+    "v": "E"
    },
    "vis": [
     {
@@ -344,14 +363,14 @@
    "say": [
     {
      "t": "Check: is 0 smaller than 4?",
-     "a": "c123c7906b",
-     "v": "N"
+     "a": "bbc1fea78d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "0 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "c2c04da46d",
-    "v": "N"
+    "a": "81d906f7b1",
+    "v": "E"
    },
    "vis": [
     {
@@ -371,14 +390,14 @@
    "say": [
     {
      "t": "Bring down the 5. What number do we have now?",
-     "a": "75611c29e9",
-     "v": "N"
+     "a": "3d67eb0303",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The leftover was zero, so we just have the 5.",
-    "a": "fb6b652c41",
-    "v": "N"
+    "a": "c8d018c0f0",
+    "v": "E"
    },
    "vis": [
     {
@@ -405,14 +424,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 5?",
-     "a": "a04a24c0a4",
-     "v": "N"
+     "a": "0c170abbf3",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 4s: 4, 8. Stop before you go past 5.",
-    "a": "bf2c24077e",
-    "v": "N"
+    "a": "7d8e032e38",
+    "v": "E"
    },
    "vis": [
     {
@@ -441,14 +460,14 @@
    "say": [
     {
      "t": "Multiply: 1 times 4?",
-     "a": "d9d6eb3347",
-     "v": "N"
+     "a": "56020acf11",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 groups of 4. Count by 4s 1 times.",
-    "a": "137969bb01",
-    "v": "N"
+    "a": "f9099b34c9",
+    "v": "E"
    },
    "vis": [
     {
@@ -474,14 +493,14 @@
    "say": [
     {
      "t": "Subtract: 5 minus 4?",
-     "a": "f4b4b1e0e5",
-     "v": "N"
+     "a": "df4485b47b",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 4 and count up to 5. How many did you count?",
-    "a": "2040547333",
-    "v": "N"
+    "a": "2f2a349861",
+    "v": "E"
    },
    "vis": [
     {
@@ -510,14 +529,14 @@
    "say": [
     {
      "t": "Check: is 1 smaller than 4?",
-     "a": "3113d4b3cc",
-     "v": "N"
+     "a": "1657f9ae30",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "8512c383e9",
-    "v": "N"
+    "a": "3b61d9756f",
+    "v": "E"
    },
    "vis": [
     {
@@ -537,14 +556,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 1.",
-    "a": "289004b814",
-    "v": "N"
+    "a": "375231775a",
+    "v": "E"
    },
    "vis": [
     {
@@ -554,8 +573,8 @@
    "after": [
     {
      "t": "So 645 divided by 4 is 161, remainder 1!",
-     "a": "86e1e5cc71",
-     "v": "N"
+     "a": "6b4ba94550",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -574,14 +593,14 @@
    "say": [
     {
      "t": "Let's check it. 161 times 4 is 644. Add the remainder: 644 plus 1 is?",
-     "a": "2cb8ff4300",
-     "v": "N"
+     "a": "8e9cc29934",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "644 plus 1. Count up 1 from 644.",
-    "a": "208d811ada",
-    "v": "N"
+    "a": "bd0f543c74",
+    "v": "E"
    },
    "vis": [
     {
@@ -594,7 +613,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -612,8 +631,8 @@
    "say": [
     {
      "t": "Problem 2 of 3: 614 divided by 3.",
-     "a": "f935eea43c",
-     "v": "N"
+     "a": "082013a390",
+     "v": "E"
     }
    ],
    "vis": [
@@ -633,14 +652,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 6? Count by 3s if you need to.",
-     "a": "dc5095f0a9",
-     "v": "N"
+     "a": "d565c5a3b8",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 3s: 3, 6, 9. Stop before you go past 6.",
-    "a": "c9f7bfc2ad",
-    "v": "N"
+    "a": "a2a9d15d0b",
+    "v": "E"
    },
    "vis": [
     {
@@ -654,8 +673,8 @@
    "after": [
     {
      "t": "Yes! 2. Write it on top, above the 6.",
-     "a": "d1521e68f8",
-     "v": "N"
+     "a": "72a93541a2",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -675,14 +694,14 @@
    "say": [
     {
      "t": "Multiply: 2 times 3?",
-     "a": "7e6c56b935",
-     "v": "N"
+     "a": "218023359e",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 groups of 3. Count by 3s 2 times.",
-    "a": "6cf7a9c887",
-    "v": "N"
+    "a": "8792941e95",
+    "v": "E"
    },
    "vis": [
     {
@@ -708,14 +727,14 @@
    "say": [
     {
      "t": "Subtract: 6 minus 6?",
-     "a": "0beb3f6c34",
-     "v": "N"
+     "a": "5265886c71",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "6 minus 6: they're the same, so it's zero.",
-    "a": "3086f9f7e8",
-    "v": "N"
+    "a": "45f26c0eb2",
+    "v": "E"
    },
    "vis": [
     {
@@ -744,14 +763,14 @@
    "say": [
     {
      "t": "Check: is 0 smaller than 3?",
-     "a": "3c3b72e29e",
-     "v": "N"
+     "a": "0843e724fd",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "0 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "9a2621c564",
-    "v": "N"
+    "a": "653a2dc442",
+    "v": "E"
    },
    "vis": [
     {
@@ -763,8 +782,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -777,14 +796,14 @@
    "say": [
     {
      "t": "Bring down the 1. What number do we have now?",
-     "a": "681aa11ade",
-     "v": "N"
+     "a": "1fec6667d8",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The leftover was zero, so we just have the 1.",
-    "a": "f48e490d32",
-    "v": "N"
+    "a": "8892f8c3c5",
+    "v": "E"
    },
    "vis": [
     {
@@ -803,7 +822,26 @@
    "after": [
     {
      "t": "Now we do the Knight's Code again.",
-     "a": "b5e7e5e593",
+     "a": "e8179acec3",
+     "v": "E"
+    }
+   ]
+  },
+  {
+   "kind": "reward",
+   "r": "chest",
+   "p": 1,
+   "say": [
+    {
+     "t": "Halfway there, and look! Another treasure chest! Tap it!",
+     "a": "82be011e51",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Okay, where were we? Right, the problem!",
+     "a": "dc18246dfd",
      "v": "E"
     }
    ]
@@ -817,14 +855,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 1?",
-     "a": "2207a19fa6",
-     "v": "N"
+     "a": "f75ad062fb",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 is smaller than 3, so no 3s fit. That's zero!",
-    "a": "96a1ee9734",
-    "v": "N"
+    "a": "37c2773394",
+    "v": "E"
    },
    "vis": [
     {
@@ -838,7 +876,7 @@
    "after": [
     {
      "t": "Zero! We still write the 0 on top. Never skip it!",
-     "a": "25e3e70f2f",
+     "a": "6138efa682",
      "v": "E"
     }
    ],
@@ -859,14 +897,14 @@
    "say": [
     {
      "t": "Multiply: 0 times 3?",
-     "a": "902ea6074e",
-     "v": "N"
+     "a": "a6ab099feb",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Zero times anything is zero.",
-    "a": "a246f9efbd",
-    "v": "N"
+    "a": "6a0b188b15",
+    "v": "E"
    },
    "vis": [
     {
@@ -892,14 +930,14 @@
    "say": [
     {
      "t": "Subtract: 1 minus 0?",
-     "a": "fe6abbd77e",
-     "v": "N"
+     "a": "ac77404dd1",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 0 and count up to 1. How many did you count?",
-    "a": "0511bf1d29",
-    "v": "N"
+    "a": "d1c323e7ee",
+    "v": "E"
    },
    "vis": [
     {
@@ -928,14 +966,14 @@
    "say": [
     {
      "t": "Check: is 1 smaller than 3?",
-     "a": "6422cc5acf",
-     "v": "N"
+     "a": "22b0ce8239",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "0b13c6f893",
-    "v": "N"
+    "a": "da902b8bd9",
+    "v": "E"
    },
    "vis": [
     {
@@ -947,8 +985,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -961,14 +999,14 @@
    "say": [
     {
      "t": "Bring down the 4. What number do we have now?",
-     "a": "6c3ed2a9a8",
-     "v": "N"
+     "a": "da1ab48f11",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 4 next to the 1. That makes 14.",
-    "a": "c62b0487e8",
-    "v": "N"
+    "a": "6810a904ed",
+    "v": "E"
    },
    "vis": [
     {
@@ -995,14 +1033,14 @@
    "say": [
     {
      "t": "Divide: how many 3s fit into 14? Count by 3s if you need to.",
-     "a": "64b4ef6a9e",
-     "v": "N"
+     "a": "971d4492d5",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 3s: 3, 6, 9, 12, 15. Stop before you go past 14.",
-    "a": "b1a8bde99f",
-    "v": "N"
+    "a": "da5e01dbe4",
+    "v": "E"
    },
    "vis": [
     {
@@ -1017,8 +1055,8 @@
    "after": [
     {
      "t": "Yes! 4. Write it on top, above the 4.",
-     "a": "88f374de6b",
-     "v": "N"
+     "a": "485d677da9",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -1038,14 +1076,14 @@
    "say": [
     {
      "t": "Multiply: 4 times 3?",
-     "a": "02961155ff",
-     "v": "N"
+     "a": "29ba7cbe9f",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "4 groups of 3. Count by 3s 4 times.",
-    "a": "c4175af809",
-    "v": "N"
+    "a": "fa4cb4c7e4",
+    "v": "E"
    },
    "vis": [
     {
@@ -1071,14 +1109,14 @@
    "say": [
     {
      "t": "Subtract: 14 minus 12?",
-     "a": "29c4f7efd8",
-     "v": "N"
+     "a": "9555a70094",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 12 and count up to 14. How many did you count?",
-    "a": "d725372cf5",
-    "v": "N"
+    "a": "587f22d7e7",
+    "v": "E"
    },
    "vis": [
     {
@@ -1108,14 +1146,14 @@
    "say": [
     {
      "t": "Check: is 2 smaller than 3?",
-     "a": "fb007676d0",
-     "v": "N"
+     "a": "45bca2a612",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 is smaller than 3. If it weren't, we could fit one more 3.",
-    "a": "2648a812ee",
-    "v": "N"
+    "a": "ec1eb718bb",
+    "v": "E"
    },
    "vis": [
     {
@@ -1127,8 +1165,8 @@
    "after": [
     {
      "t": "Good. That means our Divide step was right.",
-     "a": "73c7dece50",
-     "v": "N"
+     "a": "60a1a50791",
+     "v": "E"
     }
    ]
   },
@@ -1141,14 +1179,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 2.",
-    "a": "1535dc7ac3",
-    "v": "N"
+    "a": "03c336f20a",
+    "v": "E"
    },
    "vis": [
     {
@@ -1158,8 +1196,8 @@
    "after": [
     {
      "t": "So 614 divided by 3 is 204, remainder 2!",
-     "a": "14b304e77c",
-     "v": "N"
+     "a": "c7b2f40084",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -1178,14 +1216,14 @@
    "say": [
     {
      "t": "Let's check it. 204 times 3 is 612. Add the remainder: 612 plus 2 is?",
-     "a": "12451cc54a",
-     "v": "N"
+     "a": "d15d3f279d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "612 plus 2. Count up 2 from 612.",
-    "a": "0c8a21a133",
-    "v": "N"
+    "a": "66f630231c",
+    "v": "E"
    },
    "vis": [
     {
@@ -1198,7 +1236,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -1216,8 +1254,8 @@
    "say": [
     {
      "t": "Problem 3 of 3: 963 divided by 4.",
-     "a": "f2ce528929",
-     "v": "N"
+     "a": "bf5a43cef6",
+     "v": "E"
     }
    ],
    "vis": [
@@ -1237,14 +1275,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 9?",
-     "a": "68191a1767",
-     "v": "N"
+     "a": "5d3e845266",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 4s: 4, 8, 12. Stop before you go past 9.",
-    "a": "32ef8f320d",
-    "v": "N"
+    "a": "b78048a3c3",
+    "v": "E"
    },
    "vis": [
     {
@@ -1273,14 +1311,14 @@
    "say": [
     {
      "t": "Multiply: 2 times 4?",
-     "a": "25e614641a",
-     "v": "N"
+     "a": "05c6c8fcee",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "2 groups of 4. Count by 4s 2 times.",
-    "a": "538b584bb4",
-    "v": "N"
+    "a": "bb899a6b7b",
+    "v": "E"
    },
    "vis": [
     {
@@ -1306,14 +1344,14 @@
    "say": [
     {
      "t": "Subtract: 9 minus 8?",
-     "a": "1856aabb30",
-     "v": "N"
+     "a": "06a241accc",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 8 and count up to 9. How many did you count?",
-    "a": "0737195cd0",
-    "v": "N"
+    "a": "c5d77fa7a7",
+    "v": "E"
    },
    "vis": [
     {
@@ -1342,14 +1380,14 @@
    "say": [
     {
      "t": "Check: is 1 smaller than 4?",
-     "a": "3113d4b3cc",
-     "v": "N"
+     "a": "1657f9ae30",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "1 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "8512c383e9",
-    "v": "N"
+    "a": "3b61d9756f",
+    "v": "E"
    },
    "vis": [
     {
@@ -1369,14 +1407,14 @@
    "say": [
     {
      "t": "Bring down the 6. What number do we have now?",
-     "a": "a92e866f50",
-     "v": "N"
+     "a": "fc40cb1c1d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Put the 6 next to the 1. That makes 16.",
-    "a": "0157c5f58f",
-    "v": "N"
+    "a": "9f3a0af975",
+    "v": "E"
    },
    "vis": [
     {
@@ -1395,6 +1433,25 @@
    "after": []
   },
   {
+   "kind": "reward",
+   "r": "chest",
+   "p": 2,
+   "say": [
+    {
+     "t": "Ooh, a chest! You earned it. Tap it open!",
+     "a": "a319472c2b",
+     "v": "E"
+    }
+   ],
+   "after": [
+    {
+     "t": "Nice loot! Now let's finish this one.",
+     "a": "d76f87182a",
+     "v": "E"
+    }
+   ]
+  },
+  {
    "kind": "ask",
    "p": 2,
    "tag": "D",
@@ -1403,14 +1460,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 16?",
-     "a": "c153e2e214",
-     "v": "N"
+     "a": "7d0499cab3",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Count by 4s: 4, 8, 12, 16, 20. Stop before you go past 16.",
-    "a": "5ef750740c",
-    "v": "N"
+    "a": "379974850f",
+    "v": "E"
    },
    "vis": [
     {
@@ -1440,14 +1497,14 @@
    "say": [
     {
      "t": "Multiply: 4 times 4?",
-     "a": "16f76fa4a1",
-     "v": "N"
+     "a": "afbeb38d4c",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "4 groups of 4. Count by 4s 4 times.",
-    "a": "253c3ee210",
-    "v": "N"
+    "a": "09fd753d30",
+    "v": "E"
    },
    "vis": [
     {
@@ -1473,14 +1530,14 @@
    "say": [
     {
      "t": "Subtract: 16 minus 16?",
-     "a": "b51241e830",
-     "v": "N"
+     "a": "b1146b1773",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "16 minus 16: they're the same, so it's zero.",
-    "a": "ae6560f8f7",
-    "v": "N"
+    "a": "6af575bb20",
+    "v": "E"
    },
    "vis": [
     {
@@ -1510,14 +1567,14 @@
    "say": [
     {
      "t": "Check: is 0 smaller than 4?",
-     "a": "c123c7906b",
-     "v": "N"
+     "a": "bbc1fea78d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "0 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "c2c04da46d",
-    "v": "N"
+    "a": "81d906f7b1",
+    "v": "E"
    },
    "vis": [
     {
@@ -1537,14 +1594,14 @@
    "say": [
     {
      "t": "Bring down the 3. What number do we have now?",
-     "a": "a815e79f9f",
-     "v": "N"
+     "a": "80dc319c4d",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The leftover was zero, so we just have the 3.",
-    "a": "f2d9630cd4",
-    "v": "N"
+    "a": "529a45e8c6",
+    "v": "E"
    },
    "vis": [
     {
@@ -1571,14 +1628,14 @@
    "say": [
     {
      "t": "Divide: how many 4s fit into 3?",
-     "a": "72f60ae0cd",
-     "v": "N"
+     "a": "3e3b3fc2d0",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "3 is smaller than 4, so no 4s fit. That's zero!",
-    "a": "d318b555c6",
-    "v": "N"
+    "a": "37879e792e",
+    "v": "E"
    },
    "vis": [
     {
@@ -1592,7 +1649,7 @@
    "after": [
     {
      "t": "Zero! We still write the 0 on top. Never skip it!",
-     "a": "25e3e70f2f",
+     "a": "6138efa682",
      "v": "E"
     }
    ],
@@ -1613,14 +1670,14 @@
    "say": [
     {
      "t": "Multiply: 0 times 4?",
-     "a": "06346a254b",
-     "v": "N"
+     "a": "869fa3f6ed",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Zero times anything is zero.",
-    "a": "a246f9efbd",
-    "v": "N"
+    "a": "6a0b188b15",
+    "v": "E"
    },
    "vis": [
     {
@@ -1646,14 +1703,14 @@
    "say": [
     {
      "t": "Subtract: 3 minus 0?",
-     "a": "405e480f1b",
-     "v": "N"
+     "a": "44c0927a17",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "Start at 0 and count up to 3. How many did you count?",
-    "a": "5f51e83e02",
-    "v": "N"
+    "a": "7b72cd9a3e",
+    "v": "E"
    },
    "vis": [
     {
@@ -1682,14 +1739,14 @@
    "say": [
     {
      "t": "Check: is 3 smaller than 4?",
-     "a": "323a57b7ba",
-     "v": "N"
+     "a": "4a9f6b7aa9",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "3 is smaller than 4. If it weren't, we could fit one more 4.",
-    "a": "37e7b3d760",
-    "v": "N"
+    "a": "68d00e8abf",
+    "v": "E"
    },
    "vis": [
     {
@@ -1709,14 +1766,14 @@
    "say": [
     {
      "t": "There are no more digits to bring down. What's the remainder?",
-     "a": "e59368f6c8",
-     "v": "N"
+     "a": "ef7df39079",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "The remainder is the number left at the bottom: 3.",
-    "a": "2c7cbbbc19",
-    "v": "N"
+    "a": "f7acdc3477",
+    "v": "E"
    },
    "vis": [
     {
@@ -1726,8 +1783,8 @@
    "after": [
     {
      "t": "So 963 divided by 4 is 240, remainder 3!",
-     "a": "4337e7859a",
-     "v": "N"
+     "a": "43c90f1f8f",
+     "v": "E"
     }
    ],
    "afterVis": [
@@ -1746,14 +1803,14 @@
    "say": [
     {
      "t": "Let's check it. 240 times 4 is 960. Add the remainder: 960 plus 3 is?",
-     "a": "1529770ff2",
-     "v": "N"
+     "a": "4ba9693ace",
+     "v": "E"
     }
    ],
    "hint": {
     "t": "960 plus 3. Count up 3 from 960.",
-    "a": "9ac86eb1ad",
-    "v": "N"
+    "a": "3308319a53",
+    "v": "E"
    },
    "vis": [
     {
@@ -1766,7 +1823,7 @@
    "after": [
     {
      "t": "That's the number we started with. Perfect!",
-     "a": "a5c9ccace6",
+     "a": "f30dd7e1e9",
      "v": "E"
     }
    ],
@@ -1777,11 +1834,23 @@
    ]
   },
   {
+   "kind": "reward",
+   "r": "bigchest",
+   "say": [
+    {
+     "t": "You solved every problem today! That earns the giant golden chest!",
+     "a": "37a1445d33",
+     "v": "E"
+    }
+   ],
+   "after": []
+  },
+  {
    "kind": "outro",
    "say": [
     {
      "t": "You beat the Zero Trap! Tomorrow you lead, and I'll only help if you need it.",
-     "a": "9cfdd105a0",
+     "a": "7689f3aac5",
      "v": "E"
     }
    ],
@@ -1793,42 +1862,64 @@
   }
  ],
  "shared": {
+  "power": [
+   {
+    "t": "Power up! Five right answers! Bonus coins!",
+    "a": "0f852eccfc",
+    "v": "E"
+   },
+   {
+    "t": "Knight power! You're on fire! Bonus coins!",
+    "a": "9a28ac282f",
+    "v": "E"
+   },
+   {
+    "t": "Five in a row! Super bonus!",
+    "a": "7a6a367f81",
+    "v": "E"
+   },
+   {
+    "t": "Power up! Look at all those coins!",
+    "a": "a674ebff19",
+    "v": "E"
+   }
+  ],
   "yes": [
    {
     "t": "Yes!",
-    "a": "2f7c428eac",
+    "a": "c92e264d11",
     "v": "E"
    },
    {
     "t": "Nice!",
-    "a": "68795f2fe5",
+    "a": "70e936c5e4",
     "v": "E"
    },
    {
     "t": "That's it!",
-    "a": "b155c5395e",
+    "a": "fbf1d5a7b5",
     "v": "E"
    },
    {
     "t": "Great job!",
-    "a": "562e1324f9",
+    "a": "f36450c1a7",
     "v": "E"
    },
    {
     "t": "Exactly!",
-    "a": "4e5d3497be",
+    "a": "fbdfc3fbb6",
     "v": "E"
    }
   ],
   "miss": {
    "t": "Not quite. Here's a hint.",
-   "a": "1abc557c2e",
-   "v": "N"
+   "a": "0a6fe4ee4b",
+   "v": "E"
   },
   "show": {
    "t": "Let's look together. Write this number to keep going.",
-   "a": "5fd2e7ba09",
-   "v": "N"
+   "a": "0fe3a5d3e0",
+   "v": "E"
   }
  }
 }

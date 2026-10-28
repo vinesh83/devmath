@@ -1,11 +1,13 @@
 /* =========================================================
    Long Division Workshop: a required, video-style tutorial series for 3-digit ÷ 1-digit long division.
-   Three daily episodes of about 10 minutes (one unlocks per day): Day 1 The Knight's Code (857÷3, 247÷7 first digit
-   too small), Day 2 The Zero Trap (645÷4, 614÷3), Day 3 Knight's Challenge (932÷4 no remainder, 529÷6). The board draws itself
-   and a narrator talks him through it, but every step is a question he answers: Divide, Multiply, Subtract,
+   Three daily episodes of about 10 minutes (one unlocks per day), three problems each: Day 1 The Knight's Code,
+   Day 2 The Zero Trap (zeros in the answer), Day 3 Knight's Challenge (he leads). The board draws itself
+   and Ellie talks him through it in her puppy voice, but every step is a question he answers: Divide, Multiply, Subtract,
    Check, Bring down, then the remainder and a multiply-back check. A miss gives a hint; a second miss shows
    the answer and he writes it. Progress is saved by problem. Class Practice and the 3-digit Dungeon levels
    stay locked until Day 1 is done. Each day's episode opens by itself on his first visit to the map.
+   Rewards along the way (first time through a day): a power-up every five right answers, a loot chest halfway
+   through every problem, a gem per problem, and a giant chest plus 3 gems at the end.
    Scripts and narration: tut/ep1..3.json, tut/a/*.mp3 (made by tut/gen.py).
    ========================================================= */
 const Tut={
@@ -21,14 +23,14 @@ const Tut={
   async open(o){o=o||{};if(this.el)return;const ep=o.ep||this.nextEp()||1;this.ep=ep;const D=await this.data(ep);const S=this.st();
     if(typeof Music!=='undefined')Music.stop();try{speechSynthesis.cancel();}catch(e){}
     const root=el('div',{class:'vp tut'});this.el=root;
-    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,`🎬 Workshop · Day ${ep}: ${D.title}`),el('span',{class:'tut-pn'}),el('div',{class:'tut-bar'},bar),
+    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,`🎬 Workshop · Day ${ep}: ${D.title}`),el('span',{class:'tut-pn'}),el('div',{class:'tut-pw',title:'Five right answers = power up!'},'⚡',...[0,1,2,3,4].map(()=>el('i'))),el('div',{class:'tut-bar'},bar),
       el('button',{class:'tut-exit',type:'button',onclick:()=>this.close()},'⏸ Finish later'));
     const board=el('div',{class:'tut-board'}),legend=el('div',{class:'tut-legend'},...[['D','Divide','#3fa7ff'],['M','Multiply','#3fbf5f'],['S','Subtract','#ffd23f'],['C','Check','#c084fc'],['B','Bring down','#ff4d6d']].map(([k,n,c])=>el('div',{class:'tut-lg','data-k':k,style:`--c:${c}`},el('b',null,k),el('span',null,n))));
     const side=el('div',{class:'tut-side'});
     const face=el('div',{class:'tut-face'},'🐶'),sub=el('div',{class:'tut-sub'}),again=el('button',{class:'tut-again',type:'button','aria-label':'Hear it again'},'🔁');
     const ask=el('div',{class:'tut-ask',hidden:true});
     root.append(head,el('div',{class:'tut-stage'},board,el('div',{class:'tut-right'},legend,side)),el('div',{class:'tut-foot'},face,sub,again),ask);document.body.append(root);
-    Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),face});again.addEventListener('click',()=>this.replay());
+    Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),pwEl:head.querySelector('.tut-pw'),face});this.pw=0;this.fresh=!this.epDone(ep);again.addEventListener('click',()=>this.replay());
     // Ellie's toon portrait when the 3D engine is available
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const sp=Cin3.sprites().dog;const c=Cine3D.portrait(sp,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
     // resume at the start of the problem he was on
@@ -95,7 +97,7 @@ const Tut={
     tapify(y,()=>res({v:'yes',clear:()=>{}}));tapify(n,()=>res({v:'no',clear:()=>{}}));A.append(y,n);});},
   async ask1(step){const t0=Date.now();let tries=0;
     for(;;){const r=step.q==='yn'?await this.askYN():await this.askNum();if(!this.alive)return;
-      if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);
+      if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);this.pw++;this.pips();
         this.st().log.push({i:this.i,p:step.p,tag:step.tag,tries,ms:Date.now()-t0});if(this.st().log.length>400)this.st().log.shift();return;}
       tries++;this.chime(false);r.clear();this.ask.hidden=true;
       if(tries===1){await this.lines([this.D.shared.miss,step.hint]);}
@@ -103,6 +105,18 @@ const Tut={
         this.sub.append(document.createTextNode('Write: '),el('b',{class:'tut-show'},step.q==='yn'?(step.ans==='yes'?'Yes':'No'):String(step.ans)));}
       if(!this.alive)return;}},
   chime(ok){try{if(ok){Snd.tone(784,0.07,'square',0.035);Snd.tone(1046,0.1,'square',0.035,0.07);}else Snd.tone(220,0.15,'triangle',0.04);}catch(e){}},
+  // ---- rewards: a power-up every five right answers, a chest halfway through each problem, a gem per problem,
+  // and the giant chest at the end. They pay on the first time through a day (not on replays).
+  pips(){if(!this.pwEl)return;this.pwEl.querySelectorAll('i').forEach((x,k)=>x.classList.toggle('on',k<this.pw));},
+  paidKey(k){const S=this.st();S.paid=S.paid||{};const key=this.ep+':'+k;if(S.paid[key])return false;S.paid[key]=1;saveState();return true;},
+  async powerUp(){this.pips();if(!this.fresh)return;const n=8+Math.floor(Math.random()*8);state.coins=(state.coins||0)+n;saveState();try{updateTop();}catch(e){}
+    if(typeof Brave!=='undefined')Brave.pop('⚡ POWER UP!',n,0,null);const P=this.D.shared.power;if(P)await this.speak(P[Math.floor(Math.random()*P.length)]);},
+  gem(p){if(!this.fresh||!this.paidKey('gem'+p)||typeof Brave==='undefined')return;Brave.add(1,'workshop');Brave.pop('PROBLEM DONE!',0,1,null);},
+  async reward(s){const key=s.r+(s.p!=null?s.p:'');if(!this.fresh||!this.paidKey(key))return;await this.lines(s.say);if(!this.alive)return;
+    this.stopAudio();document.body.classList.add('tut-chest');
+    try{await openChest(s.r==='bigchest'?'boss':'great');}catch(e){console.error(e);}
+    document.body.classList.remove('tut-chest');if(s.r==='bigchest'&&typeof Brave!=='undefined'){Brave.add(3,'workshop-day');Brave.pop('WORKSHOP DAY DONE!',0,3,'legend');}
+    await this.lines(s.after);},
   // ---- the script
   async run(){const D=this.D;
     while(this.alive&&this.i<D.steps.length){const s=D.steps[this.i];const S=this.st();
@@ -110,7 +124,10 @@ const Tut={
       this.bar.style.width=(100*this.i/D.steps.length).toFixed(1)+'%';this.legendOn(s.tag||null);
       this.vis(s.vis);await this.lines(s.say);if(!this.alive)return;
       if(s.kind==='ask'){await this.ask1(s);if(!this.alive)return;this.vis(s.afterVis);
-        const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);}
+        const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);
+        if(this.pw>=5){this.pw=0;await this.powerUp();}
+        if(s.tag==='K')this.gem(s.p);}
+      else if(s.kind==='reward'){await this.reward(s);}
       this.i++;}
     if(!this.alive)return;const S=this.st();const ep=this.ep,first=!S.eps[ep];if(first)S.eps[ep]={doneAt:new Date().toISOString()};S.i=0;S.cur=null;
     if(first){state.coins=(state.coins||0)+(ep===this.EPS?60:30);try{updateTop();}catch(e){}}saveState();

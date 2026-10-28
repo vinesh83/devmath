@@ -43,7 +43,7 @@ const Isle={
       if(open)b.addEventListener('click',()=>{card.hidden=true;n.click();});row.append(b);}
     const boss=el('button',{class:'w3d-boss',type:'button'},'⚔️ World menu');boss.addEventListener('click',()=>{card.hidden=true;this.press(`.ow-castle[aria-label="${w.name}"]`);});
     card.append(close,el('h3',{style:`color:${w.color||'#ffe066'}`},w.name),el('p',null,w.sub||''),row,boss);},
-  look(){const h=state.hero||{};return{skin:h.skin,hair:h.hair,outfit:h.outfit,hat:h.hat,cape:h.cape};},
+  look(){const h=state.hero||{},col=(k,id,f)=>((CATALOG[k]||[]).find(z=>z.id===id)||{})[f];return{skin:h.skin,hair:h.hair,outfit:h.outfit,outfitCol:col('outfit',h.outfit,'B'),hat:h.hat,cape:h.cape,capeCol:col('cape',h.cape,'c')};},
   async show(){const m=this.map();if(!m)return;m.classList.toggle('w3d-on',this.on());this.toggleBtn();
     if(!this.on()){if(this.w)this.w.setPaused(true);return;}
     if(!this.host)this.host=el('div',{class:'w3d'});if(!m.contains(this.host))m.prepend(this.host);

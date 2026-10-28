@@ -89,15 +89,17 @@ const Walkie={
   say(t){t=this.clean(t);if(!t.trim()||state.mute)return Promise.resolve();return new Promise(done=>{try{const u=new SpeechSynthesisUtterance(t);const v=this.voice();if(v)u.voice=v;u.pitch=1.55;u.rate=1.04;u.volume=1;u.onend=u.onerror=()=>done();speechSynthesis.speak(u);setTimeout(done,600+t.length*90);}catch(e){done();}});},
   // the puppy voice (server: /api/voice). Fetches start right away; clips play in order.
   speak(t,first){t=this.words(t);if(!t.trim()||state.mute)return;
+    // a piece with no words (only a mood cue or an emoji) has nothing to say; the voice server rejects it
+    if(!/[\p{L}\p{N}]/u.test(t.replace(/\[[^\]]*\]/g,'')))return;
     const code=state.ellieCode,go=()=>this.noVoice||!code?Promise.reject(0):this.tfetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})},7000)
-      .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;return b;});
+      .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;this.vmiss=0;return b;});
     // until one clip has worked (the server designs the voice on first use), ask one at a time
     const got=this.voiceOk?go():(this.vlast=(this.vlast||Promise.resolve()).catch(()=>{}).then(go));
     got.catch(()=>{});
     const g=this.gen||0;
     this.q=(this.q||Promise.resolve()).then(async()=>{if(g!==(this.gen||0))return;this.duck(true);
       try{const buf=await got;if(g!==(this.gen||0))return;if(first)await this.chirp();await this.play(buf);}
-      catch(st){if(st===503||st===401||(st===0&&code))this.noVoice=true;if(g===(this.gen||0))await this.say(t);}
+      catch(st){if(st===503||st===401)this.noVoice=true;else if(typeof st!=='number'&&(this.vmiss=(this.vmiss||0)+1)>=3)this.noVoice=true;if(g===(this.gen||0))await this.say(t);}
       if(g===(this.gen||0))this.duck(false);});},
   play(buf){const c=Snd.ctx;if(!c)return Promise.reject(-1);return c.decodeAudioData(buf.slice(0)).then(ab=>new Promise(done=>{const s=c.createBufferSource();s.buffer=ab;s.connect(c.destination);s.onended=done;this.src=s;s.start();setTimeout(done,ab.duration*1000+500);}));},
   // walkie-talkie "kshh" before Ellie's first words

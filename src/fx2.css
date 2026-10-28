@@ -629,3 +629,35 @@ html,body{touch-action:manipulation}
 .dv-lv.dv-tut{background:linear-gradient(90deg,#ffd23f33,#ff9f4333);box-shadow:0 0 0 3px #ffd23f}
 .dv-class-drill.locked{opacity:.6}
 .vp.tut{display:flex;place-items:stretch;align-items:stretch;justify-items:stretch;background:radial-gradient(ellipse at 30% 20%,#2c2470,#120d33 70%)}
+/* Brave: Ellie's Dare, gems, and the Legend Vault */
+.dare-card{text-align:center;border:3px solid #ff7b1c;background:radial-gradient(ellipse at 50% 0%,#5a2410,#1a1030 70%);box-shadow:0 0 40px #ff7b1c88;animation:dareIn .45s cubic-bezier(.2,1.6,.4,1)}
+.dare-card.dare-legend{border-color:#c084fc;background:radial-gradient(ellipse at 50% 0%,#3d1466,#0d0820 70%);box-shadow:0 0 50px #c084fcaa}
+.dare-card h2{font-size:34px;margin:4px 0;color:#ffd23f;text-shadow:0 3px 0 #0008}.dare-legend h2{color:#e9d5ff}
+.dare-flame{font-size:64px;line-height:1;animation:dareBob 1s ease-in-out infinite}
+.dare-pay{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}.dare-pay span{background:#0006;border-radius:12px;padding:8px 12px;font-weight:800;font-size:18px}
+.dare-why{font-size:15px;color:#ffe9a8}.dare-safe{font-size:14px;opacity:.8}
+.dare-go{font-size:22px;padding:14px 22px;animation:darePulse 1.2s ease-in-out infinite}
+@keyframes dareIn{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes dareBob{50%{transform:translateY(-6px) scale(1.08)}}
+@keyframes darePulse{50%{transform:scale(1.06);box-shadow:0 0 24px #3fdc6b}}
+.dare-badge{display:inline-block;margin:0 0 8px;padding:6px 14px;border-radius:999px;font-weight:800;background:linear-gradient(90deg,#ff7b1c,#ff3d3d);color:#fff;box-shadow:0 0 18px #ff7b1c99}
+.dare-badge.dare-legend{background:linear-gradient(90deg,#7c3aed,#c084fc)}
+.gem-chip{font-weight:800}
+.gem-pop{position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);z-index:500;pointer-events:none;text-align:center;animation:gpIn 2.6s ease forwards}
+.gem-pop b{display:block;font:900 54px/1 "Pixelify Sans",system-ui;color:#ffd23f;text-shadow:0 4px 0 #8a3b00,0 0 30px #ff7b1c}
+.gem-pop.dare-legend b{color:#f0e0ff;text-shadow:0 4px 0 #4c1d95,0 0 30px #c084fc}
+.gp-row{display:flex;gap:18px;justify-content:center;margin-top:10px}.gp-row span{font:900 40px/1 system-ui;color:#fff;text-shadow:0 3px 0 #0009}
+.gp-gem{color:#9be7ff!important;text-shadow:0 0 18px #5ef2ff,0 3px 0 #0009!important}
+.gp-spark{position:absolute;left:50%;top:50%;font-style:normal;font-size:22px;color:#ffe066;animation:gpSpark 1.4s ease-out forwards;transform:rotate(var(--a)) translateY(0)}
+@keyframes gpIn{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}12%{transform:translate(-50%,-50%) scale(1.15);opacity:1}20%{transform:translate(-50%,-50%) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+@keyframes gpSpark{to{transform:rotate(var(--a)) translateY(calc(-1*var(--d)));opacity:0}}
+.vault-tab{background:linear-gradient(90deg,#1b3a6b,#5b21b6)!important;color:#fff!important}
+.items.vault .vault-head{grid-column:1/-1;display:grid;gap:4px;padding:10px 14px;border-radius:14px;background:linear-gradient(90deg,#132a50,#3b1470)}
+.items.vault .vault-head b{font-size:22px;color:#9be7ff}
+.items.vault .item.legend{border:2px solid #c084fc;box-shadow:0 0 14px #c084fc55}
+.items.vault .vp-ic{font-size:52px;line-height:96px;height:96px}
+.items.vault .vault-prize{border:2px solid #ffd23f;box-shadow:0 0 16px #ffd23f66}
+/* Workshop: power meter and chests over the lesson */
+.tut-pw{display:flex;gap:4px;align-items:center;font-weight:800}.tut-pw i{width:16px;height:16px;border-radius:50%;background:#ffffff22;border:2px solid #ffd23f66}
+.tut-pw i.on{background:radial-gradient(circle at 35% 35%,#fff3b0,#ffc933 60%,#c98a00);border-color:#ffd23f;box-shadow:0 0 10px #ffd23f}
+body.tut-chest #cine{position:fixed;z-index:400}

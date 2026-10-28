@@ -43,7 +43,7 @@ setTimeout(()=>{try{if(!Cin3.off)Cin3.load();}catch(e){}},4000);
 // Toon look: tag every sprite with what it is, so the 3D engine builds the same smooth toon characters as Number Isle
 // (Dev's real skin, hair, outfit color, hat and cape; Ellie's accessories; his mech's paint).
 {const _sp=Cin3.sprites.bind(Cin3);Cin3.sprites=function(){const S=_sp.apply(this,arguments);try{
-  const L=heroLook(),oc=(CATALOG.outfit.find(o=>o.id===L.outfit)||{}).B,look={skin:L.skin,hair:L.hair,outfit:L.outfit,outfitCol:oc,hat:L.hat,cape:L.cape&&L.cape!=='none'?L.cape:null};
+  const L=heroLook(),oc=(CATALOG.outfit.find(o=>o.id===L.outfit)||{}).B,look={skin:L.skin,hair:L.hair,outfit:L.outfit,outfitCol:oc,hat:L.hat,cape:L.cape&&L.cape!=='none'?L.cape:null,capeCol:L.cape&&L.cape!=='none'?((CATALOG.cape.find(c=>c.id===L.cape)||{}).c):null};
   for(const f of ['stand','runA','runB'])if(S.hero[f])Object.assign(S.hero[f],{kind:'hero',pose:f,look});
   if(S.dog)Object.assign(S.dog,{kind:'dog',dogAcc:(state.hero||{}).dogAcc||{}});
   if(S.glitch)S.glitch.kind='glitch';if(S.gmech)S.gmech.kind='gmech';if(S.minion)S.minion.kind='minion';

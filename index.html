@@ -1057,6 +1057,38 @@ html,body{touch-action:manipulation}
 .dv-lv.dv-tut{background:linear-gradient(90deg,#ffd23f33,#ff9f4333);box-shadow:0 0 0 3px #ffd23f}
 .dv-class-drill.locked{opacity:.6}
 .vp.tut{display:flex;place-items:stretch;align-items:stretch;justify-items:stretch;background:radial-gradient(ellipse at 30% 20%,#2c2470,#120d33 70%)}
+/* Brave: Ellie's Dare, gems, and the Legend Vault */
+.dare-card{text-align:center;border:3px solid #ff7b1c;background:radial-gradient(ellipse at 50% 0%,#5a2410,#1a1030 70%);box-shadow:0 0 40px #ff7b1c88;animation:dareIn .45s cubic-bezier(.2,1.6,.4,1)}
+.dare-card.dare-legend{border-color:#c084fc;background:radial-gradient(ellipse at 50% 0%,#3d1466,#0d0820 70%);box-shadow:0 0 50px #c084fcaa}
+.dare-card h2{font-size:34px;margin:4px 0;color:#ffd23f;text-shadow:0 3px 0 #0008}.dare-legend h2{color:#e9d5ff}
+.dare-flame{font-size:64px;line-height:1;animation:dareBob 1s ease-in-out infinite}
+.dare-pay{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}.dare-pay span{background:#0006;border-radius:12px;padding:8px 12px;font-weight:800;font-size:18px}
+.dare-why{font-size:15px;color:#ffe9a8}.dare-safe{font-size:14px;opacity:.8}
+.dare-go{font-size:22px;padding:14px 22px;animation:darePulse 1.2s ease-in-out infinite}
+@keyframes dareIn{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes dareBob{50%{transform:translateY(-6px) scale(1.08)}}
+@keyframes darePulse{50%{transform:scale(1.06);box-shadow:0 0 24px #3fdc6b}}
+.dare-badge{display:inline-block;margin:0 0 8px;padding:6px 14px;border-radius:999px;font-weight:800;background:linear-gradient(90deg,#ff7b1c,#ff3d3d);color:#fff;box-shadow:0 0 18px #ff7b1c99}
+.dare-badge.dare-legend{background:linear-gradient(90deg,#7c3aed,#c084fc)}
+.gem-chip{font-weight:800}
+.gem-pop{position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);z-index:500;pointer-events:none;text-align:center;animation:gpIn 2.6s ease forwards}
+.gem-pop b{display:block;font:900 54px/1 "Pixelify Sans",system-ui;color:#ffd23f;text-shadow:0 4px 0 #8a3b00,0 0 30px #ff7b1c}
+.gem-pop.dare-legend b{color:#f0e0ff;text-shadow:0 4px 0 #4c1d95,0 0 30px #c084fc}
+.gp-row{display:flex;gap:18px;justify-content:center;margin-top:10px}.gp-row span{font:900 40px/1 system-ui;color:#fff;text-shadow:0 3px 0 #0009}
+.gp-gem{color:#9be7ff!important;text-shadow:0 0 18px #5ef2ff,0 3px 0 #0009!important}
+.gp-spark{position:absolute;left:50%;top:50%;font-style:normal;font-size:22px;color:#ffe066;animation:gpSpark 1.4s ease-out forwards;transform:rotate(var(--a)) translateY(0)}
+@keyframes gpIn{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}12%{transform:translate(-50%,-50%) scale(1.15);opacity:1}20%{transform:translate(-50%,-50%) scale(1)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+@keyframes gpSpark{to{transform:rotate(var(--a)) translateY(calc(-1*var(--d)));opacity:0}}
+.vault-tab{background:linear-gradient(90deg,#1b3a6b,#5b21b6)!important;color:#fff!important}
+.items.vault .vault-head{grid-column:1/-1;display:grid;gap:4px;padding:10px 14px;border-radius:14px;background:linear-gradient(90deg,#132a50,#3b1470)}
+.items.vault .vault-head b{font-size:22px;color:#9be7ff}
+.items.vault .item.legend{border:2px solid #c084fc;box-shadow:0 0 14px #c084fc55}
+.items.vault .vp-ic{font-size:52px;line-height:96px;height:96px}
+.items.vault .vault-prize{border:2px solid #ffd23f;box-shadow:0 0 16px #ffd23f66}
+/* Workshop: power meter and chests over the lesson */
+.tut-pw{display:flex;gap:4px;align-items:center;font-weight:800}.tut-pw i{width:16px;height:16px;border-radius:50%;background:#ffffff22;border:2px solid #ffd23f66}
+.tut-pw i.on{background:radial-gradient(circle at 35% 35%,#fff3b0,#ffc933 60%,#c98a00);border-color:#ffd23f;box-shadow:0 0 10px #ffd23f}
+body.tut-chest #cine{position:fixed;z-index:400}
 </style>
 
 <div id="app">
@@ -4060,7 +4092,7 @@ setTimeout(()=>{try{if(!Cin3.off)Cin3.load();}catch(e){}},4000);
 // Toon look: tag every sprite with what it is, so the 3D engine builds the same smooth toon characters as Number Isle
 // (Dev's real skin, hair, outfit color, hat and cape; Ellie's accessories; his mech's paint).
 {const _sp=Cin3.sprites.bind(Cin3);Cin3.sprites=function(){const S=_sp.apply(this,arguments);try{
-  const L=heroLook(),oc=(CATALOG.outfit.find(o=>o.id===L.outfit)||{}).B,look={skin:L.skin,hair:L.hair,outfit:L.outfit,outfitCol:oc,hat:L.hat,cape:L.cape&&L.cape!=='none'?L.cape:null};
+  const L=heroLook(),oc=(CATALOG.outfit.find(o=>o.id===L.outfit)||{}).B,look={skin:L.skin,hair:L.hair,outfit:L.outfit,outfitCol:oc,hat:L.hat,cape:L.cape&&L.cape!=='none'?L.cape:null,capeCol:L.cape&&L.cape!=='none'?((CATALOG.cape.find(c=>c.id===L.cape)||{}).c):null};
   for(const f of ['stand','runA','runB'])if(S.hero[f])Object.assign(S.hero[f],{kind:'hero',pose:f,look});
   if(S.dog)Object.assign(S.dog,{kind:'dog',dogAcc:(state.hero||{}).dogAcc||{}});
   if(S.glitch)S.glitch.kind='glitch';if(S.gmech)S.gmech.kind='gmech';if(S.minion)S.minion.kind='minion';
@@ -4325,12 +4357,14 @@ window.__classRun=(idx)=>startRun({title:'Class Practice · Long Division',mode:
 
 /* =========================================================
    Long Division Workshop: a required, video-style tutorial series for 3-digit ÷ 1-digit long division.
-   Three daily episodes of about 10 minutes (one unlocks per day): Day 1 The Knight's Code (857÷3, 247÷7 first digit
-   too small), Day 2 The Zero Trap (645÷4, 614÷3), Day 3 Knight's Challenge (932÷4 no remainder, 529÷6). The board draws itself
-   and a narrator talks him through it, but every step is a question he answers: Divide, Multiply, Subtract,
+   Three daily episodes of about 10 minutes (one unlocks per day), three problems each: Day 1 The Knight's Code,
+   Day 2 The Zero Trap (zeros in the answer), Day 3 Knight's Challenge (he leads). The board draws itself
+   and Ellie talks him through it in her puppy voice, but every step is a question he answers: Divide, Multiply, Subtract,
    Check, Bring down, then the remainder and a multiply-back check. A miss gives a hint; a second miss shows
    the answer and he writes it. Progress is saved by problem. Class Practice and the 3-digit Dungeon levels
    stay locked until Day 1 is done. Each day's episode opens by itself on his first visit to the map.
+   Rewards along the way (first time through a day): a power-up every five right answers, a loot chest halfway
+   through every problem, a gem per problem, and a giant chest plus 3 gems at the end.
    Scripts and narration: tut/ep1..3.json, tut/a/*.mp3 (made by tut/gen.py).
    ========================================================= */
 const Tut={
@@ -4346,14 +4380,14 @@ const Tut={
   async open(o){o=o||{};if(this.el)return;const ep=o.ep||this.nextEp()||1;this.ep=ep;const D=await this.data(ep);const S=this.st();
     if(typeof Music!=='undefined')Music.stop();try{speechSynthesis.cancel();}catch(e){}
     const root=el('div',{class:'vp tut'});this.el=root;
-    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,`🎬 Workshop · Day ${ep}: ${D.title}`),el('span',{class:'tut-pn'}),el('div',{class:'tut-bar'},bar),
+    const bar=el('i');const head=el('div',{class:'tut-head'},el('b',null,`🎬 Workshop · Day ${ep}: ${D.title}`),el('span',{class:'tut-pn'}),el('div',{class:'tut-pw',title:'Five right answers = power up!'},'⚡',...[0,1,2,3,4].map(()=>el('i'))),el('div',{class:'tut-bar'},bar),
       el('button',{class:'tut-exit',type:'button',onclick:()=>this.close()},'⏸ Finish later'));
     const board=el('div',{class:'tut-board'}),legend=el('div',{class:'tut-legend'},...[['D','Divide','#3fa7ff'],['M','Multiply','#3fbf5f'],['S','Subtract','#ffd23f'],['C','Check','#c084fc'],['B','Bring down','#ff4d6d']].map(([k,n,c])=>el('div',{class:'tut-lg','data-k':k,style:`--c:${c}`},el('b',null,k),el('span',null,n))));
     const side=el('div',{class:'tut-side'});
     const face=el('div',{class:'tut-face'},'🐶'),sub=el('div',{class:'tut-sub'}),again=el('button',{class:'tut-again',type:'button','aria-label':'Hear it again'},'🔁');
     const ask=el('div',{class:'tut-ask',hidden:true});
     root.append(head,el('div',{class:'tut-stage'},board,el('div',{class:'tut-right'},legend,side)),el('div',{class:'tut-foot'},face,sub,again),ask);document.body.append(root);
-    Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),face});again.addEventListener('click',()=>this.replay());
+    Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),pwEl:head.querySelector('.tut-pw'),face});this.pw=0;this.fresh=!this.epDone(ep);again.addEventListener('click',()=>this.replay());
     // Ellie's toon portrait when the 3D engine is available
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const sp=Cin3.sprites().dog;const c=Cine3D.portrait(sp,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
     // resume at the start of the problem he was on
@@ -4420,7 +4454,7 @@ const Tut={
     tapify(y,()=>res({v:'yes',clear:()=>{}}));tapify(n,()=>res({v:'no',clear:()=>{}}));A.append(y,n);});},
   async ask1(step){const t0=Date.now();let tries=0;
     for(;;){const r=step.q==='yn'?await this.askYN():await this.askNum();if(!this.alive)return;
-      if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);
+      if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);this.pw++;this.pips();
         this.st().log.push({i:this.i,p:step.p,tag:step.tag,tries,ms:Date.now()-t0});if(this.st().log.length>400)this.st().log.shift();return;}
       tries++;this.chime(false);r.clear();this.ask.hidden=true;
       if(tries===1){await this.lines([this.D.shared.miss,step.hint]);}
@@ -4428,6 +4462,18 @@ const Tut={
         this.sub.append(document.createTextNode('Write: '),el('b',{class:'tut-show'},step.q==='yn'?(step.ans==='yes'?'Yes':'No'):String(step.ans)));}
       if(!this.alive)return;}},
   chime(ok){try{if(ok){Snd.tone(784,0.07,'square',0.035);Snd.tone(1046,0.1,'square',0.035,0.07);}else Snd.tone(220,0.15,'triangle',0.04);}catch(e){}},
+  // ---- rewards: a power-up every five right answers, a chest halfway through each problem, a gem per problem,
+  // and the giant chest at the end. They pay on the first time through a day (not on replays).
+  pips(){if(!this.pwEl)return;this.pwEl.querySelectorAll('i').forEach((x,k)=>x.classList.toggle('on',k<this.pw));},
+  paidKey(k){const S=this.st();S.paid=S.paid||{};const key=this.ep+':'+k;if(S.paid[key])return false;S.paid[key]=1;saveState();return true;},
+  async powerUp(){this.pips();if(!this.fresh)return;const n=8+Math.floor(Math.random()*8);state.coins=(state.coins||0)+n;saveState();try{updateTop();}catch(e){}
+    if(typeof Brave!=='undefined')Brave.pop('⚡ POWER UP!',n,0,null);const P=this.D.shared.power;if(P)await this.speak(P[Math.floor(Math.random()*P.length)]);},
+  gem(p){if(!this.fresh||!this.paidKey('gem'+p)||typeof Brave==='undefined')return;Brave.add(1,'workshop');Brave.pop('PROBLEM DONE!',0,1,null);},
+  async reward(s){const key=s.r+(s.p!=null?s.p:'');if(!this.fresh||!this.paidKey(key))return;await this.lines(s.say);if(!this.alive)return;
+    this.stopAudio();document.body.classList.add('tut-chest');
+    try{await openChest(s.r==='bigchest'?'boss':'great');}catch(e){console.error(e);}
+    document.body.classList.remove('tut-chest');if(s.r==='bigchest'&&typeof Brave!=='undefined'){Brave.add(3,'workshop-day');Brave.pop('WORKSHOP DAY DONE!',0,3,'legend');}
+    await this.lines(s.after);},
   // ---- the script
   async run(){const D=this.D;
     while(this.alive&&this.i<D.steps.length){const s=D.steps[this.i];const S=this.st();
@@ -4435,7 +4481,10 @@ const Tut={
       this.bar.style.width=(100*this.i/D.steps.length).toFixed(1)+'%';this.legendOn(s.tag||null);
       this.vis(s.vis);await this.lines(s.say);if(!this.alive)return;
       if(s.kind==='ask'){await this.ask1(s);if(!this.alive)return;this.vis(s.afterVis);
-        const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);}
+        const praise=s.after&&s.after.length?s.after:[D.shared.yes[Math.floor(Math.random()*D.shared.yes.length)]];await this.lines(praise);
+        if(this.pw>=5){this.pw=0;await this.powerUp();}
+        if(s.tag==='K')this.gem(s.p);}
+      else if(s.kind==='reward'){await this.reward(s);}
       this.i++;}
     if(!this.alive)return;const S=this.st();const ep=this.ep,first=!S.eps[ep];if(first)S.eps[ep]={doneAt:new Date().toISOString()};S.i=0;S.cur=null;
     if(first){state.coins=(state.coins||0)+(ep===this.EPS?60:30);try{updateTop();}catch(e){}}saveState();
@@ -4536,7 +4585,7 @@ const Isle={
       if(open)b.addEventListener('click',()=>{card.hidden=true;n.click();});row.append(b);}
     const boss=el('button',{class:'w3d-boss',type:'button'},'⚔️ World menu');boss.addEventListener('click',()=>{card.hidden=true;this.press(`.ow-castle[aria-label="${w.name}"]`);});
     card.append(close,el('h3',{style:`color:${w.color||'#ffe066'}`},w.name),el('p',null,w.sub||''),row,boss);},
-  look(){const h=state.hero||{};return{skin:h.skin,hair:h.hair,outfit:h.outfit,hat:h.hat,cape:h.cape};},
+  look(){const h=state.hero||{},col=(k,id,f)=>((CATALOG[k]||[]).find(z=>z.id===id)||{})[f];return{skin:h.skin,hair:h.hair,outfit:h.outfit,outfitCol:col('outfit',h.outfit,'B'),hat:h.hat,cape:h.cape,capeCol:col('cape',h.cape,'c')};},
   async show(){const m=this.map();if(!m)return;m.classList.toggle('w3d-on',this.on());this.toggleBtn();
     if(!this.on()){if(this.w)this.w.setPaused(true);return;}
     if(!this.host)this.host=el('div',{class:'w3d'});if(!m.contains(this.host))m.prepend(this.host);
@@ -4762,15 +4811,17 @@ const Walkie={
   say(t){t=this.clean(t);if(!t.trim()||state.mute)return Promise.resolve();return new Promise(done=>{try{const u=new SpeechSynthesisUtterance(t);const v=this.voice();if(v)u.voice=v;u.pitch=1.55;u.rate=1.04;u.volume=1;u.onend=u.onerror=()=>done();speechSynthesis.speak(u);setTimeout(done,600+t.length*90);}catch(e){done();}});},
   // the puppy voice (server: /api/voice). Fetches start right away; clips play in order.
   speak(t,first){t=this.words(t);if(!t.trim()||state.mute)return;
+    // a piece with no words (only a mood cue or an emoji) has nothing to say; the voice server rejects it
+    if(!/[\p{L}\p{N}]/u.test(t.replace(/\[[^\]]*\]/g,'')))return;
     const code=state.ellieCode,go=()=>this.noVoice||!code?Promise.reject(0):this.tfetch(this.URL.replace(/ellie$/,'voice'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code,text:t.trim()})},7000)
-      .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;return b;});
+      .then(r=>r.ok?r.arrayBuffer():Promise.reject(r.status)).then(b=>{this.voiceOk=true;this.vmiss=0;return b;});
     // until one clip has worked (the server designs the voice on first use), ask one at a time
     const got=this.voiceOk?go():(this.vlast=(this.vlast||Promise.resolve()).catch(()=>{}).then(go));
     got.catch(()=>{});
     const g=this.gen||0;
     this.q=(this.q||Promise.resolve()).then(async()=>{if(g!==(this.gen||0))return;this.duck(true);
       try{const buf=await got;if(g!==(this.gen||0))return;if(first)await this.chirp();await this.play(buf);}
-      catch(st){if(st===503||st===401||(st===0&&code))this.noVoice=true;if(g===(this.gen||0))await this.say(t);}
+      catch(st){if(st===503||st===401)this.noVoice=true;else if(typeof st!=='number'&&(this.vmiss=(this.vmiss||0)+1)>=3)this.noVoice=true;if(g===(this.gen||0))await this.say(t);}
       if(g===(this.gen||0))this.duck(false);});},
   play(buf){const c=Snd.ctx;if(!c)return Promise.reject(-1);return c.decodeAudioData(buf.slice(0)).then(ab=>new Promise(done=>{const s=c.createBufferSource();s.buffer=ab;s.connect(c.destination);s.onended=done;this.src=s;s.start();setTimeout(done,ab.duration*1000+500);}));},
   // walkie-talkie "kshh" before Ellie's first words
@@ -4956,6 +5007,112 @@ window.__markup=Markup;
 window.__go=(id,li)=>startLevel(WORLDS.find(w=>w.id===id),li,{go:true});
 
 /* =========================================================
+   Brave: a strong, safe reason to pick the hard problem.
+   - Ellie's Dare: after a solved problem in a level or quest, Ellie sometimes offers to swap the next one for a harder
+     version (Hero: one level up, ×3 coins; Legend: two levels up, ×5 coins). "Not now" costs nothing.
+   - Gems 💎 come only from hard work: Dares and the Long Division Workshop. A miss on a dare never lowers his level,
+     and a real try on a Legend still earns a brave gem.
+   - The Legend Vault (a Shop tab) sells things coins can't buy: legend outfits and capes, coin bags, and a real-world
+     prize a grown-up honors (cfg.gemPrize = {gems, name}, or false to hide it).
+   ========================================================= */
+const Brave={
+  st(){const s=state.brave=state.brave||{offered:0,taken:0,won:0,log:[]};state.gems=state.gems||0;return s;},
+  // things only gems can buy (price 0 keeps them out of coin loot; they stay out of the coin tabs)
+  VAULT:[
+    {cat:'outfit',id:'dragon',name:'Dragon Knight',gems:20,B:'#1e9e5a',A:'#ffd23f',P:'#0f4d2e',K:'#2a1a0a'},
+    {cat:'cape',id:'flame',name:'Flame cape',gems:15,c:'#ff5a1f'},
+    {cat:'outfit',id:'lava',name:'Lava Lord',gems:30,B:'#d7263d',A:'#ff9f1c',P:'#3a0d12',K:'#1a0606'},
+    {cat:'cape',id:'royal',name:'Royal cape',gems:25,c:'#8a2be2'},
+    {cat:'outfit',id:'diamond',name:'Diamond Knight',gems:45,B:'#b9f3ff',A:'#ffffff',P:'#5aa9c9',K:'#1b3a4b'},
+    {cat:'cape',id:'diamondc',name:'Diamond cape',gems:35,c:'#9be7ff'},
+    {cat:'outfit',id:'shadowx',name:'Shadow Legend',gems:60,B:'#141428',A:'#b14dff',P:'#0a0a18',K:'#000000'}],
+  isVault(cat,id){return this.VAULT.some(v=>v.cat===cat&&v.id===id);},
+  prize(){if(cfg.gemPrize===false)return null;const p=cfg.gemPrize||{};return{gems:Number(p.gems)||50,name:String(p.name||'Pick dinner or dessert!')};},
+  BAG:{gems:10,coins:150},
+  // ---- gems
+  add(n,why){if(!(n>0))return;this.st();state.gems+=n;const s=this.st();s.log.push({t:new Date().toISOString(),n,why});if(s.log.length>150)s.log.shift();saveState();this.chips();},
+  chips(){document.querySelectorAll('.chip').forEach(ch=>{if(!ch.querySelector('.coin-ico')||ch.classList.contains('gem-chip'))return;let g=ch.nextElementSibling;
+    if(!g||!g.classList.contains('gem-chip')){g=el('span',{class:'chip gem-chip',title:'Gems: earned only from Dares and the Workshop'});ch.after(g);}g.textContent='💎 '+(state.gems||0);});},
+  // ---- Ellie's lines (recorded in her puppy voice: tut/a/brave-*.mp3)
+  voice(k){if(state.mute)return;try{const a=new Audio('tut/a/brave-'+k+'.mp3');a.play().catch(()=>{});}catch(e){}},
+  // ---- the dare: a harder version of the next problem
+  KINDS:['arith','word','table','area','div','mul'],
+  hardOf(p,k){const L=p.L||1;let T=Math.min(5,L+k);if(p.kind==='div'&&typeof Tut!=='undefined'&&!Tut.done())T=Math.min(T,2);if(T<=L)return null;let q=null;
+    try{if(p.kind==='arith'||p.kind==='word'||p.kind==='table'){const g=GEN[p.skill];q=g&&g(T);}else if(p.kind==='area')q=genArea(T);else if(p.kind==='div')q=genDiv(T);else if(p.kind==='mul')q=genMul(T);}catch(e){}
+    return q&&q.kind===p.kind&&(q.L||T)>L?q:null;},
+  eligible(){if(!run||!run.spec)return false;const sp=run.spec;if(!(sp.mode==='level'||sp.mode==='quest')||sp.boss||sp.packId)return false;
+    const i=run.idx,p=run.queue[i];if(!p||i<1||p.twin||p.dare||(run.dareAsk||{})[i])return false;if(!this.KINDS.includes(p.kind))return false;
+    const last=run.results[i-1];if(!last||!last.solved)return false;          // only on a roll: right after a solved problem
+    if(i-(run.lastDare==null?-9:run.lastDare)<2)return false;return true;},   // never two in a row
+  offer(go){const i=run.idx,p=run.queue[i];run.dareAsk=run.dareAsk||{};run.dareAsk[i]=1;
+    const mega=Math.random()<0.3,k=mega?2:1;let q=this.hardOf(p,k),tier=mega?'legend':'hero';if(!q&&mega){q=this.hardOf(p,1);tier='hero';}if(!q)return go();
+    run.lastDare=i;const s=this.st();s.offered++;saveState();const T=this.TIER[tier];this.voice(tier==='legend'?'offer-legend':'offer');Snd.zap(6);
+    const first=!s.seen;s.seen=1;
+    const take=()=>{overlay(null);q.dare=tier;q.L=q.L||p.L;run.queue[i]=q;s.taken++;saveState();Snd.fanfare();this.voice('accept');go();},
+      skip=()=>{overlay(null);Snd.tap();go();};
+    overlay(el('div',{class:'modal dare-card dare-'+tier},
+      el('div',{class:'dare-flame'},tier==='legend'?'💀':'🔥'),
+      el('h2',null,tier==='legend'?'LEGEND DARE!':'Ellie’s Dare!'),
+      el('p',null,tier==='legend'?'Swap the next one for a LEGEND problem: two levels harder.':'Swap the next one for a HERO problem: one level harder.'),
+      el('div',{class:'dare-pay'},el('span',null,`🪙 ×${T.mult} coins`),el('span',null,`💎 +${T.gems}`),el('span',null,'💎 +1 more on the first try')),
+      first?el('p',{class:'dare-why'},'Gems only come from Dares and the Workshop. Spend them in the Legend Vault in the Shop: gear coins can’t buy, and a real prize!'):null,
+      el('p',{class:'dare-safe'},'A miss never lowers your level. Ellie helps like always.'),
+      el('div',{class:'btns'},el('button',{class:'btn btn-green dare-go',type:'button',onclick:take},tier==='legend'?'💀 I’m a Legend!':'🔥 Take the dare!'),
+        el('button',{class:'btn btn-dark',type:'button',onclick:skip},'Not now'))));},
+  TIER:{hero:{mult:3,gems:1,name:'HERO DARE'},legend:{mult:5,gems:2,name:'LEGEND DARE'}},
+  badge(){const p=run&&run.queue[run.idx],card=$('#card');if(!p||!p.dare||!card||card.querySelector('.dare-badge'))return;const T=this.TIER[p.dare];
+    card.prepend(el('div',{class:'dare-badge dare-'+p.dare},`${p.dare==='legend'?'💀':'🔥'} ${T.name} · ×${T.mult} coins · 💎 +${T.gems}`));},
+  // ---- the payout, on top of the normal coins
+  paid(p,res,a){const T=this.TIER[p.dare],s=this.st();let coins=0,gems=0,head;
+    if(res.solved){coins=(a.coins||0)*(T.mult-1);gems=T.gems+(res.firstTry?1:0);s.won++;head=res.firstTry?'FIRST-TRY DARE!':'DARE CRUSHED!';this.voice(res.firstTry?'win-first':'win');}
+    else{coins=3;gems=p.dare==='legend'&&(a.nTries||0)>=2?1:0;head='BRAVE TRY!';this.voice('brave');}
+    state.coins+=coins;run.coins+=coins;a.coins=(a.coins||0)+coins;a.gems=gems;
+    s.log.push({t:new Date().toISOString(),tier:p.dare,skill:p.skill,L:p.L,solved:!!res.solved,firstTry:!!res.firstTry});if(s.log.length>150)s.log.shift();
+    if(gems)this.add(gems,'dare-'+p.dare);saveState();updateTop();this.pop(head,res.solved?a.coins:coins,gems,p.dare);},
+  pop(head,coins,gems,tier){const o=el('div',{class:'gem-pop'+(tier?' dare-'+tier:'')},el('b',null,head),
+      el('div',{class:'gp-row'},coins?el('span',null,`+${coins} 🪙`):null,gems?el('span',{class:'gp-gem'},`+${gems} 💎`):null));
+    for(let i=0;i<26;i++){const sp=el('i',{class:'gp-spark'});sp.style.setProperty('--a',(i*360/26)+'deg');sp.style.setProperty('--d',(120+Math.random()*160)+'px');sp.textContent=i%3?'✦':(gems?'💎':'🪙');o.append(sp);}
+    setTimeout(()=>{document.body.append(o);try{Snd.gem();if(gems)Snd.fanfare();else Snd.coin();}catch(e){}setTimeout(()=>o.remove(),2600);},tier?650:0);},  // after the hit stamp
+  // ---- the Legend Vault tab in the Shop
+  vault(S){const grid=S.querySelector('.items');if(!grid)return;grid.innerHTML='';grid.classList.add('vault');const look=Object.assign({},heroLook());
+    grid.append(el('div',{class:'vault-head'},el('b',null,`💎 ${state.gems||0} gems`),el('span',null,'Earn gems only from 🔥 Dares in levels and quests, and from the Long Division Workshop.')));
+    const buy=(cost,fn)=>{if((state.gems||0)<cost){Snd.shield();return false;}state.gems-=cost;fn();saveState();Snd.gem();Snd.fanfare();return true;};
+    const pr=this.prize();
+    if(pr){const b=el('button',{class:'item vault-prize'+((state.gems||0)<pr.gems?' cant':''),type:'button',onclick:()=>{if(!buy(pr.gems,()=>{state.prizes=(state.prizes||[]).concat([{id:uid(),name:pr.name,at:new Date().toISOString(),status:'pending',from:'vault'}]);this.add(0);}))return;
+        this.voice('prize');overlay(el('div',{class:'modal'},el('h2',null,'🏆 Real prize!'),el('p',null,`${pr.name} Show a grown-up to make it official.`),el('div',{class:'btns'},el('button',{class:'btn btn-green',type:'button',onclick:()=>{overlay(null);renderShop();}},'Yes!'))));}},
+        el('div',{class:'vp-ic'},'🏆'),el('span',{class:'nm'},'Real-world prize'),el('span',{class:'dpw'},pr.name),el('span',{class:'pr'},`💎 ${pr.gems}`));grid.append(b);}
+    grid.append(el('button',{class:'item'+((state.gems||0)<this.BAG.gems?' cant':''),type:'button',onclick:()=>{if(buy(this.BAG.gems,()=>{state.coins+=this.BAG.coins;}))renderShop();}},
+      el('div',{class:'vp-ic'},'💰'),el('span',{class:'nm'},`Coin bag: +${this.BAG.coins}`),el('span',{class:'dpw'},'For anything in the Shop'),el('span',{class:'pr'},`💎 ${this.BAG.gems}`)));
+    for(const it of this.VAULT){const key=it.cat+':'+it.id,own=state.owned.includes(key),eq=(look[it.cat]||'none')===it.id;
+      const ic=el('canvas',{width:96,height:96});const c=ic.getContext('2d');c.imageSmoothingEnabled=false;drawHero(c,24,12,4,Object.assign({},look,{[it.cat]:it.id}),'stand',0);
+      grid.append(el('button',{class:'item legend'+(eq?' eq':'')+(!own&&(state.gems||0)<it.gems?' cant':''),type:'button',onclick:()=>{
+          if(own){ShopX.equip(it.cat,it);saveState();Snd.tap();renderShop();return;}
+          if(buy(it.gems,()=>{state.owned.push(key);ShopX.equip(it.cat,it);}))renderShop();}},
+        ic,el('span',{class:'nm'},it.name),el('span',{class:'dpw'},'Legend · coins can’t buy this'),el('span',{class:'pr'},eq?'Wearing':own?'Owned · tap to wear':`💎 ${it.gems}`)));}},
+};
+// the vault items join the catalog (so the hero can wear them everywhere) once the catalog exists
+setTimeout(()=>{try{for(const v of Brave.VAULT){const L=CATALOG[v.cat];if(!L.some(x=>x.id===v.id))L.push(Object.assign({price:0,vault:1},v));}}catch(e){console.error(e);}},0);
+// ---- hooks
+{const _np=nextProblem;nextProblem=function(){if(run&&run.idx<run.queue.length&&Brave.eligible()){const R=run;return Brave.offer(()=>{if(run===R)_np.apply(this,arguments);Brave.badge();});}
+  const r=_np.apply(this,arguments);try{Brave.badge();}catch(e){}return r;};}
+{const _cp=complete;complete=function(p,res){const dare=p&&p.dare,sk=dare?getSkill(p.skill):null,r0=sk&&sk.r;if(dare&&ATT)ATT.dare=dare;
+  const out=_cp.apply(this,arguments);
+  if(dare){if(sk&&sk.r<r0)sk.r=r0;try{Brave.paid(p,res,ATT);}catch(e){console.error(e);}}
+  return out;};}
+{const _ut=updateTop;updateTop=function(){const r=_ut.apply(this,arguments);try{Brave.chips();}catch(e){}return r;};}
+{const _rm=renderMap;renderMap=function(){const r=_rm.apply(this,arguments);try{Brave.chips();}catch(e){}return r;};}
+{const _rs=renderShop;renderShop=function(){const vault=shopTab==='vault';if(vault)shopTab='outfit';
+  // the coin tabs never list vault items
+  const saved={};for(const k of ['outfit','cape']){saved[k]=CATALOG[k];CATALOG[k]=CATALOG[k].filter(x=>!x.vault);}
+  try{_rs.apply(this,arguments);}finally{for(const k in saved)CATALOG[k]=saved[k];}
+  if(vault)shopTab='vault';
+  const S=$('#scr-shop'),tabs=S.querySelector('.tabs');if(tabs){if(vault)tabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    tabs.append(el('button',{class:'tab vault-tab'+(vault?' on':''),type:'button',onclick:()=>{shopTab='vault';renderShop();}},'💎 Legend Vault'));}
+  if(vault)Brave.vault(S);Brave.chips();};}
+window.__brave=Brave;
+Object.defineProperty(window,'__bcomplete',{get:()=>complete});
+
+/* =========================================================
    Coach sync: saves Dev's results to a private GitHub repo that Claude Code reads
    Pair once with  ...devmath/#sync=TOKEN  (or paste the token in Report)
    ========================================================= */
@@ -5080,7 +5237,7 @@ const NoZoom={init(){const stop=e=>e.preventDefault();
   reset(){const m=document.querySelector('meta[name=viewport]');if(!m)return;const base='width=device-width,initial-scale=1,viewport-fit=cover';
     m.setAttribute('content',base+',maximum-scale=1,user-scalable=no');setTimeout(()=>m.setAttribute('content',base+',maximum-scale=1'),300);}};
 /* auto-update: when a new version is published, reload on the map so he never has to restart the app */
-const BUILD='20261027224857';
+const BUILD='20261028000419';
 const Updater={want:false,
   async check(){try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.text()).trim();if(v&&v!==BUILD&&BUILD.indexOf('__')<0){if(lsGet('nk-upd',null)===v)return; /* already reloaded once for this version: don't loop */this.want=v;this.apply();}}catch(e){}},
   apply(){if(!this.want)return;const S=[...document.querySelectorAll('.screen')].find(s=>!s.hidden);const safe=!S||['scr-map','scr-onboard','scr-dojo','scr-shop','scr-mech'].includes(S.id);
