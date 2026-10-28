@@ -19,7 +19,7 @@ const InkBox={active:null,pad:null,drawing:false,lastUp:0,
       down(e){if(e.pointerType==='touch'&&InkBox.penSeen)return;if(e.pointerType==='pen')InkBox.penSeen=true;e.preventDefault();Snd.init();
         if(Pad.active!==this.target){this.strokes=[];this.target=Pad.active;}if(!this.target||this.target.locked)return;
         clearTimeout(this.tm);InkBox.drawing=true;if(!ANS.firstInput)ANS.firstInput=Date.now();this.cur=[this.pt(e)];try{cv.setPointerCapture(e.pointerId);}catch(_){}this.draw();},
-      move(e){if(!this.cur)return;const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];for(const v of evs)this.cur.push(this.pt(v));this.draw();},
+      move(e){if(!this.cur)return;let evs=e.getCoalescedEvents?e.getCoalescedEvents():null;if(!evs||!evs.length)evs=[e];/* some events come with an empty batch */for(const v of evs)this.cur.push(this.pt(v));this.draw();},
       up(){InkBox.drawing=false;InkBox.lastUp=Date.now();if(!this.cur)return;this.strokes.push(this.cur);this.cur=null;this.lastAt=Date.now();this.draw();clearTimeout(this.tm);this.tm=setTimeout(()=>this.read(),o.big?220:400);},
       read(){const f=this.target;if(!f||f.locked||f!==Pad.active||typeof HW==='undefined'||!this.strokes.length)return;let r;
         try{r=this.boxes?InkBox.readBoxes(this.strokes,this.boxes,this.W,this.H,{allowDot:f.allowDot}):HW.recognize(this.strokes,{allowDot:f.allowDot,maxLen:f.max+1});}catch(e){return;}

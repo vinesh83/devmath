@@ -20,7 +20,7 @@ const Pause={on:false,at:0,last:Date.now(),
   resume(){if(!this.on)return;const d=Date.now()-this.at;this.on=false;
     if(run){const p=run.queue[run.idx];if(p){if(p.ts)p.ts+=d;if(p.t0)p.t0+=d;}if(run.dj&&run.dj.end)run.dj.end+=d;if(run.start)run.start+=d;}
     if(ANS.firstInput)ANS.firstInput+=d;if(typeof ATT!=='undefined'&&ATT&&ATT.t0)ATT.t0+=d;
-    overlay(null);this.last=Date.now();Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}
+    if(this.modal&&this.modal.isConnected)overlay(null);this.last=Date.now();if(!$('#scr-level').hidden){Battle.start();Music.play(run&&run.spec&&run.spec.mech?'boss':'battle');}}
 };
 /* No accidental zoom: fast taps and two-finger play in battles can make iPad zoom in and get stuck.
    Block pinch and double-tap zoom, and if the screen ever ends up zoomed, snap it back. */
@@ -45,3 +45,5 @@ const Updater={want:false,
 setInterval(()=>{try{if(typeof Music==='undefined'||!Snd.ctx||state.musicOff||Pause.on||!Pause.active()||document.querySelector('.vp,#cine3d'))return;
   if(!Music.song)Music.play(run.spec&&run.spec.mech?'boss':'battle');}catch(e){}},1500);
 Object.defineProperty(window,'__snd',{get:()=>({Music,Snd,state})});
+// if something else replaced the pause box (and he isn't breathing), the pause has ended: resume so the clock and music recover
+setInterval(()=>{try{if(!Pause.on||Pause.held||!Pause.modal)return;if(Pause.modal.isConnected)return;if(document.querySelector('.bb-cv'))return;Pause.resume();}catch(e){}},1500);

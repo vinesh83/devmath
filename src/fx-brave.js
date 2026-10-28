@@ -29,9 +29,10 @@ const Brave={
   voice(k){if(state.mute)return;try{const a=new Audio('tut/a/brave-'+k+'.mp3');a.play().catch(()=>{});}catch(e){}},
   // ---- the dare: a harder version of the next problem
   KINDS:['arith','word','table','area','div','mul'],
-  hardOf(p,k){const L=p.L||1;let T=Math.min(5,L+k);if(p.kind==='div'&&typeof Tut!=='undefined'&&!Tut.done())T=Math.min(T,2);if(T<=L)return null;let q=null;
-    try{if(p.kind==='arith'||p.kind==='word'||p.kind==='table'){const g=GEN[p.skill];q=g&&g(T);}else if(p.kind==='area')q=genArea(T);else if(p.kind==='div')q=genDiv(T);else if(p.kind==='mul')q=genMul(T);}catch(e){}
-    return q&&q.kind===p.kind&&(q.L||T)>L?q:null;},
+  hardOf(p,k){const L=p.L||1;let T=Math.min(5,L+k);if(p.kind==='div'&&typeof Tut!=='undefined'&&!Tut.done())T=Math.min(T,2);if(T<=L)return null;const q=this.atLevel(p,T);
+    return q&&(q.L||T)>L?q:null;},
+  atLevel(p,T){let q=null;try{if(p.kind==='arith'||p.kind==='word'||p.kind==='table'){const g=GEN[p.skill];q=g&&g(T);}else if(p.kind==='area')q=genArea(T);else if(p.kind==='div')q=genDiv(T);else if(p.kind==='mul')q=genMul(T);}catch(e){}
+    return q&&q.kind===p.kind?q:null;},
   eligible(){if(!run||!run.spec)return false;const sp=run.spec;if(!(sp.mode==='level'||sp.mode==='quest')||sp.boss||sp.packId)return false;
     const i=run.idx,p=run.queue[i];if(!p||i<1||p.twin||p.dare||(run.dareAsk||{})[i])return false;if(!this.KINDS.includes(p.kind))return false;
     const last=run.results[i-1];if(!last||!last.solved)return false;          // only on a roll: right after a solved problem
@@ -40,7 +41,7 @@ const Brave={
     const mega=Math.random()<0.3,k=mega?2:1;let q=this.hardOf(p,k),tier=mega?'legend':'hero';if(!q&&mega){q=this.hardOf(p,1);tier='hero';}if(!q)return go();
     run.lastDare=i;const s=this.st();s.offered++;saveState();const T=this.TIER[tier];this.voice(tier==='legend'?'offer-legend':'offer');Snd.zap(6);
     const first=!s.seen;s.seen=1;
-    const take=()=>{overlay(null);q.dare=tier;q.L=q.L||p.L;run.queue[i]=q;s.taken++;saveState();Snd.fanfare();this.voice('accept');go();},
+    const take=()=>{overlay(null);q.dare=tier;q.L=q.L||p.L;q.L0=p.L||1;run.queue[i]=q;s.taken++;saveState();Snd.fanfare();this.voice('accept');go();},
       skip=()=>{overlay(null);Snd.tap();go();};
     overlay(el('div',{class:'modal dare-card dare-'+tier},
       el('div',{class:'dare-flame'},tier==='legend'?'💀':'🔥'),
@@ -87,8 +88,10 @@ setTimeout(()=>{try{for(const v of Brave.VAULT){const L=CATALOG[v.cat];if(!L.som
 // ---- hooks
 {const _np=nextProblem;nextProblem=function(){if(run&&run.idx<run.queue.length&&Brave.eligible()){const R=run;return Brave.offer(()=>{if(run===R)_np.apply(this,arguments);Brave.badge();});}
   const r=_np.apply(this,arguments);try{Brave.badge();}catch(e){}return r;};}
-{const _cp=complete;complete=function(p,res){const dare=p&&p.dare,sk=dare?getSkill(p.skill):null,r0=sk&&sk.r;if(dare&&ATT)ATT.dare=dare;
+{const _cp=complete;complete=function(p,res){const dare=p&&p.dare,sk=dare?getSkill(p.skill):null,r0=sk&&sk.r,n0=run&&run.queue.length;if(dare&&ATT)ATT.dare=dare;
   const out=_cp.apply(this,arguments);
+  // the practice twin after a missed dare comes at his own level, not the dare's
+  if(dare&&run&&run.queue.length>n0){const i=run.queue.length-1,tw=run.queue[i];if(tw&&tw.twin){const t2=Brave.atLevel(p,p.L0||1);if(t2){t2.twin=true;run.queue[i]=t2;}}}
   if(dare){if(sk&&sk.r<r0)sk.r=r0;try{Brave.paid(p,res,ATT);}catch(e){console.error(e);}}
   return out;};}
 {const _ut=updateTop;updateTop=function(){const r=_ut.apply(this,arguments);try{Brave.chips();}catch(e){}return r;};}

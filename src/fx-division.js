@@ -60,7 +60,7 @@ function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,sh
   const glow=els=>{g.querySelectorAll('.glow').forEach(x=>x.classList.remove('glow'));els.forEach(x=>x&&x.classList.add('glow'));};
   const setCoach=(ic,name,text)=>{coach.innerHTML='';coach.append(el('span',{class:'dv-ic'},ic),el('b',null,name),short?null:el('span',null,text));};
   const tip=(t,voice)=>{tipEl.innerHTML='';if(!t)return;tipEl.append(dogIcon(Slip.pet(),120),el('div',{class:'sl-bub'},el('b',null,t)));if(voice)DivVoice(voice);};
-  const ask=(want,max,place,onOk,check)=>{const f=Pad.make({sm:true,allowDot:false,max,ph:'?'});place.append(f.el);Pad.focus(f);let tries=0;
+  const ask=(want,max,place,onOk,check)=>{const f=Pad.make({sm:true,allowDot:false,max,ph:'?'});f.want=want;place.append(f.el);Pad.focus(f);let tries=0;
     f.onChange=()=>{if(f.locked||f.val.length<String(want).length)return;const v=Pad.val(f);tries++;
       if(v===want){Pad.right(f);Pad.lock(f);Snd.tap();tip(null);a.steps.push({k,want,ok:tries===1});setTimeout(()=>onOk(f),250);return;}
       errs++;stepErr++;Pad.wrong(f);const why=check(v);a.errors=(a.errors||[]).concat([{a:v,want,tags:['div:'+why.tag]}]);
@@ -89,7 +89,7 @@ function renderDiv(p,a){const card=$('#card'),P=divPlan(p.n,p.d),N=P.s.length,sh
     setCoach('🏁','DONE',R?`The leftover is ${R}. It’s smaller than ${p.d}, so it’s the remainder.`:'Nothing left over. It splits evenly!');
     tip(null);DivVoice('div-done');Snd.coin();
     const res=el('div',{class:'dv-result'},`${fmt(p.n)} ÷ ${p.d} = `,el('b',null,ans));
-    const ckF=Pad.make({sm:true,allowDot:false,max:6,ph:'?'});const ckMsg=el('span',{class:'dv-ckmsg'});
+    const ckF=Pad.make({sm:true,allowDot:false,max:6,ph:'?'});ckF.want=p.n;const ckMsg=el('span',{class:'dv-ckmsg'});
     const ck=el('div',{class:'dv-check'},el('b',null,'Check it: '),`${fmt(p.answer)} × ${p.d}${R?' + '+R:''} = `,ckF.el,ckMsg);
     tipEl.innerHTML='';tipEl.append(res,ck);Pad.focus(ckF);if(!cue)DivVoice('div-check');
     const end=checked=>{if(checked)a.checkUsed=true;a.divRem=R;complete(p,{solved:true,firstTry:errs===0,tries:errs?2:1});};

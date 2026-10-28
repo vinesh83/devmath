@@ -9,7 +9,12 @@ const DOG_GEAR=[ // [id, name, price, slot]
   ['collar','Red Collar',40,'neck'],['bandana','Bandana',60,'neck'],['bowtie','Bow Tie',60,'neck'],['spiked','Spiked Collar',90,'neck'],['cape','Super Cape',150,'neck'],['chain','Gold Chain',220,'neck'],
   ['nerd','Nerd Glasses',50,'face'],['monocle','Fancy Monocle',70,'face'],['shades','Sunglasses',80,'face'],['starglasses','Star Glasses',100,'face'],
   ['party','Party Hat',70,'hat'],['flower','Flower Crown',80,'hat'],['santa','Santa Hat',90,'hat'],['propeller','Propeller Cap',110,'hat'],['cowboy','Cowboy Hat',120,'hat'],
-  ['pirate','Pirate Hat',140,'hat'],['crown','Royal Crown',160,'hat'],['viking','Viking Helmet',160,'hat'],['wizard','Wizard Hat',180,'hat']];
+  ['pirate','Pirate Hat',140,'hat'],['crown','Royal Crown',160,'hat'],['viking','Viking Helmet',160,'hat'],['wizard','Wizard Hat',180,'hat'],
+  // new: more hats, face gear, neck gear, and a back slot (packs and wings)
+  ['chef','Chef Hat',90,'hat'],['headset','Gamer Headset',100,'hat'],['knight','Knight Helmet',130,'hat'],['unicorn','Unicorn Horn',150,'hat'],['halo','Golden Halo',200,'hat'],
+  ['hearts','Heart Glasses',80,'face'],['goggles','Pilot Goggles',90,'face'],['mask','Hero Mask',110,'face'],
+  ['scarf','Cozy Scarf',70,'neck'],['medal','Gold Medal',160,'neck'],
+  ['backpack','Adventure Pack',120,'back'],['angel','Angel Wings',260,'back'],['wings','Dragon Wings',300,'back'],['jetpack','Jetpack',350,'back']];
 CATALOG.ride=RIDES.map(([id,name,price])=>({id,name,price}));
 CATALOG.dogacc=DOG_GEAR.map(([id,name,price,slot])=>({id,name,price,slot}));
 
@@ -20,7 +25,10 @@ const DogGear={
     party:['..Y..','..Q..','.QYQ.','QQQQQ'],crown:['Y.Y.Y','YYYYY','YRYBY'],cowboy:['.NNN.','.NNN.','NNNNNNN'],propeller:['RRYBB','..Y..','.RRB.','RRRBB'],
     wizard:['...P.','..PP.','.PYP.','PPPPP'],viking:['W...W','WSSSW','SSSSS'],flower:['R.Y.Q','GGGGG'],pirate:['.KKK.','KKWKK','KKKKKKK'],santa:['....W','.RRR.','RRRR.','WWWWW'],
     shades:['KKKKK'],starglasses:['YKY','KYK'],monocle:['.Y.','Y.Y','.Y.'],nerd:['KKKK','K..K'],
-    collar:['R','R','Y'],spiked:['W','K','W','K'],bandana:['RRR','.RR','..R'],bowtie:['B.B','BBB','B.B'],chain:['Y','Y','Y','O'],cape:['.RRRR','RRRRRR','RRRRRRR']},
+    collar:['R','R','Y'],spiked:['W','K','W','K'],bandana:['RRR','.RR','..R'],bowtie:['B.B','BBB','B.B'],chain:['Y','Y','Y','O'],cape:['.RRRR','RRRRRR','RRRRRRR'],
+    chef:['.WWW.','WWWWW','.WWW.','.SSS.'],headset:['.KKK.','K...K','R...R'],knight:['..R..','.SSS.','SSSSS','SKKKS'],unicorn:['..Y..','..Q..','..Y..','.QYQ.'],halo:['.YYY.','Y...Y','.YYY.','.....'],
+    hearts:['R.R','RRR','.R.'],goggles:['BNB'],mask:['KKKKK','KWKWK'],scarf:['GGG','.GG','.G.'],medal:['B','B','YY','YY'],
+    backpack:['NNNN','NYYN','NNNN'],angel:['W....W','WW..WW','.WWWW.'],wings:['G....G','GG..GG','.GGGG.'],jetpack:['SRRS','SRRS','O..O','Y..Y']},
   anchors:{},
   anchor(id){if(this.anchors[id])return this.anchors[id];const rows=PETS[id].rows;let ex=-1,ey=-1;
     for(let r=0;r<rows.length&&ex<0;r++){const c=rows[r].indexOf('K');if(c>=0){ex=c;ey=r;}}
@@ -35,7 +43,9 @@ const DogGear={
       drawSprite(c,art,x+ox*s,y+oy*s,s,this.PAL);};
     if(acc.neck==='cape')put(this.ART.cape,A.ex-2,A.back-1,'neck');else if(acc.neck&&this.ART[acc.neck])put(this.ART[acc.neck],A.ex-1,A.ey+1,'neck');
     if(acc.face&&this.ART[acc.face])put(this.ART[acc.face],A.ex,A.ey,'face');
-    if(acc.hat&&this.ART[acc.hat])put(this.ART[acc.hat],A.ex,A.top,'hat');}};
+    if(acc.hat&&this.ART[acc.hat])put(this.ART[acc.hat],A.ex,A.top,'hat');
+    // back gear sits on the middle of the back
+    if(acc.back&&this.ART[acc.back]){const w=PETS[id].rows[0].length;put(this.ART[acc.back],Math.floor(w*0.38),A.back,'hat');}}};
 // his own dog wears its gear everywhere drawPet is used
 {const _dp=drawPet;drawPet=function(ctx,id,x,y,s,t){_dp(ctx,id,x,y,s,t);const p=PETS[id];
   if(p&&p.dog&&state.hero&&state.hero.pet===id&&state.hero.dogAcc){const bob=Math.round(Math.sin((t||0)*(p.fly?5:3))*(p.fly?3:1));DogGear.draw(ctx,id,x,y+bob,s,state.hero.dogAcc);}};}

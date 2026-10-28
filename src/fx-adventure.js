@@ -54,23 +54,27 @@ const Adv={
     try{this.ink=InkBox.make(ink,{big:true});}catch(e){}
     Pad.focus(f);this.f=f;return {P,q,msg,go,f,bye,head};},
   close(){this.onGo=null;const h=document.querySelector('.w3d');if(h)h.classList.remove('adv-busy');if(this.P){this.P.remove();this.P=null;}if(this.f&&Pad.active===this.f)Pad.active=null;this.f=null;},
-  ask(ui,text,done){ui.q.textContent=text;ui.f.val='';Pad.render(ui.f);ui.f.el.classList.remove('wrong','right');if(this.ink&&this.ink.clear)this.ink.clear();Pad.focus(ui.f);const t0=Date.now();
-    let last=0;const submit=()=>{if(Date.now()-last<600)return;const v=Pad.val(ui.f);if(v==null){ui.msg.textContent='Write or tap your answer first.';return;}last=Date.now();done(v,Date.now()-t0);};this.onGo=submit;ui.f.onEnter=submit;},
+  ask(ui,text,done,want){ui.q.textContent=text;ui.f.want=want;ui.f.val='';Pad.render(ui.f);ui.f.el.classList.remove('wrong','right');if(this.ink&&this.ink.clear)this.ink.clear();Pad.focus(ui.f);const t0=Date.now();
+    let last=0;const submit=()=>{if(this.P!==ui.P)return;if(typeof ReadCheck!=='undefined'&&ReadCheck.busy){ui.msg.textContent='Reading your writing…';ReadCheck.after(submit);return;}if(Date.now()-last<600)return;const v=Pad.val(ui.f);if(v==null){ui.msg.textContent='Write or tap your answer first.';return;}last=Date.now();
+      // one answer per question: Go is off until the next question (or the retry after a miss)
+      this.onGo=null;ui.f.onEnter=null;this.armed=submit;done(v,Date.now()-t0);};this.onGo=submit;ui.f.onEnter=submit;},
+  // a timer only acts if its panel is still the one on screen
+  later(ui,fn,ms){const P=ui.P;setTimeout(()=>{if(this.P===P)fn();},ms);},
   // after a miss: clear the box so he can try again
-  retry(ui){setTimeout(()=>{if(!this.f)return;ui.f.val='';Pad.render(ui.f);ui.f.el.classList.remove('wrong');if(this.ink&&this.ink.clear)this.ink.clear();},900);},
+  retry(ui){this.later(ui,()=>{ui.f.val='';Pad.render(ui.f);ui.f.el.classList.remove('wrong');if(this.ink&&this.ink.clear)this.ink.clear();this.onGo=this.armed;ui.f.onEnter=this.armed;},900);},
   coins(n){state.coins=(state.coins||0)+n;try{updateTop();}catch(e){}},
   chime(ok){try{if(ok){Snd.tone(784,0.08,'square',0.04);Snd.tone(1046,0.12,'square',0.04,0.08);}else Snd.tone(196,0.18,'sawtooth',0.04);}catch(e){}},
   // ---- dig: two-part sharing riddle, then the chest opens
   dig(id){const ui=this.panel('⛏️ A buried chest!','Solve the lock to open it');const R=this.digQ();let part=0,miss=0;
     ui.bye.addEventListener('click',()=>{this.close();this.w.adv.digCancel();});
     const next=()=>{const p=R.parts[part];ui.head.querySelector('span').textContent=R.text;this.ask(ui,p.ask,(v)=>{
-      if(v===p.ans){this.chime(1);ui.f.el.classList.add('right');part++;if(part<R.parts.length){ui.msg.textContent=`Yes! ${R.d} × ${R.q} = ${R.d*R.q}.`;setTimeout(next,700);}else win();}
-      else{this.chime(0);miss++;ui.f.el.classList.add('wrong');ui.msg.textContent=part===0?(miss>1?`Hint: what times ${R.d} gets close to ${R.n} without going over?`:'Almost! Try again.'):(miss>1?`Hint: ${R.n} − ${R.d*R.q} = ?`:'Almost! How many are left after the fair shares?');this.retry(ui);}});};
+      if(v===p.ans){this.chime(1);ui.f.el.classList.add('right');part++;if(part<R.parts.length){ui.msg.textContent=`Yes! ${R.d} × ${R.q} = ${R.d*R.q}.`;this.later(ui,next,700);}else win();}
+      else{this.chime(0);miss++;ui.f.el.classList.add('wrong');ui.msg.textContent=part===0?(miss>1?`Hint: what times ${R.d} gets close to ${R.n} without going over?`:'Almost! Try again.'):(miss>1?`Hint: ${R.n} − ${R.d*R.q} = ?`:'Almost! How many are left after the fair shares?');this.retry(ui);}},p.ans);};
     const win=()=>{const S=this.st(),day=dayStr(),i=+id.replace('dig','');S.dug[day+':'+i]=1;this.w.adv.digOpen();
       const have=Object.keys(S.relics);const fresh=this.RELICS.filter(r=>!S.relics[r[1]]);let gift,coins=15+rint(0,10);
       if(fresh.length&&Math.random()<0.75){gift=pick(fresh);S.relics[gift[1]]=1;}else coins+=15;this.coins(coins);saveState();
       ui.q.textContent=gift?`${gift[0]} You found the ${gift[1]}!`:'A chest full of coins!';ui.msg.textContent=`+${coins} coins${gift?' and a new relic for your Treasure Log':''}.`;
-      ui.P.classList.add('adv-win');setTimeout(()=>this.close(),3200);};
+      ui.P.classList.add('adv-win');this.later(ui,()=>this.close(),3200);};
     next();},
   // ---- gems: a math secret, no quiz
   gem(id){const g=this.GEMS.find(x=>x.id===id);if(!g)return;const S=this.st();S.gems[id]=1;this.coins(10);saveState();this.chime(1);
@@ -83,12 +87,12 @@ const Adv={
     ui.go.textContent='⚔️ Strike!';ui.bye.addEventListener('click',()=>{this.close();A.foeEscape();});
     const round=()=>{const Q=this.duelQ();this.ask(ui,Q.q+' = ?',(v,ms)=>{
       if(v===Q.ans){const crit=ms<5000;foeHp-=crit?2:1;A.strike(crit);this.chime(1);ui.msg.textContent=crit?'⚡ Critical hit!':'Hit!';draw();
-        if(foeHp<=0){setTimeout(()=>{A.foeDefeat();const S=this.st();S.bugs++;S.down[id]=Date.now()+4*60000;const c=12+rint(0,8);this.coins(c);saveState();
-          ui.q.textContent='👾💥 Glitch Bug defeated!';ui.msg.textContent=`+${c} coins · bugs beaten: ${S.bugs}`;ui.P.classList.add('adv-win');setTimeout(()=>this.close(),2600);},700);}
-        else setTimeout(round,750);}
+        if(foeHp<=0){this.later(ui,()=>{A.foeDefeat();const S=this.st();S.bugs++;S.down[id]=Date.now()+4*60000;const c=12+rint(0,8);this.coins(c);saveState();
+          ui.q.textContent='👾💥 Glitch Bug defeated!';ui.msg.textContent=`+${c} coins · bugs beaten: ${S.bugs}`;ui.P.classList.add('adv-win');this.later(ui,()=>this.close(),2600);},700);}
+        else this.later(ui,round,750);}
       else{hearts--;A.zap();this.chime(0);ui.f.el.classList.add('wrong');ui.msg.textContent=`Zap! ${Q.q} = ${Q.ans}. Remember it for next time.`;draw();
-        if(hearts<=0){setTimeout(()=>{A.foeEscape();ui.q.textContent='The bug scuttled away!';ui.msg.textContent='It will be back. Practice in the Dojo and try again.';setTimeout(()=>this.close(),2600);},900);}
-        else setTimeout(round,1600);}});};
+        if(hearts<=0){this.later(ui,()=>{A.foeEscape();ui.q.textContent='The bug scuttled away!';ui.msg.textContent='It will be back. Practice in the Dojo and try again.';this.later(ui,()=>this.close(),2600);},900);}
+        else this.later(ui,round,1600);}},Q.ans);};
     round();},
   // ---- the Treasure Log
   log(){const S=this.st();const rel=el('div',{class:'adv-grid'},...this.RELICS.map(r=>el('div',{class:'adv-cell'+(S.relics[r[1]]?'':' none')},el('span',null,S.relics[r[1]]?r[0]:'❔'),el('small',null,S.relics[r[1]]?r[1]:'???'))));

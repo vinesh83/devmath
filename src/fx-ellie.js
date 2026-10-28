@@ -19,11 +19,26 @@ const Walkie={
   btn(){let b=document.querySelector('.ellie-btn');if(b)return b;
     b=el('button',{class:'ellie-btn',type:'button','aria-label':'Talk to Ellie'},el('span',{class:'ellie-ico'},'📻'),el('b',null,'Hold to talk'));
     const panel=el('div',{class:'ellie-panel',hidden:true});document.body.append(b,panel);this.panel=panel;
-    b.addEventListener('pointerdown',e=>{e.preventDefault();this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>this.up()));
+    b.addEventListener('pointerdown',e=>{e.preventDefault();this.holding=true;this.down();});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>{this.holding=false;this.up();}));
     return b;},
   // battles, mini-games and videos have their own buttons: the walkie-talkie steps aside
   inFight(){return [...document.querySelectorAll('.bb-ctl,.ag-pad,.ap-grid,.spd-wrap,#catch,#dash,#whack,.vp,#cine3d,.adv-panel')].some(x=>x.getClientRects().length);},
-  show(){const b=this.btn();const fight=this.inFight(),lvl=!$('#scr-level').hidden&&!fight,map=!$('#scr-map').hidden&&$('#overlay').hidden&&!fight;b.hidden=!this.on()||!(lvl||map);if(fight&&!this.busy){this.hush();this.unring();}if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;},
+  show(){const b=this.btn();const fight=this.inFight(),lvl=!$('#scr-level').hidden&&$('#overlay').hidden&&!fight,map=!$('#scr-map').hidden&&$('#overlay').hidden&&!fight;b.hidden=!this.on()||!(lvl||map);if(fight&&!this.busy){this.hush();this.unring();}if(!b.hidden&&!this.fillT){this.fillSeen=(this.fillSeen||0)+1;if(this.fillSeen>8)this.fillLoad();}b.classList.toggle('on-map',map&&!lvl);if(this.panel)this.panel.classList.toggle('on-map',map&&!lvl);if(!(lvl||map)&&this.panel)this.panel.hidden=true;if(!b.hidden)this.dock(b,map&&!lvl);},
+  // the button never sits on anything he needs: it takes the first spot (home first) with no button, answer box,
+  // keypad, Pencil paper or joystick under it, and shrinks to a small round button away from home
+  SPOTS:[{k:'home'},{k:'br',r:12,b:12},{k:'tr',r:12,t:76},{k:'tl',l:12,t:76},{k:'mr',r:8,m:1},{k:'ml',l:8,m:1},{k:'tc',c:1,t:8},{k:'bc',c:1,b:8}],
+  NEED:'button,a[href],input,select,textarea,[role=button],[tabindex],#scratch,.scratch-wrap,.ink,.ink-cv,.mk-cv,.story,.field,.items,.w3d-joy,.w3d-btn,.w3d-card,.adv-panel,.tut-ask,#actions,#keys,.pad,.keys,label',
+  spotRect(sp,map){const W=innerWidth,H=innerHeight;if(sp.k==='home')return map?{x:W-132-200,y:H-30-68,w:200,h:68}:{x:16,y:H-16-68,w:200,h:68};
+    const w=64,h=64;const x=sp.c?(W-w)/2:sp.l!=null?sp.l:W-sp.r-w,y=sp.m?(H-h)/2:sp.t!=null?sp.t:H-sp.b-h;return {x,y,w,h};},
+  blocked(R,b){let n=0;for(let i=0;i<4;i++)for(let j=0;j<3;j++){const x=R.x+4+(R.w-8)*i/3,y=R.y+4+(R.h-8)*j/2;
+      for(const e of document.elementsFromPoint(x,y)){if(e===b||b.contains(e)||(this.panel&&this.panel.contains(e)))continue;if(e===document.body||e===document.documentElement)break;
+        const t=e.closest(this.NEED),cd=e.closest('.card');if((t&&!t.contains(b))||(cd&&e!==cd)){n++;break;}}}return n;},   // empty card space is fine, its words are not
+  dock(b,map){if(this.holding||this.rec)return;const cur=this.spot||'home';let best=null,bn=1e9;
+    for(const sp of this.SPOTS){const n=this.blocked(this.spotRect(sp,map),b);if(n===0){best=sp;bn=0;break;}if(n<bn){bn=n;best=sp;}}
+    if(!best||best.k===cur&&this.spotMap===map)return;this.spot=best.k;this.spotMap=map;
+    const st=b.style;st.left=st.right=st.top=st.bottom=st.transform='';b.classList.toggle('mini',best.k!=='home');
+    if(best.k!=='home'){if(best.c){st.left='50%';st.transform='translateX(-50%)';}else if(best.l!=null)st.left=best.l+'px';else{st.left='auto';st.right=best.r+'px';}
+      if(best.m){st.top='50%';st.bottom='auto';st.transform=(st.transform?st.transform+' ':'')+'translateY(-50%)';}else if(best.t!=null){st.top=best.t+'px';st.bottom='auto';}else st.bottom=best.b+'px';}},
   // on a problem, the chat sits on the empty right side of the problem card, clear of the scratch paper
   place(){const p=this.panel,c=$('#card');if(!p)return;if($('#scr-level').hidden||!c){p.style.cssText='';return;}const r=c.getBoundingClientRect();if(!r.width){p.style.cssText='';return;}
     const w=Math.min(420,r.width*0.52);p.style.cssText=`left:${r.right-w-14}px;top:${r.top+14}px;bottom:auto;width:${w}px;transform:none`;},

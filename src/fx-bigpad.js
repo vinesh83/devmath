@@ -5,7 +5,7 @@
 const BigPad={
   ans(){if(typeof run==='undefined'||!run||!run.spec||run.spec.mode==='dojo')return null;const p=run.queue[run.idx];if(!p)return null;const a=p.answer!=null?p.answer:(p.base&&p.base.answer);return a==null||isNaN(a)?null:+a;},
   digits(){const a=this.ans();return a==null?0:String(Math.abs(a)).replace('.','').length;},
-  wants(f){return !!f&&!f.locked&&this.digits()>=4;},
+  wants(f){return !!f&&!f.locked&&(f.max||10)>=4&&this.digits()>=4;},
   hint(){if(InkBox.pad){const a=this.ans(),d=this.digits();let n=this.wants(Pad.active)?0:(d>=3||String(a).includes('.')?3:2);
     // a step box that takes one digit (long division steps) gets one open space, not 2 or 3 boxes
     const fm=Pad.active&&Pad.active.max;if(n&&fm&&fm<n)n=fm<=1?0:fm;InkBox.pad.setBoxes(n);}

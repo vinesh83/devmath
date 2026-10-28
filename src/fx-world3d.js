@@ -43,17 +43,19 @@ const Isle={
       if(open)b.addEventListener('click',()=>{card.hidden=true;n.click();});row.append(b);}
     const boss=el('button',{class:'w3d-boss',type:'button'},'⚔️ World menu');boss.addEventListener('click',()=>{card.hidden=true;this.press(`.ow-castle[aria-label="${w.name}"]`);});
     card.append(close,el('h3',{style:`color:${w.color||'#ffe066'}`},w.name),el('p',null,w.sub||''),row,boss);},
+  // his own dog (its breed and its gear) walks with him
+  dogLook(){const h=state.hero||{},p=h.pet&&PETS[h.pet]&&PETS[h.pet].dog?h.pet:'ellie';return Object.assign({breed:p},h.dogAcc||{});},
   look(){const h=state.hero||{},col=(k,id,f)=>((CATALOG[k]||[]).find(z=>z.id===id)||{})[f];return{skin:h.skin,hair:h.hair,outfit:h.outfit,outfitCol:col('outfit',h.outfit,'B'),hat:h.hat,cape:h.cape,capeCol:col('cape',h.cape,'c')};},
   async show(){const m=this.map();if(!m)return;m.classList.toggle('w3d-on',this.on());this.toggleBtn();
     if(!this.on()){if(this.w)this.w.setPaused(true);return;}
     if(!this.host)this.host=el('div',{class:'w3d'});if(!m.contains(this.host))m.prepend(this.host);
     if(this.w&&this.w.lost){try{this.w.dispose();}catch(e){}this.w=null;}
-    if(this.w){this.w.update(this.sites());const lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);if(lk!==this.lk){this.lk=lk;this.w.setLook(this.look(),(state.hero||{}).dogAcc||{});}this.w.setPaused(false);return;}
+    if(this.w){this.w.update(this.sites());const lk=JSON.stringify([this.look(),this.dogLook()]);if(lk!==this.lk){this.lk=lk;this.w.setLook(this.look(),this.dogLook());}this.w.setPaused(false);return;}
     if(this.loading)return;this.loading=true;
     const ok=await Cin3.load().catch(()=>false);this.loading=false;
     if(!ok||!window.World3D||!World3D.ok()){this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();return;}
-    this.lk=JSON.stringify([this.look(),(state.hero||{}).dogAcc]);
-    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:(state.hero||{}).dogAcc||{},pos:state.w3dPos,tier:state.w3dTier||0,noAuto:!!window.__w3dNoAuto,onTier:t=>{state.w3dTier=t;saveState();},
+    this.lk=JSON.stringify([this.look(),this.dogLook()]);
+    try{this.w=World3D.start(this.host,{sites:this.sites(),look:this.look(),dog:this.dogLook(),pos:state.w3dPos,tier:state.w3dTier||0,noAuto:!!window.__w3dNoAuto,onTier:t=>{state.w3dTier=t;saveState();},
       onEnter:s=>this.enter(s),onPos:p=>{state.w3dPos=p;},onNear:s=>{if(!s&&this.w)this.w.card.hidden=true;},
       sfx:k=>{try{Snd.tone(523,0.06,'square',0.03);Snd.tone(784,0.08,'square',0.03,0.05);}catch(e){}}});}
     catch(e){console.error(e);this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();}

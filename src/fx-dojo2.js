@@ -200,7 +200,7 @@ const Dojo={
   next(){const sp=run.spec,dj=run.dj;if(run.idx>=run.queue.length||(sp.kind==='sprint'&&Date.now()>=dj.end))return this.finish();
     const p=run.queue[run.idx],f=p.f;if(sp.kind!=='sprint')updateTop();
     Pad.reset();ANS.firstInput=null;padOn(true);const card=$('#card');CARD_QUIET=true;card.innerHTML='';card.className='card dj-card';card.style.flex='';card.style.maxHeight='';requestAnimationFrame(()=>requestAnimationFrame(()=>{CARD_QUIET=false;}));
-    const flip=Math.random()<0.5,fld=Pad.make({allowDot:false,max:4,ph:'?'}),len=String(f.ans).length,teach=p.k==='teach';
+    const flip=Math.random()<0.5,fld=Pad.make({allowDot:false,max:4,ph:'?'}),len=String(f.ans).length,teach=p.k==='teach';fld.want=f.ans;
     const N=sp.kind==='sprint'?null:run.queue.length;
     card.append(el('div',{class:'dj-top'},el('span',{class:'dj-tag',style:'--bc:'+BELTS[sp.belt][1]},teach?'NEW FACT':sp.kind==='sprint'?'SPRINT':'TRAINING'),
       sp.kind==='sprint'?el('div',{class:'dj-time'},el('i',{style:`width:${Math.max(0,100*(dj.end-Date.now())/60000)}%;animation-duration:${Math.max(0.1,(dj.end-Date.now())/1000)}s`})):el('div',{class:'dj-prog'},el('i',{style:`width:${Math.round(100*run.idx/N)}%`}),el('span',null,`${run.idx+1} / ${N}`)),
@@ -265,7 +265,7 @@ const Dojo={
       this.reask(p,[2,5]);
       const v2=teach?null:factVisual(f);
       const fix=el('div',{class:'dj-miss'},el('div',{class:'dj-build'},'Let’s build it'),v2,teach?null:el('div',{class:'dj-tip'},factTip(f)));card.querySelector('.dj-expr').after(fix);
-      const cp=Pad.make({allowDot:false,max:4,ph:'?'});fix.append(el('div',{class:'dj-copy'},'Now you: ',el('span',null,factExpr(f,flip)+' ='),cp.el));
+      const cp=Pad.make({allowDot:false,max:4,ph:'?'});cp.want=f.ans;fix.append(el('div',{class:'dj-copy'},'Now you: ',el('span',null,factExpr(f,flip)+' ='),cp.el));
       ink.parentNode&&ink.remove();const ink2=el('div',{class:'dj-ink'});fix.after(ink2);if(typeof InkBox!=='undefined')InkBox.mount(ink2,{big:true,allowDot:false,boxes:f.ans>=100?3:2});else ink2.remove();
       Pad.focus(cp);say('Copy it to lock it in. It will come back in a moment.','info');
       cp.onChange=()=>{if(Pad.val(cp)===f.ans){Pad.right(cp);Pad.lock(cp);Snd.coin();setTimeout(()=>this.advance(p),450);}

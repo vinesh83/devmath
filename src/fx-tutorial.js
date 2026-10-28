@@ -17,7 +17,7 @@ const Tut={
   done(){return !!this.st().eps[1];},
   epDone(n){return !!this.st().eps[n];},
   // the next episode he can do today: one a day, in order
-  nextEp(){const E=this.st().eps;for(let n=1;n<=this.EPS;n++){if(E[n])continue;if(n===1)return 1;const prev=E[n-1];return prev&&String(prev.doneAt).slice(0,10)<dayStr()?n:null;}return null;},
+  nextEp(){const E=this.st().eps;for(let n=1;n<=this.EPS;n++){if(E[n])continue;if(n===1)return 1;const prev=E[n-1];return prev&&dayStr(new Date(prev.doneAt))<dayStr()?n:null;}   /* his own calendar day, not UTC */return null;},
   async data(n){this.cache=this.cache||{};if(!this.cache[n]){const r=await fetch('tut/ep'+n+'.json',{cache:'no-cache'});this.cache[n]=await r.json();}return this.D=this.cache[n];},
   // ---- the screen
   async open(o){o=o||{};if(this.el)return;const ep=o.ep||this.nextEp()||1;this.ep=ep;const D=await this.data(ep);const S=this.st();
@@ -33,6 +33,7 @@ const Tut={
     Object.assign(this,{board,legend,side,sub,ask,bar,pn:head.querySelector('.tut-pn'),pwEl:head.querySelector('.tut-pw'),face});this.pw=0;this.fresh=!this.epDone(ep);again.addEventListener('click',()=>this.replay());
     // Ellie's toon portrait when the 3D engine is available
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const sp=Cin3.sprites().dog;const c=Cine3D.portrait(sp,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
+    if(this.el!==root)return;   /* he tapped Finish later while it loaded */
     // resume at the start of the problem he was on
     let i=S.cur===ep?Math.min(S.i,D.steps.length-1):0;while(i>0&&D.steps[i].kind!=='problem')i--;if(this.epDone(ep))i=0;this.i=i;this.alive=true;this.run();},
   close(){this.alive=false;this.stopAudio();if(this.el){this.el.remove();this.el=null;}if(this.f&&Pad.active===this.f)Pad.active=null;
@@ -85,18 +86,18 @@ const Tut={
     else if(k==='outro'){this.board.innerHTML='';this.side.innerHTML='';this.board.append(el('div',{class:'tut-big win'},'🏆 Long Division Knight!'));}}},
   legendOn(tag){this.legend.querySelectorAll('.tut-lg').forEach(x=>x.classList.toggle('on',x.dataset.k===tag));},
   // ---- answers: keypad and Pencil for numbers, two big buttons for yes/no
-  askNum(){return new Promise(res=>{const A=this.ask;A.innerHTML='';A.hidden=false;const f=Pad.make({max:4,allowDot:false,ph:'?'});this.f=f;
+  askNum(want){return new Promise(res=>{const A=this.ask;A.innerHTML='';A.hidden=false;const f=Pad.make({max:4,allowDot:false,ph:'?'});f.want=want;this.f=f;
     const ink=el('div',{class:'tut-ink'});const keys=el('div',{class:'tut-keys'});
     '1234567890'.split('').concat(['⌫']).forEach(k=>{const b=el('button',{class:'tut-key',type:'button'},k);tapify(b,()=>{Pad.focus(f);Pad.key(k==='⌫'?'del':k);},{down:true});keys.append(b);});
     const go=el('button',{class:'tut-go',type:'button'},'✓');keys.append(go);A.append(el('div',{class:'tut-row'},f.el,ink),keys);
     try{this.ink=InkBox.make(ink,{big:true});}catch(e){}Pad.focus(f);let last=0;
-    const sub=()=>{if(Date.now()-last<500)return;const v=Pad.val(f);if(v==null)return;last=Date.now();res({v,clear:()=>{f.val='';Pad.render(f);if(this.ink&&this.ink.clear)this.ink.clear();Pad.focus(f);}});};
+    const sub=()=>{if(typeof ReadCheck!=='undefined'&&ReadCheck.busy){ReadCheck.after(sub);return;}if(Date.now()-last<500)return;const v=Pad.val(f);if(v==null)return;last=Date.now();res({v,clear:()=>{f.val='';Pad.render(f);if(this.ink&&this.ink.clear)this.ink.clear();Pad.focus(f);}});};
     tapify(go,sub);f.onEnter=sub;});},
   askYN(){return new Promise(res=>{const A=this.ask;A.innerHTML='';A.hidden=false;
     const y=el('button',{class:'tut-yn yes',type:'button'},'👍 Yes'),n=el('button',{class:'tut-yn no',type:'button'},'👎 No');
     tapify(y,()=>res({v:'yes',clear:()=>{}}));tapify(n,()=>res({v:'no',clear:()=>{}}));A.append(y,n);});},
   async ask1(step){const t0=Date.now();let tries=0;
-    for(;;){const r=step.q==='yn'?await this.askYN():await this.askNum();if(!this.alive)return;
+    for(;;){const r=step.q==='yn'?await this.askYN():await this.askNum(step.ans);if(!this.alive)return;
       if(String(r.v)===String(step.ans)){this.ask.hidden=true;this.chime(true);this.pw++;this.pips();
         this.st().log.push({i:this.i,p:step.p,tag:step.tag,tries,ms:Date.now()-t0});if(this.st().log.length>400)this.st().log.shift();return;}
       tries++;this.chime(false);r.clear();this.ask.hidden=true;
@@ -109,7 +110,7 @@ const Tut={
   // and the giant chest at the end. They pay on the first time through a day (not on replays).
   pips(){if(!this.pwEl)return;this.pwEl.querySelectorAll('i').forEach((x,k)=>x.classList.toggle('on',k<this.pw));},
   paidKey(k){const S=this.st();S.paid=S.paid||{};const key=this.ep+':'+k;if(S.paid[key])return false;S.paid[key]=1;saveState();return true;},
-  async powerUp(){this.pips();if(!this.fresh)return;const n=8+Math.floor(Math.random()*8);state.coins=(state.coins||0)+n;saveState();try{updateTop();}catch(e){}
+  async powerUp(){this.pips();if(!this.fresh||!this.paidKey('pw'+this.i))return;const n=8+Math.floor(Math.random()*8);state.coins=(state.coins||0)+n;saveState();try{updateTop();}catch(e){}
     if(typeof Brave!=='undefined')Brave.pop('⚡ POWER UP!',n,0,null);const P=this.D.shared.power;if(P)await this.speak(P[Math.floor(Math.random()*P.length)]);},
   gem(p){if(!this.fresh||!this.paidKey('gem'+p)||typeof Brave==='undefined')return;Brave.add(1,'workshop');Brave.pop('PROBLEM DONE!',0,1,null);},
   async reward(s){const key=s.r+(s.p!=null?s.p:'');if(!this.fresh||!this.paidKey(key))return;await this.lines(s.say);if(!this.alive)return;
