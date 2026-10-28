@@ -662,3 +662,41 @@ html,body{touch-action:manipulation}
 .tut-pw i.on{background:radial-gradient(circle at 35% 35%,#fff3b0,#ffc933 60%,#c98a00);border-color:#ffd23f;box-shadow:0 0 10px #ffd23f}
 body.tut-chest #cine{position:fixed;z-index:400}
 .ellie-btn.mini{padding:6px;gap:0}.ellie-btn.mini b{display:none}.ellie-btn.mini .ellie-ico{width:44px;height:44px;font-size:24px}
+/* Times Rescue */
+.rs-dots{display:flex;gap:6px}.rs-dots span{padding:4px 10px;border-radius:999px;background:#ffffff14;color:#c8cbe8;font-weight:700;font-size:13px}
+.rs-dots span.on{background:#ffe066;color:#1a1530}.rs-dots span.ok{background:#3fdc6b;color:#10301a}
+.rs-coins{font-weight:800}
+.rs-board{display:flex;align-items:center;justify-content:center}
+.rs-card{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px;text-align:center;width:100%}
+.rs-title{color:#c8cbe8;font:700 18px var(--f-body,Lexend)}
+.rs-big{font:900 54px var(--f-math,"JetBrains Mono",monospace);color:#fff;text-shadow:0 3px 0 #0006}
+.rs-big.win{color:#7dff5a;animation:rsPop .45s cubic-bezier(.2,1.6,.4,1)}
+.rs-sub{color:#ffe9a8;font:700 18px var(--f-body,Lexend)}
+.rs-trickbig{font:900 36px/1.5 var(--f-display,Lexend);color:#ffe066}
+.rs-grid{display:grid;gap:calc(var(--s)*.18)}.rs-row{display:flex;gap:calc(var(--s)*.18);padding:2px 6px;border-radius:999px;transition:background .3s}
+.rs-row i{width:var(--s);height:var(--s);border-radius:50%;background:#ffffff33}
+.rs-row.lit{background:#ffe06622}.rs-row.lit i{background:radial-gradient(circle at 35% 35%,#fff3b0,#ffc933 60%,#c98a00);box-shadow:0 0 8px #ffd23f88}
+.rs-row.ghost i{background:transparent;border:2px dashed #ffffff55}.rs-row.ghost.lit i{background:#ff9f4366;border-color:#ff9f43}
+.rs-row.gone{opacity:.35;position:relative}.rs-row.gone::after{content:'';position:absolute;left:0;right:0;top:50%;border-top:4px solid #ff4d6d}
+.rs-side{gap:12px}
+.rs-trick{padding:12px 14px;border-radius:16px;background:#ffffff14;font:700 16px/1.45 var(--f-body,Lexend)}.rs-trick b{display:block;color:#ffe066;margin-bottom:4px}
+.rs-egg-box{display:grid;justify-items:center;gap:4px;padding:10px;border-radius:16px;background:#ffffff10}.rs-egg-box small{color:#c8cbe8;font-weight:700}
+.rs-egg.wobble svg{animation:rsWob 1.2s ease-in-out infinite}.rs-egg.shake svg{animation:rsWob .25s ease-in-out infinite}
+.rs-combo{padding:10px;border-radius:14px;background:linear-gradient(90deg,#ff7b1c,#ff3d3d);color:#fff;font:900 22px var(--f-display,Lexend);text-align:center;animation:rsPop .35s}
+.rs-forge{display:grid;justify-items:center;gap:14px;width:100%;padding:16px}
+.rs-foe{font-size:84px;line-height:1}.rs-foe.hit{animation:rsHit .3s}
+.rs-forge.boss .rs-foe{font-size:110px}
+.rs-hp{width:min(420px,80%);height:16px;border-radius:9px;background:#ffffff1f;overflow:hidden}.rs-hp i{display:block;height:100%;background:linear-gradient(90deg,#3fdc6b,#ffe066);transition:width .3s}
+.rs-forge.boss .rs-hp i{background:linear-gradient(90deg,#ff4d6d,#ff9f43)}
+.rs-float{position:absolute;z-index:5;pointer-events:none;font:900 28px var(--f-display,Lexend);color:#ffe066;text-shadow:0 2px 0 #0008;animation:rsFloat 1.1s ease-out forwards}.rs-float.fast{color:#5ef2ff}
+.rs-mults{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.rs-mults span{padding:6px 12px;border-radius:12px;background:#ffffff1a;font:800 24px var(--f-math,monospace)}
+.rs-mults span.over{opacity:.35;text-decoration:line-through}.rs-mults span.stop{background:#3fdc6b;color:#10301a;box-shadow:0 0 14px #3fdc6b}
+.rs-ember{width:220px;height:220px;animation:rsPop .6s cubic-bezier(.2,1.6,.4,1)}
+.rs-btn{position:fixed;z-index:6;left:16px;top:160px;border:0;border-radius:16px;padding:10px 14px;background:#1f2347e6;color:#ffe066;font:800 16px var(--f-display,Lexend);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.rs-btn.due{background:linear-gradient(90deg,#ff7b1c,#ffb627);color:#2a1300;animation:darePulse 1.4s ease-in-out infinite}
+@keyframes rsPop{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+@keyframes rsWob{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+@keyframes rsHit{30%{transform:translateX(-10px) rotate(-8deg) scale(1.1);filter:brightness(2)}70%{transform:translateX(8px) rotate(5deg)}}
+@keyframes rsFloat{to{transform:translateY(-70px);opacity:0}}
+.rs-hatch .rs-big{font-size:38px}.rs-hatch .tut-go.wide{width:auto;padding:12px 28px}
+.rs .tut-head b{font-size:20px}

@@ -145,7 +145,7 @@ const Tut={
   }catch(e){console.error(e);}};}
 {const _sl=startLevel;startLevel=function(w,li){if(w&&w.id==='dungeon'&&li>=3&&li<5&&!Tut.done()){try{overlay(null);}catch(e){}Tut.open();return;}return _sl.apply(this,arguments);};}
 // each day's episode opens by itself on his first visit to the map that day (while the series lasts)
-setInterval(()=>{try{const S=Tut.st(),nx=Tut.nextEp();if(!nx||S.autoDay===dayStr()||Tut.el)return;const m=$('#scr-map');
+setInterval(()=>{try{const S=Tut.st(),nx=Tut.nextEp();if(!nx||S.autoDay===dayStr()||Tut.el)return;if(typeof Rescue!=='undefined'&&Rescue.pending()&&!window.__rsNoAuto)return;   /* Times Rescue goes first */const m=$('#scr-map');
   if(!m||m.hidden||!$('#overlay').hidden||!$('#talk').hidden||!$('#cine').hidden||document.querySelector('.vp,#cine3d,.adv-panel'))return;
   S.autoDay=dayStr();saveState();Tut.open({ep:nx});}catch(e){}},2500);
 Tut.menu=function(){overlay(el('div',{class:'modal'},el('h2',null,'🎬 Long Division Workshop'),el('p',null,'Replay any day you have done.'),
