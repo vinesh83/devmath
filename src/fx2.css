@@ -700,3 +700,19 @@ body.tut-chest #cine{position:fixed;z-index:400}
 @keyframes rsFloat{to{transform:translateY(-70px);opacity:0}}
 .rs-hatch .rs-big{font-size:38px}.rs-hatch .tut-go.wide{width:auto;padding:12px 28px}
 .rs .tut-head b{font-size:20px}
+.rs-why{margin-top:6px;padding:10px 16px;border-radius:14px;background:#ffe06622;border:2px solid #ffe066;color:#fff3c4;font:800 22px/1.3 var(--f-body,Lexend);max-width:90%}
+.rs-picks{display:grid;gap:10px;width:min(460px,90%)}
+.rs-pick{border:0;border-radius:16px;padding:14px 16px;background:#2d3266;color:#fff;font:800 22px var(--f-body,Lexend);box-shadow:0 4px 0 #161a3d;text-align:left}
+.rs-tri svg{filter:drop-shadow(0 6px 12px #0006)}
+.rs-fam{display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:center}.rs-fam>div:last-child{display:grid;gap:6px;font:800 24px var(--f-math,monospace);color:#ffe9a8}
+.rs-forge.spark .rs-foe{animation:dareBob 1s ease-in-out infinite}
+.rs-tgbox{display:grid;justify-items:center;gap:6px}
+.rs-tg{display:grid;grid-template-columns:repeat(11,30px);gap:3px}.rs-tg i{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;font:700 11px var(--f-body,Lexend);font-style:normal;background:#ffffff10;color:#ffffff55}
+.rs-tg i.h{background:none;color:#ffe066;font-weight:900;font-size:13px}.rs-tg i.learn{background:#3fa7ff55;color:#dff}.rs-tg i.own{background:#ffc93399;color:#2a1a00}.rs-tg i.own.fast{background:linear-gradient(135deg,#fff3b0,#ffc933);color:#2a1a00;box-shadow:0 0 6px #ffd23f}
+.rs-tg.small{grid-template-columns:repeat(11,14px);gap:2px}.rs-tg.small i{width:14px;height:14px;border-radius:3px;font-size:8px}
+.rs-tgk{color:#c8cbe8;font-weight:800}
+.rs-menu .rs-tg{margin:0 auto}
+.rs-emb{width:150px;height:150px;transition:transform .4s}.rs-emb.chomp{animation:rsChomp .4s}
+.rs-lvl{display:grid;justify-items:center;gap:4px;color:#ffe066;font:800 16px var(--f-display,Lexend)}.rs-lvl .rs-hp{width:200px}
+@keyframes rsChomp{40%{filter:brightness(1.4);translate:0 -10px}}
+.rs-board{align-items:flex-start;padding-top:18px}.rs .rs-why{max-width:60%;align-self:flex-start;margin-left:5%}

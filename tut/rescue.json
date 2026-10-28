@@ -278,7 +278,36 @@
      "t": "Day one, done! You rescued five times facts. Look, the dragon egg is cracking!",
      "a": "rsc8ba6e462"
     }
-   ]
+   ],
+   "anchors": [
+    {
+     "q": "6 + 6",
+     "ans": 12
+    },
+    {
+     "q": "8 + 8",
+     "ans": 16
+    },
+    {
+     "q": "9 + 9",
+     "ans": 18
+    }
+   ],
+   "tri": [
+    [
+     4,
+     8
+    ],
+    [
+     4,
+     9
+    ],
+    [
+     3,
+     8
+    ]
+   ],
+   "pick": []
   },
   {
    "n": 2,
@@ -580,7 +609,36 @@
      "t": "Day two, done! Your sixes are strong now. The egg has a big crack!",
      "a": "rs62ccce17f"
     }
-   ]
+   ],
+   "anchors": [
+    {
+     "q": "10 \u00d7 7",
+     "ans": 70
+    },
+    {
+     "q": "5 \u00d7 6",
+     "ans": 30
+    },
+    {
+     "q": "5 \u00d7 9",
+     "ans": 45
+    }
+   ],
+   "tri": [
+    [
+     6,
+     7
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     5,
+     8
+    ]
+   ],
+   "pick": []
   },
   {
    "n": 3,
@@ -860,6 +918,48 @@
      "t": "Day three, done! Nines and sevens, rescued. The egg is about to hatch!",
      "a": "rs9d1dde761"
     }
+   ],
+   "anchors": [
+    {
+     "q": "10 \u00d7 8",
+     "ans": 80
+    },
+    {
+     "q": "10 \u00d7 9",
+     "ans": 90
+    },
+    {
+     "q": "7 + 7",
+     "ans": 14
+    }
+   ],
+   "tri": [
+    [
+     9,
+     7
+    ],
+    [
+     9,
+     8
+    ],
+    [
+     7,
+     7
+    ]
+   ],
+   "pick": [
+    [
+     6,
+     9
+    ],
+    [
+     4,
+     7
+    ],
+    [
+     9,
+     6
+    ]
    ]
   },
   {
@@ -1078,6 +1178,48 @@
      "t": "You did it! All four days! You rescued the times tables, and look who hatched!",
      "a": "rsb3cab3ba3"
     }
+   ],
+   "anchors": [
+    {
+     "q": "5 \u00d7 8",
+     "ans": 40
+    },
+    {
+     "q": "7 + 7",
+     "ans": 14
+    },
+    {
+     "q": "14 + 14",
+     "ans": 28
+    }
+   ],
+   "tri": [
+    [
+     8,
+     7
+    ],
+    [
+     6,
+     9
+    ],
+    [
+     6,
+     8
+    ]
+   ],
+   "pick": [
+    [
+     8,
+     6
+    ],
+    [
+     9,
+     4
+    ],
+    [
+     6,
+     7
+    ]
    ]
   }
  ],
@@ -1161,6 +1303,90 @@
   "welcome": {
    "t": "Welcome back! Let's pick up where we left off.",
    "a": "rsc7bc07aeb"
+  },
+  "spark": {
+   "t": "Memory Spark! Quick, from memory. These power up today's trick.",
+   "a": "rsb6d580e59"
+  },
+  "sparkDone": {
+   "t": "Spark complete! Your brain is warmed up.",
+   "a": "rse577f6629"
+  },
+  "tri": {
+   "t": "Fact families! Three numbers that go together. Find the missing one.",
+   "a": "rs49f90ff58"
+  },
+  "triDone": {
+   "t": "One family, four facts. Times and divide are best friends!",
+   "a": "rsa843d7249"
+  },
+  "pick": {
+   "t": "Trick Picker! Which trick would you use? There can be more than one right choice.",
+   "a": "rs690cd51a0"
+  },
+  "pickOk": {
+   "t": "Great pick! That trick works.",
+   "a": "rs4a8b6cd14"
+  },
+  "pickNo": {
+   "t": "Hmm, that trick doesn't fit this one. Try another!",
+   "a": "rs6ceccb6b5"
+  },
+  "left": {
+   "t": "And how many are left over?",
+   "a": "rscc4527e6c"
+  },
+  "why": {
+   "t": "Close! Look at what you wrote.",
+   "a": "rs83105c5a3"
+  },
+  "record": {
+   "t": "New record! You beat your best!",
+   "a": "rse51d59835"
+  },
+  "grid": {
+   "t": "Look at your Times Grid. Every gold square is a fact you own!",
+   "a": "rscf86a9bc1"
+  },
+  "snack": [
+   {
+    "t": "Ember is hungry! Feed Ember some times facts!",
+    "a": "rsa8dd788c6"
+   },
+   {
+    "t": "Snack time for Ember! Every right answer is a dragon berry.",
+    "a": "rs315a0e5de"
+   },
+   {
+    "t": "Ember's tummy is rumbling. Let's feed Ember!",
+    "a": "rs5ebcc04da"
+   }
+  ],
+  "yum": [
+   {
+    "t": "Yum!",
+    "a": "rs999f701c8"
+   },
+   {
+    "t": "Crunch!",
+    "a": "rs58871dff8"
+   },
+   {
+    "t": "Ember loves that one!",
+    "a": "rs6344372e1"
+   },
+   {
+    "t": "Delicious!",
+    "a": "rs48acab9f9"
+   }
+  ],
+  "grow": {
+   "t": "Ember grew bigger! Level up!",
+   "a": "rsb7ef64130"
+  },
+  "full": {
+   "t": "Ember is full and happy. See you tomorrow!",
+   "a": "rs66471332c"
   }
  }
 }

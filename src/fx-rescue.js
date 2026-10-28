@@ -19,11 +19,11 @@ const Rescue={
   async data(){if(!this.D){const r=await fetch('tut/rescue.json',{cache:'no-cache'});this.D=await r.json();}return this.D;},
   fact(key){try{return Dojo.facts('tm').find(x=>x.key===key)||null;}catch(e){return null;}},
   // ---- the screen (the Workshop's layout)
-  async open(o){o=o||{};if(this.el)return;const n=o.day||this.next()||1;const D=await this.data();const day=D.days[n-1];if(!day)return;
+  async open(o){o=o||{};if(this.el)return;const n=o.snack?4:(o.day||this.next()||1);const D=await this.data();const day=D.days[n-1];if(!day)return;this.snackMode=!!o.snack;
     if(typeof Music!=='undefined')Music.stop();const S=this.st();this.n=n;this.day=day;this.t0=Date.now();this.fresh=!this.done(n);
     const root=el('div',{class:'vp tut rs'});this.el=root;
-    const dots=el('div',{class:'rs-dots'},...['Trick','Build','Forge','Fits','Reward'].map(t=>el('span',null,t)));
-    const head=el('div',{class:'tut-head'},el('b',null,`🛡️ Times Rescue · Day ${n}: ${day.title}`),dots,el('span',{class:'chip rs-coins'},el('span',{class:'coin-ico'}),String(state.coins||0)),
+    const dots=el('div',{class:'rs-dots'},...['Spark','Trick','Build','Forge','Divide','Reward'].map(t=>el('span',null,t)));
+    const head=el('div',{class:'tut-head'},el('b',null,o.snack?'🐉 Feed Ember':`🛡️ Times Rescue · Day ${n}: ${day.title}`),o.snack?el('span'):dots,el('span',{class:'chip rs-coins'},el('span',{class:'coin-ico'}),String(state.coins||0)),
       el('button',{class:'tut-exit',type:'button',onclick:()=>this.close()},'⏸ Finish later'));
     const board=el('div',{class:'tut-board rs-board'}),side=el('div',{class:'tut-right rs-side'});
     const face=el('div',{class:'tut-face'},'🐶'),sub=el('div',{class:'tut-sub ellie'}),again=el('button',{class:'tut-again',type:'button','aria-label':'Hear it again'},'🔁');
@@ -34,7 +34,8 @@ const Rescue={
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&window.Cine3D&&Cine3D.portrait){const c=Cine3D.portrait(Cin3.sprites().dog,{w:110,h:110,res:2,turn:0.5});c.className='tut-ellie';face.textContent='';face.append(c);}}catch(e){}
     if(this.el!==root)return;   /* he tapped Finish later while it loaded */
     // resume at the start of the part he was on today
-    const c=S.cur&&S.cur.n===n&&S.cur.day===dayStr()?S.cur:null;this.seg=c?c.seg:0;this.alive=true;if(c)await this.speak(D.shared.welcome);this.run();},
+    if(o.snack){this.alive=true;this.snackRun();return;}
+    const c=S.cur&&S.cur.n===n&&S.cur.day===dayStr()&&S.cur.v===2?S.cur:null;this.seg=c?c.seg:0;this.alive=true;if(c)await this.speak(D.shared.welcome);this.run();},
   close(){this.alive=false;this.stopAudio();if(this.el){this.el.remove();this.el=null;}if(this.f&&Pad.active===this.f)Pad.active=null;
     try{if(typeof renderMap==='function'&&!$('#scr-map').hidden)renderMap();}catch(e){}},
   // ---- Ellie's voice (subtitles always)
@@ -51,9 +52,9 @@ const Rescue={
   // ---- rewards along the way
   pay(n){if(!this.fresh||!n)return;state.coins=(state.coins||0)+n;if(this.coinsEl)this.coinsEl.lastChild.textContent=String(state.coins);try{updateTop();}catch(e){}},
   float(txt,cls){const b=this.board.getBoundingClientRect(),x=el('div',{class:'rs-float '+(cls||'')},txt);x.style.left=(b.width/2-40+Math.random()*80)+'px';x.style.top=(b.height*0.35)+'px';this.board.append(x);setTimeout(()=>x.remove(),1100);},
-  setSeg(i){this.seg=i;[...this.dots.children].forEach((d,k)=>{d.className=k<i?'ok':k===i?'on':'';});const S=this.st();S.cur={n:this.n,seg:i,day:dayStr()};saveState();},
+  setSeg(i){this.seg=i;[...this.dots.children].forEach((d,k)=>{d.className=k<i?'ok':k===i?'on':'';});const S=this.st();S.cur={n:this.n,seg:i,day:dayStr(),v:2};saveState();},
   // the side panel: the trick card, the egg, and the combo meter
-  drawSide(){const S=this.st(),stage=Object.keys(S.days).length;this.side.innerHTML='';
+  drawSide(){const S=this.st(),stage=Object.keys(S.days).length;this.side.innerHTML='';if(this.snackMode){this.side.append(el('div',{class:'rs-trick'},el('b',null,'🔢 Times Grid'),Rescue.grid(true)),this.comboEl=el('div',{class:'rs-combo',hidden:true}));return;}
     this.side.append(el('div',{class:'rs-trick'},el('b',null,'🔑 Secret trick'),...this.day.trickCard.split('\n').map(t=>el('div',null,t))),
       el('div',{class:'rs-egg-box'},this.egg(stage),el('small',null,stage>=4?'Hatched!':`Dragon egg · ${stage} of 4 days`)),
       this.comboEl=el('div',{class:'rs-combo',hidden:true}));},
@@ -77,7 +78,7 @@ const Rescue={
   async q(ans,hint,show,onMiss){let tries=0;for(;;){const r=await this.askNum(ans);if(!this.alive)return null;
       if(r.v===ans){this.ask.hidden=true;this.chime(true);return {tries,ms:r.ms,src:r.src};}
       tries++;this.chime(false);r.clear();this.ask.hidden=true;
-      if(tries===1){if(onMiss)onMiss();await this.speak(this.D.shared.miss);if(hint)await this.speak(hint);}
+      if(tries===1){const why=onMiss&&onMiss(r.v);if(why){this.why(why);await this.speak(this.D.shared.why);}else await this.speak(this.D.shared.miss);if(hint)await this.speak(hint);}
       else{this.sub.textContent='';this.sub.append(document.createTextNode((show||'Write')+' '),el('b',{class:'tut-show'},String(ans)));await this.speak(this.D.shared.show);
         this.sub.textContent='';this.sub.append(document.createTextNode('Write: '),el('b',{class:'tut-show'},String(ans)));}
       if(!this.alive)return null;}},
@@ -92,14 +93,49 @@ const Rescue={
     return g;},
   // the picture that shows the whole fact: half of ten groups, or ten groups with one taken away
   endHl(f){return /half of ×10/.test(f.trick)?'half':/^×10/.test(f.trick)?'minus':'all';},
+  // what a wrong answer actually is: a neighbor fact, or plus instead of times
+  whyTimes(a,b,v){const C=[[a*(b-1),`${v} is ${a} × ${b-1}. Add one more ${a}!`],[a*(b+1),`${v} is ${a} × ${b+1}. Take away one ${a}!`],[(a-1)*b,`${v} is ${a-1} × ${b}. Add one more ${b}!`],
+      [(a+1)*b,`${v} is ${a+1} × ${b}. Take away one ${b}!`],[a+b,`${v} is ${a} + ${b}. Times means ${a} groups of ${b}.`]];for(const [x,t] of C)if(x===v&&x>0)return t;return null;},
+  why(t){let w=this.board.querySelector('.rs-why');if(!w){w=el('div',{class:'rs-why'});(this.board.querySelector('.rs-card,.rs-forge')||this.board).append(w);}w.textContent='💡 '+t;},
   card(title,big,pic){this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},title?el('div',{class:'rs-title'},title):null,el('div',{class:'rs-big'},big),pic||null));},
   // ---- the day's parts
   async run(){const D=this.D,day=this.day;
-    if(this.seg<=0){this.setSeg(0);this.card('Secret trick',el('div',{class:'rs-trickbig'},...day.trickCard.split('\n').map(t=>el('div',null,t))));await this.lines(day.intro);}
-    if(!this.alive)return;if(this.seg<=1){this.setSeg(1);await this.build();}
-    if(!this.alive)return;if(this.seg<=2){this.setSeg(2);await this.forge(this.n===4);}
-    if(!this.alive)return;if(this.seg<=3){this.setSeg(3);await this.fits();}
-    if(!this.alive)return;this.setSeg(4);await this.finish();},
+    if(this.seg<=0){this.setSeg(0);await this.spark();}
+    if(!this.alive)return;if(this.seg<=1){this.setSeg(1);this.card('Secret trick',el('div',{class:'rs-trickbig'},...day.trickCard.split('\n').map(t=>el('div',null,t))));await this.lines(day.intro);}
+    if(!this.alive)return;if(this.seg<=2){this.setSeg(2);await this.build();if(this.alive&&day.pick&&day.pick.length)await this.picker();}
+    if(!this.alive)return;if(this.seg<=3){this.setSeg(3);await this.forge(this.n===4);}
+    if(!this.alive)return;if(this.seg<=4){this.setSeg(4);await this.triangles();if(this.alive)await this.fits();}
+    if(!this.alive)return;this.setSeg(5);await this.finish();},
+  // Memory Spark: recall before learning. Today's anchor facts, then a few facts from earlier days (spaced retrieval)
+  async spark(){const D=this.D,day=this.day;await this.speak(D.shared.spark);const prev=[];D.days.slice(0,this.n-1).forEach(d=>d.facts.forEach(f=>prev.push(f)));
+    const Q=day.anchors.map(x=>({q:x.q,ans:x.ans})).concat(shuffle(prev.slice()).slice(0,4).map(f=>({q:`${f.a} × ${f.b}`,ans:f.ans,f})));let ok=0;
+    this.autoGo=true;for(const x of Q){if(!this.alive)break;this.board.innerHTML='';this.board.append(el('div',{class:'rs-forge spark'},el('div',{class:'rs-foe'},'✨'),el('div',{class:'rs-big'},`${x.q} = ?`),el('div',{class:'rs-sub'},`Spark ${ok+1} of ${Q.length}`)));
+      const r=await this.askOnce(x.ans);if(!this.alive)break;
+      if(x.f){const df=this.fact(x.f.key);if(df){try{const Rr=Dojo.rec(df);Dojo.log(df,r.ok,r.ms,r.src,Rr.owned?'review':'learn');}catch(e){}}}
+      if(r.ok){ok++;this.pay(1);this.float('✨ +1');}else{this.board.querySelector('.rs-big').textContent=`${x.q} = ${x.ans}`;this.board.querySelector('.rs-big').classList.add('win');
+        if(x.f){const w=this.whyTimes(x.f.a,x.f.b,r.v);if(w)this.why(w);}await new Promise(z=>setTimeout(z,window.__tutFast?30:1800));}}
+    this.autoGo=false;if(this.alive)await this.speak(D.shared.sparkDone);},
+  // Trick Picker: choosing a strategy (any trick that works is right)
+  tricksFor(a,b){const T=[];const has=n=>a===n||b===n;if(has(4)||has(8)||has(2))T.push('double');if(has(6))T.push('five');if(has(9))T.push('ten');if(has(5))T.push('half');return T;},
+  async picker(){const D=this.D;await this.speak(D.shared.pick);const NAMES={double:'🔁 Double Power',five:'✋ Five and One More',ten:'🔟 Ten Take One'};
+    for(const [a,b] of this.day.pick){if(!this.alive)return;const ok=this.tricksFor(a,b);let got=null;
+      while(this.alive&&!got){const pickP=new Promise(res=>{this.card('Trick Picker',`${a} × ${b}`,el('div',{class:'rs-picks'},...Object.entries(NAMES).map(([k,n])=>{const bt=el('button',{class:'rs-pick',type:'button'},n);tapify(bt,()=>res(k));return bt;})));});
+        const k=await pickP;if(ok.includes(k)){got=k;this.chime(true);this.pay(2);this.float('+2 🪙');await this.speak(D.shared.pickOk);}else{this.chime(false);await this.speak(D.shared.pickNo);}}
+      if(!this.alive)return;this.card(`${a} × ${b} · ${NAMES[got]}`,`${a} × ${b} = ?`);const r=await this.q(a*b,null,'',v=>this.whyTimes(a,b,v));if(!r)return;this.pay(1);
+      this.board.querySelector('.rs-big').textContent=`${a} × ${b} = ${a*b}`;this.board.querySelector('.rs-big').classList.add('win');await new Promise(z=>setTimeout(z,window.__tutFast?30:900));}},
+  // fact families: one triangle, four facts; the hidden corner is asked as a division
+  async triangles(){const D=this.D;await this.speak(D.shared.tri);
+    for(const [a,b] of this.day.tri){if(!this.alive)return;const p=a*b,hideA=Math.random()<0.5,hid=hideA?a:b,shown=hideA?b:a;
+      const tri=(q)=>{const d=el('div',{class:'rs-tri'});d.innerHTML=`<svg viewBox="0 0 260 220" width="260" height="220"><path d="M130 30 L30 190 L230 190 Z" fill="#ffffff10" stroke="#ffe066" stroke-width="5" stroke-linejoin="round"/>
+        <circle cx="130" cy="40" r="34" fill="#ff7b1c"/><text x="130" y="52" text-anchor="middle" font-size="34" font-weight="900" fill="#fff" font-family="NK Digits,Lexend,sans-serif">${p}</text>
+        <circle cx="45" cy="178" r="32" fill="#3fa7ff"/><text x="45" y="190" text-anchor="middle" font-size="32" font-weight="900" fill="#fff" font-family="NK Digits,Lexend,sans-serif">${shown}</text>
+        <circle cx="215" cy="178" r="32" fill="${q?'#ffffff33':'#3fdc6b'}"/><text x="215" y="190" text-anchor="middle" font-size="32" font-weight="900" fill="#fff" font-family="NK Digits,Lexend,sans-serif">${q?'?':hid}</text>
+        <text x="130" y="140" text-anchor="middle" font-size="30" font-weight="900" fill="#ffe066">× ÷</text></svg>`;return d;};
+      this.card('Fact family',`${p} ÷ ${shown} = ?`,tri(true));const r=await this.q(hid,null,'',v=>v*shown>p?`${v} × ${shown} = ${v*shown}. That's more than ${p}!`:v*shown<p?`${v} × ${shown} = ${v*shown}. That's less than ${p}.`:null);if(!r)return;
+      const df=this.fact(`${p}/${shown}`);if(df){try{const Rr=Dojo.rec(df);Dojo.log(df,r.tries===0,r.ms,r.src,Rr.owned?'review':'learn');}catch(e){}}
+      this.pay(2);this.card('One family, four facts',`${shown} × ${hid} = ${p}`,el('div',{class:'rs-fam'},tri(false),el('div',null,...[`${hid} × ${shown} = ${p}`,`${p} ÷ ${shown} = ${hid}`,`${p} ÷ ${hid} = ${shown}`].map(t=>el('div',null,t)))));
+      this.board.querySelector('.rs-big').classList.add('win');await new Promise(z=>setTimeout(z,window.__tutFast?30:1600));}
+    if(this.alive)await this.speak(D.shared.triDone);},
   async build(){const D=this.D;await this.speak(D.shared.build);
     for(const f of this.day.facts){if(!this.alive)return;
       for(let k=0;k<f.steps.length;k++){const s=f.steps[k];this.card(`${f.a} × ${f.b}  ·  ${f.trick}`,s.q,this.dots_(f,s.hl,k));
@@ -126,22 +162,28 @@ const Rescue={
         this.pay(fast?3:2);this.float(fast?'⚡ +3 🪙':'+2 🪙',fast?'fast':'');const foe=bar.querySelector('.rs-foe');foe.classList.remove('hit');void foe.offsetWidth;foe.classList.add('hit');
         if(combo%5===0){this.pay(5);if(typeof Brave!=='undefined')Brave.pop(`🔥 ${combo} COMBO!`,5,0,null);this.quick(this.pick(D.shared.combo));}else if(Math.random()<0.35)this.quick(this.pick(D.shared.yes));}
       else{combo=0;if(df&&first){try{Dojo.log(df,false,r.ms,r.src,'learn');}catch(e){}}
-        this.card(`${f.a} × ${f.b}  ·  ${f.trick}`,`${x.a} × ${x.b} = ${f.ans}`,this.dots_(f,this.endHl(f)));await this.speak(f.done);Q.splice(Math.min(3,Q.length),0,x);}
+        this.card(`${f.a} × ${f.b}  ·  ${f.trick}`,`${x.a} × ${x.b} = ${f.ans}`,this.dots_(f,this.endHl(f)));const w=this.whyTimes(x.a,x.b,r.v);if(w)this.why(w);await this.speak(f.done);Q.splice(Math.min(3,Q.length),0,x);}
       this.updCombo(combo);}
     this.autoGo=false;if(!this.alive)return;this.updCombo(0);
-    this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},el('div',{class:'rs-big win'},boss?'🗿💥 Times Golem defeated!':'⚔️✨ Sword forged!'),el('div',{class:'rs-sub'},`Best combo: ${best}`)));
+    // personal records: his best combo for this day's Forge (a race against himself, not a clock)
+    const B=this.st().best=this.st().best||{},bk='d'+this.n,rec=best>(B[bk]||0)&&B[bk]!=null;B[bk]=Math.max(B[bk]||0,best);saveState();
+    this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},el('div',{class:'rs-big win'},boss?'🗿💥 Times Golem defeated!':'⚔️✨ Sword forged!'),el('div',{class:'rs-sub'},`Best combo: ${best}`+(rec?' · 🏆 NEW RECORD!':''))));if(rec)this.quick(D.shared.record);
     this.pay(boss?20:10);if(typeof Brave!=='undefined')Brave.pop(boss?'GOLEM DOWN!':'SWORD FORGED!',boss?20:10,0,boss?'legend':null);await this.speak(boss?D.shared.golemDown:D.shared.forgeDone);},
   // one try in the Forge (it keeps moving; misses come back later)
-  async askOnce(ans){const r=await this.askNum(ans);if(!this.alive)return {ok:false};this.ask.hidden=true;const ok=r.v===ans;this.chime(ok);if(!ok)r.clear();return {ok,ms:r.ms,src:r.src};},
+  async askOnce(ans){const r=await this.askNum(ans);if(!this.alive)return {ok:false};this.ask.hidden=true;const ok=r.v===ans;this.chime(ok);if(!ok)r.clear();return {ok,ms:r.ms,src:r.src,v:r.v};},
   updCombo(c){if(!this.comboEl)return;this.comboEl.hidden=c<2;this.comboEl.textContent=`🔥 ${c} in a row`;},
   async fits(){const D=this.D;await this.speak(D.shared.fits);
     for(const x of this.day.fits){if(!this.alive)return;const mult=[];for(let k=1;k*x.d<=x.n+x.d&&k<=10;k++)mult.push(k*x.d);
       const row=el('div',{class:'rs-mults'},...mult.map(v=>el('span',{class:v>x.n?'over':''},String(v))));row.hidden=true;
       this.card(`Division power-up · ${x.n} ÷ ${x.d}`,`How many ${x.d}s fit into ${x.n}?`,row);
       await this.speak(x.say);
-      const r=await this.q(x.q,x.hint,'',()=>{row.hidden=false;});   /* a miss shows the count-up row */if(!r)return;row.hidden=false;row.children[x.q-1]&&row.children[x.q-1].classList.add('stop');
+      const r=await this.q(x.q,x.hint,'',v=>{row.hidden=false;return v*x.d>x.n?`${v} × ${x.d} = ${v*x.d}. Too big, that's more than ${x.n}!`:(v+1)*x.d<=x.n?`${v} × ${x.d} = ${v*x.d}. Another ${x.d} still fits!`:null;});   /* a miss shows the count-up row */if(!r)return;row.hidden=false;row.children[x.q-1]&&row.children[x.q-1].classList.add('stop');
       this.board.querySelector('.rs-big').textContent=`${x.d} × ${x.q} = ${x.q*x.d}`+(x.r?`, ${x.r} left over`:'');this.board.querySelector('.rs-big').classList.add('win');
-      this.pay(2);this.float('+2 🪙');await this.speak(x.done);
+      this.pay(2);this.float('+2 🪙');
+      // and the remainder, the way long division asks it
+      if(x.r){this.board.querySelector('.rs-big').textContent=`${x.d} × ${x.q} = ${x.q*x.d}. How many left over?`;await this.speak(D.shared.left);const r2=await this.q(x.r,null,'',v=>`${x.n} − ${x.q*x.d} = ?  Count up from ${x.q*x.d} to ${x.n}.`);if(!r2)return;this.pay(1);
+        this.board.querySelector('.rs-big').textContent=`${x.n} ÷ ${x.d} = ${x.q} R ${x.r}`;}
+      await this.speak(x.done);
       this.st().log.push({t:new Date().toISOString(),n:this.n,fits:`${x.n}/${x.d}`,tries:r.tries,ms:r.ms});}},
   async finish(){const D=this.D,S=this.st(),n=this.n,first=this.fresh;
     if(first){S.days[n]={at:new Date().toISOString(),secs:Math.round((Date.now()-this.t0)/1000)};S.cur=null;
@@ -151,13 +193,14 @@ const Rescue={
     this.drawSide();this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},el('div',{class:'rs-big win'},`🛡️ Day ${n} complete!`),
       el('div',{class:'rs-sub'},first?`+${n===4?80:40} coins · +3 💎 · a loot chest`:'Great review!')));
     await this.lines(D.days[n-1].outro);if(!this.alive)return;
+    this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},el('div',{class:'rs-title'},'Your Times Grid'),Rescue.grid()));await this.speak(D.shared.grid);await new Promise(z=>setTimeout(z,window.__tutFast?30:2500));if(!this.alive)return;
     if(first){document.body.classList.add('tut-chest');try{await openChest(n===4?'boss':'great');}catch(e){}document.body.classList.remove('tut-chest');}
     if(first&&n===4)await this.hatch();
     this.ask.hidden=false;this.ask.innerHTML='';
     const nextTxt=n<4?`Day ${n+1} opens tomorrow.`:'Times Rescue complete!';
     this.ask.append(el('div',{class:'tut-win'},nextTxt+(typeof Tut!=='undefined'&&Tut.nextEp()?' Next: the Long Division Workshop!':'')),el('button',{class:'tut-go wide',type:'button',onclick:()=>this.close()},'Done'));},
   // ---- Day 4: the egg hatches into Ember
-  async hatch(){const S=this.st();S.hatched=new Date().toISOString();Rescue.addEmber();if(!state.owned.includes('pet:ember'))state.owned.push('pet:ember');saveState();
+  async hatch(){const S=this.st();S.hatched=new Date().toISOString();S.snackDay=dayStr();   /* first snack tomorrow: spacing */Rescue.addEmber();if(!state.owned.includes('pet:ember'))state.owned.push('pet:ember');saveState();
     this.board.innerHTML='';const box=el('div',{class:'rs-card rs-hatch'});this.board.append(box);const egg=this.egg(3);egg.classList.add('shake');box.append(egg);try{Snd.rattle&&Snd.rattle();}catch(e){}
     await new Promise(r=>setTimeout(r,window.__tutFast?50:1600));box.innerHTML='';let pic=null;
     try{if(typeof Cin3!=='undefined'&&await Cin3.load()&&Cine3D.shot)pic=Cine3D.shot({pet:'ember'},{w:220,h:220,res:2,turn:0.6});}catch(e){}
@@ -168,19 +211,52 @@ const Rescue={
     await this.speak(this.D.shared.hatch);await new Promise(r=>setTimeout(r,window.__tutFast?50:2500));},
   addEmber(){try{if(!PETS.ember)PETS.ember={fly:true,pal:{p:'#c2410c',P:'#ff7b1c',Y:'#ffe066',D:'#1d1f33'},rows:PETS.dragon.rows};
     if(!CATALOG.pet.some(p=>p.id==='ember'))CATALOG.pet.push({id:'ember',name:'Ember the Times Dragon',price:0});}catch(e){}},
-  // ---- the map button
+  // ---- the map button: the mission while it runs; after Ember hatches, Ember's daily snack and the Times Grid
   btn(){const m=document.querySelector('#scr-map');if(!m)return;let b=m.querySelector('.rs-btn');const nx=this.next(),S=this.st(),stage=Object.keys(S.days).length;
-    if(this.allDone()){if(b)b.remove();return;}
-    if(!b){b=el('button',{class:'rs-btn',type:'button'});b.addEventListener('click',()=>{const n=this.next();if(n)this.open({day:n});else this.menu();});m.append(b);}
-    b.textContent=nx?`🥚 Times Rescue · Day ${nx}`:`🥚 Times Rescue ✓ today · ${stage}/4`;b.classList.toggle('due',!!nx);},
-  menu(){overlay(el('div',{class:'modal'},el('h2',null,'🛡️ Times Rescue'),el('p',null,'Today’s mission is done. The next day opens tomorrow. Replay a day for practice:'),
+    if(!b){b=el('button',{class:'rs-btn',type:'button'});b.addEventListener('click',()=>{if(this.next())this.open({day:this.next()});else if(this.snackDue())this.open({snack:true});else this.menu();});m.append(b);}
+    b.textContent=nx?`🥚 Times Rescue · Day ${nx}`:S.hatched?(this.snackDue()?'🐉 Feed Ember':'🐉 Ember is full ✓'):`🥚 Times Rescue ✓ today · ${stage}/4`;b.classList.toggle('due',!!nx||this.snackDue());},
+  menu(){overlay(el('div',{class:'modal rs-menu'},el('h2',null,'🛡️ Times Rescue'),this.grid(),el('p',null,this.allDone()?'Replay any day for practice:':'Today’s mission is done. The next day opens tomorrow. Replay a day for practice:'),
     el('div',{class:'btns',style:'flex-direction:column'},...[1,2,3,4].map(n=>el('button',{class:'btn'+(this.done(n)?'':' btn-dark'),type:'button',disabled:!this.done(n),onclick:()=>{overlay(null);this.open({day:n});}},`Day ${n}${this.done(n)?'':' 🔒'}`)),
       el('button',{class:'btn btn-dark',type:'button',onclick:()=>overlay(null)},'Close'))));}
 };
+Object.assign(Rescue,{
+  // ---- the Times Grid: every fact 1-10 x 1-10; gold = owned, glowing = automatic, blue = learning, dim = not yet
+  grid(small){const F=(()=>{try{return Dojo.st().facts;}catch(e){return {};}})();let own=0,tot=0;const g=el('div',{class:'rs-tg'+(small?' small':'')});
+    g.append(el('i',{class:'h'},'×'));for(let c=1;c<=10;c++)g.append(el('i',{class:'h'},String(c)));
+    for(let r=1;r<=10;r++){g.append(el('i',{class:'h'},String(r)));for(let c=1;c<=10;c++){const k=`${Math.min(r,c)}x${Math.max(r,c)}`,R=F[k];let cls='new';
+        if(r===1||c===1||(R&&R.owned))cls=(r===1||c===1||(R&&Dojo.speed(R)==='auto'))?'own fast':'own';else if(R&&R.n)cls='learn';if(r<=c){tot++;if(cls.startsWith('own'))own++;}
+        g.append(el('i',{class:cls,title:`${r} × ${c} = ${r*c}`},small?'':String(r*c)));}}
+    return el('div',{class:'rs-tgbox'},g,el('div',{class:'rs-tgk'},`${own} of ${tot} facts owned`,small?null:el('span',null,'  ·  gold = owned  ·  blue = learning')));},
+  // ---- Ember's snack: a 3-minute daily review after the hatch, spaced like flash-card boxes (1, 2, 4, 7 days)
+  snackDue(){const S=this.st();return !!S.hatched&&S.snackDay!==dayStr();},
+  snackPick(){const S=this.st(),B=S.box=S.box||{},today=dayStr(),keys=new Map();
+    (this.D?this.D.days:[]).forEach(d=>d.facts.forEach(f=>keys.set(f.key,{a:f.a,b:f.b,key:f.key,ans:f.ans,trick:f.trick})));
+    try{const F=Dojo.st().facts;for(const k in F){const m=/^(\d+)x(\d+)$/.exec(k);if(!m||+m[2]>10)continue;const sp=Dojo.speed(F[k]);if((sp==='slow'||sp==='shaky')&&!keys.has(k))keys.set(k,{a:+m[2],b:+m[1],key:k,ans:m[1]*m[2]});}}catch(e){}
+    const all=[...keys.values()].map(x=>Object.assign(x,{bx:(B[x.key]||{b:1}).b,due:(B[x.key]||{}).due||today}));
+    const due=all.filter(x=>x.due<=today).sort((p,q)=>p.bx-q.bx);let pick=due.slice(0,8);if(pick.length<8)pick=pick.concat(all.filter(x=>!pick.includes(x)).sort((p,q)=>p.bx-q.bx).slice(0,8-pick.length));
+    return shuffle(pick);},
+  async snackRun(){const D=this.D,S=this.st();S.snackAuto=dayStr();const sn=S.snack=S.snack||{xp:0,lvl:1};await this.speak(this.pick(D.shared.snack));if(!this.alive)return;
+    const Q=this.snackPick(),B=S.box=S.box||{},again=[];let got=0;const add=(d,n)=>{const t=new Date(dayStr());t.setDate(t.getDate()+n);return dayStr(t);};
+    const pic=()=>{let c=null;try{if(window.Cine3D&&Cine3D.shot)c=Cine3D.shot({pet:'ember'},{w:150,h:150,res:2,turn:0.6});}catch(e){}if(!c){c=el('canvas',{width:150,height:150});const x=c.getContext('2d');x.imageSmoothingEnabled=false;drawPet(x,'ember',20,40,12,0);}
+      c.className='rs-emb';c.style.transform=`scale(${Math.min(1.6,0.85+sn.lvl*0.08)})`;return c;};
+    this.autoGo=true;const ask1=async(x,second)=>{const flip=Math.random()<0.5,a=flip?x.b:x.a,b=flip?x.a:x.b;this.board.innerHTML='';
+      const box=el('div',{class:'rs-forge snack'},pic(),el('div',{class:'rs-lvl'},`Ember · level ${sn.lvl}`,el('div',{class:'rs-hp'},el('i',{style:`width:${(sn.xp%50)*2}%`}))),el('div',{class:'rs-big'},`${a} × ${b} = ?`));this.board.append(box);
+      const r=await this.askOnce(x.ans);if(!this.alive)return;const df=this.fact(x.key);
+      if(!second&&df){try{const Rr=Dojo.rec(df);Dojo.log(df,r.ok,r.ms,r.src,Rr.owned?'review':'learn');}catch(e){}}
+      if(r.ok){got++;if(!second){const nb=Math.min(4,(B[x.key]||{b:1}).b+1);B[x.key]={b:nb,due:add(0,[1,2,4,7][nb-1])};}
+        sn.xp+=10;this.pay(1);this.float('🍓 Yum!');const e=box.querySelector('.rs-emb');if(e){e.classList.remove('chomp');void e.offsetWidth;e.classList.add('chomp');}this.quick(this.pick(D.shared.yum));
+        if(sn.xp%50===0){sn.lvl++;this.pay(5);if(typeof Brave!=='undefined')Brave.pop(`🐉 EMBER LEVEL ${sn.lvl}!`,5,0,'legend');await this.speak(D.shared.grow);}}
+      else{B[x.key]={b:1,due:add(0,1)};this.board.querySelector('.rs-big').textContent=`${a} × ${b} = ${x.ans}`;const w=this.whyTimes(a,b,r.v);if(w)this.why(w);if(!second)again.push(x);await new Promise(z=>setTimeout(z,window.__tutFast?30:2200));}
+      saveState();};
+    for(const x of Q){if(!this.alive)break;await ask1(x,false);}for(const x of again){if(!this.alive)break;await ask1(x,true);}
+    this.autoGo=false;if(!this.alive)return;S.snackDay=dayStr();try{const T=Dojo.st().today;T.tm.rounds=(T.tm.rounds||0)+1;}catch(e){}saveState();
+    this.board.innerHTML='';this.board.append(el('div',{class:'rs-card'},pic(),el('div',{class:'rs-big win'},`Ember ate ${got} berries!`),this.grid()));await this.speak(D.shared.full);
+    this.ask.hidden=false;this.ask.innerHTML='';this.ask.append(el('button',{class:'tut-go wide',type:'button',onclick:()=>this.close()},'Done'));}
+});
 setTimeout(()=>{try{if(Rescue.st().hatched)Rescue.addEmber();}catch(e){}},0);
 // first thing on the map each day, before the Workshop and the Times Dojo nudge (it is today's Times round)
-setInterval(()=>{try{Rescue.btn();const S=Rescue.st(),nx=Rescue.next();if(!nx||S.autoDay===dayStr()||Rescue.el||window.__rsNoAuto)return;const m=$('#scr-map');
+setInterval(()=>{try{Rescue.btn();const S=Rescue.st(),nx=Rescue.next(),snack=!nx&&Rescue.snackDue();if((!nx&&!snack)||S.autoDay===dayStr()||Rescue.el||window.__rsNoAuto)return;const m=$('#scr-map');
   if(!m||m.hidden||!$('#overlay').hidden||!$('#talk').hidden||!$('#cine').hidden||document.querySelector('.vp,#cine3d,.adv-panel'))return;
-  S.autoDay=dayStr();saveState();Rescue.open({day:nx});}catch(e){}},2000);
+  S.autoDay=dayStr();saveState();Rescue.open(snack?{snack:true}:{day:nx});}catch(e){}},2000);
 {const _tf=Dojo.timesFirst.bind(Dojo);Dojo.timesFirst=function(){if(Rescue.pending()&&!window.__rsNoAuto)return false;return _tf.apply(this,arguments);};}
 window.__rescue=Rescue;
