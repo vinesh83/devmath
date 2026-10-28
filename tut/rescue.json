@@ -1,0 +1,1166 @@
+{
+ "days": [
+  {
+   "n": 1,
+   "title": "Double Power",
+   "egg": "The egg wiggled!",
+   "intro": [
+    {
+     "t": "Agent Dev! Glitch scrambled the hard times tables. It's Times Rescue, day one!",
+     "a": "rs8ac7707f7"
+    },
+    {
+     "t": "Today's secret trick is Double Power. Times four means double it, then double it again.",
+     "a": "rs26761d95d"
+    }
+   ],
+   "trickCard": "\u00d74 = double, then double again\n\u00d78 = double, double, double",
+   "facts": [
+    {
+     "a": 4,
+     "b": 6,
+     "key": "4x6",
+     "ans": 24,
+     "trick": "double, double",
+     "steps": [
+      {
+       "q": "6 + 6 = ?",
+       "ans": 12,
+       "say": {
+        "t": "Double six?",
+        "a": "rs57b5912c9"
+       },
+       "hl": "half"
+      },
+      {
+       "q": "12 + 12 = ?",
+       "ans": 24,
+       "say": {
+        "t": "Now double twelve!",
+        "a": "rsb235eb04e"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Four times six is twenty-four!",
+      "a": "rsbf0727fa4"
+     }
+    },
+    {
+     "a": 4,
+     "b": 8,
+     "key": "4x8",
+     "ans": 32,
+     "trick": "double, double",
+     "steps": [
+      {
+       "q": "8 + 8 = ?",
+       "ans": 16,
+       "say": {
+        "t": "Double eight?",
+        "a": "rsff858457d"
+       },
+       "hl": "half"
+      },
+      {
+       "q": "16 + 16 = ?",
+       "ans": 32,
+       "say": {
+        "t": "Double sixteen!",
+        "a": "rs914da7eed"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Four times eight is thirty-two!",
+      "a": "rsadd159dd0"
+     }
+    },
+    {
+     "a": 4,
+     "b": 9,
+     "key": "4x9",
+     "ans": 36,
+     "trick": "double, double",
+     "steps": [
+      {
+       "q": "9 + 9 = ?",
+       "ans": 18,
+       "say": {
+        "t": "Double nine?",
+        "a": "rs8282b6187"
+       },
+       "hl": "half"
+      },
+      {
+       "q": "18 + 18 = ?",
+       "ans": 36,
+       "say": {
+        "t": "Double eighteen!",
+        "a": "rs946d91615"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Four times nine is thirty-six!",
+      "a": "rs1972e015f"
+     }
+    },
+    {
+     "a": 3,
+     "b": 8,
+     "key": "3x8",
+     "ans": 24,
+     "trick": "two eights + one more",
+     "steps": [
+      {
+       "q": "8 + 8 = ?",
+       "ans": 16,
+       "say": {
+        "t": "Three eights. First, two eights: double eight?",
+        "a": "rs262537b70"
+       },
+       "hl": "two"
+      },
+      {
+       "q": "16 + 8 = ?",
+       "ans": 24,
+       "say": {
+        "t": "Plus one more eight!",
+        "a": "rs94007f706"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Three times eight is twenty-four!",
+      "a": "rs1f246eaa6"
+     }
+    },
+    {
+     "a": 8,
+     "b": 8,
+     "key": "8x8",
+     "ans": 64,
+     "trick": "double \u00d73",
+     "steps": [
+      {
+       "q": "8 + 8 = ?",
+       "ans": 16,
+       "say": {
+        "t": "Times eight is double, three times. Double eight?",
+        "a": "rs671a42926"
+       },
+       "hl": "q1"
+      },
+      {
+       "q": "16 + 16 = ?",
+       "ans": 32,
+       "say": {
+        "t": "Double again!",
+        "a": "rs161141962"
+       },
+       "hl": "half"
+      },
+      {
+       "q": "32 + 32 = ?",
+       "ans": 64,
+       "say": {
+        "t": "And double one more time!",
+        "a": "rs8c3f173c6"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Eight times eight is sixty-four! You doubled three times!",
+      "a": "rs508de6371"
+     }
+    }
+   ],
+   "fits": [
+    {
+     "d": 4,
+     "n": 30,
+     "q": 7,
+     "r": 2,
+     "say": {
+      "t": "How many 4s fit into 30?",
+      "a": "rsbd9461b82"
+     },
+     "hint": {
+      "t": "Count up by 4s, and stop before you pass 30.",
+      "a": "rsc15e526b5"
+     },
+     "done": {
+      "t": "seven times 4 is 28, with 2 left over.",
+      "a": "rs2f0edd584"
+     }
+    },
+    {
+     "d": 8,
+     "n": 35,
+     "q": 4,
+     "r": 3,
+     "say": {
+      "t": "How many 8s fit into 35?",
+      "a": "rsa2d35bb3f"
+     },
+     "hint": {
+      "t": "Count up by 8s, and stop before you pass 35.",
+      "a": "rs9ee1a8298"
+     },
+     "done": {
+      "t": "four times 8 is 32, with 3 left over.",
+      "a": "rs4479426db"
+     }
+    },
+    {
+     "d": 4,
+     "n": 37,
+     "q": 9,
+     "r": 1,
+     "say": {
+      "t": "How many 4s fit into 37?",
+      "a": "rs53c65863e"
+     },
+     "hint": {
+      "t": "Count up by 4s, and stop before you pass 37.",
+      "a": "rs22e985545"
+     },
+     "done": {
+      "t": "nine times 4 is 36, with 1 left over.",
+      "a": "rs6c9194f72"
+     }
+    },
+    {
+     "d": 8,
+     "n": 66,
+     "q": 8,
+     "r": 2,
+     "say": {
+      "t": "How many 8s fit into 66?",
+      "a": "rs5570490a1"
+     },
+     "hint": {
+      "t": "Count up by 8s, and stop before you pass 66.",
+      "a": "rs82c2900e2"
+     },
+     "done": {
+      "t": "eight times 8 is 64, with 2 left over.",
+      "a": "rs703d38c9c"
+     }
+    },
+    {
+     "d": 4,
+     "n": 25,
+     "q": 6,
+     "r": 1,
+     "say": {
+      "t": "How many 4s fit into 25?",
+      "a": "rs0b2a342e5"
+     },
+     "hint": {
+      "t": "Count up by 4s, and stop before you pass 25.",
+      "a": "rs0d0953ed5"
+     },
+     "done": {
+      "t": "six times 4 is 24, with 1 left over.",
+      "a": "rs16e86b544"
+     }
+    }
+   ],
+   "outro": [
+    {
+     "t": "Day one, done! You rescued five times facts. Look, the dragon egg is cracking!",
+     "a": "rsc8ba6e462"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "title": "Five and One More",
+   "egg": "A crack appeared!",
+   "intro": [
+    {
+     "t": "Day two of Times Rescue! You already know your fives. Today we use them as a secret weapon.",
+     "a": "rsdefe32836"
+    },
+    {
+     "t": "The trick: times six is times five, plus one more group.",
+     "a": "rs3038b0751"
+    }
+   ],
+   "trickCard": "\u00d75 = half of \u00d710\n\u00d76 = \u00d75 + one more group",
+   "facts": [
+    {
+     "a": 5,
+     "b": 7,
+     "key": "5x7",
+     "ans": 35,
+     "trick": "half of \u00d710",
+     "steps": [
+      {
+       "q": "10 \u00d7 7 = ?",
+       "ans": 70,
+       "say": {
+        "t": "Ten sevens?",
+        "a": "rs827dcc307"
+       },
+       "hl": "all"
+      },
+      {
+       "q": "70 \u00f7 2 = ?",
+       "ans": 35,
+       "say": {
+        "t": "Five is half of ten. Half of seventy?",
+        "a": "rs08dc63f42"
+       },
+       "hl": "half"
+      }
+     ],
+     "done": {
+      "t": "Five times seven is thirty-five!",
+      "a": "rsd1fadee8d"
+     }
+    },
+    {
+     "a": 5,
+     "b": 8,
+     "key": "5x8",
+     "ans": 40,
+     "trick": "half of \u00d710",
+     "steps": [
+      {
+       "q": "10 \u00d7 8 = ?",
+       "ans": 80,
+       "say": {
+        "t": "Ten eights?",
+        "a": "rs469158995"
+       },
+       "hl": "all"
+      },
+      {
+       "q": "80 \u00f7 2 = ?",
+       "ans": 40,
+       "say": {
+        "t": "Half of eighty?",
+        "a": "rs6e0704ac3"
+       },
+       "hl": "half"
+      }
+     ],
+     "done": {
+      "t": "Five times eight is forty!",
+      "a": "rs695c3bcec"
+     }
+    },
+    {
+     "a": 6,
+     "b": 6,
+     "key": "6x6",
+     "ans": 36,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 6 = ?",
+       "ans": 30,
+       "say": {
+        "t": "Six sixes. Start with five sixes?",
+        "a": "rse00f913b7"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "30 + 6 = ?",
+       "ans": 36,
+       "say": {
+        "t": "Plus one more six!",
+        "a": "rs7471d1292"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times six is thirty-six!",
+      "a": "rs6db0c8a22"
+     }
+    },
+    {
+     "a": 6,
+     "b": 7,
+     "key": "6x7",
+     "ans": 42,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 7 = ?",
+       "ans": 35,
+       "say": {
+        "t": "Six sevens. Five sevens first?",
+        "a": "rs7c5d9beac"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "35 + 7 = ?",
+       "ans": 42,
+       "say": {
+        "t": "Plus one more seven!",
+        "a": "rs9a8d4615e"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times seven is forty-two!",
+      "a": "rsc0ea145db"
+     }
+    },
+    {
+     "a": 6,
+     "b": 8,
+     "key": "6x8",
+     "ans": 48,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 8 = ?",
+       "ans": 40,
+       "say": {
+        "t": "Six eights. Five eights first?",
+        "a": "rs41ad3666a"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "40 + 8 = ?",
+       "ans": 48,
+       "say": {
+        "t": "Plus one more eight!",
+        "a": "rs94007f706"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times eight is forty-eight!",
+      "a": "rs9e428bd3f"
+     }
+    },
+    {
+     "a": 6,
+     "b": 9,
+     "key": "6x9",
+     "ans": 54,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 9 = ?",
+       "ans": 45,
+       "say": {
+        "t": "Six nines. Five nines first?",
+        "a": "rs0d73c880e"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "45 + 9 = ?",
+       "ans": 54,
+       "say": {
+        "t": "Plus one more nine!",
+        "a": "rs8f3a72855"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times nine is fifty-four!",
+      "a": "rsae9b670e8"
+     }
+    }
+   ],
+   "fits": [
+    {
+     "d": 6,
+     "n": 40,
+     "q": 6,
+     "r": 4,
+     "say": {
+      "t": "How many 6s fit into 40?",
+      "a": "rs50c9f0ba0"
+     },
+     "hint": {
+      "t": "Count up by 6s, and stop before you pass 40.",
+      "a": "rsc9e297a6f"
+     },
+     "done": {
+      "t": "six times 6 is 36, with 4 left over.",
+      "a": "rse190f3ce1"
+     }
+    },
+    {
+     "d": 5,
+     "n": 38,
+     "q": 7,
+     "r": 3,
+     "say": {
+      "t": "How many 5s fit into 38?",
+      "a": "rs7ec41b56a"
+     },
+     "hint": {
+      "t": "Count up by 5s, and stop before you pass 38.",
+      "a": "rs8c680965d"
+     },
+     "done": {
+      "t": "seven times 5 is 35, with 3 left over.",
+      "a": "rs5e5dee7a0"
+     }
+    },
+    {
+     "d": 6,
+     "n": 50,
+     "q": 8,
+     "r": 2,
+     "say": {
+      "t": "How many 6s fit into 50?",
+      "a": "rsbf1bbb690"
+     },
+     "hint": {
+      "t": "Count up by 6s, and stop before you pass 50.",
+      "a": "rs40034f3e7"
+     },
+     "done": {
+      "t": "eight times 6 is 48, with 2 left over.",
+      "a": "rsebc95c184"
+     }
+    },
+    {
+     "d": 6,
+     "n": 45,
+     "q": 7,
+     "r": 3,
+     "say": {
+      "t": "How many 6s fit into 45?",
+      "a": "rsa294b73dd"
+     },
+     "hint": {
+      "t": "Count up by 6s, and stop before you pass 45.",
+      "a": "rs98c6fbf83"
+     },
+     "done": {
+      "t": "seven times 6 is 42, with 3 left over.",
+      "a": "rs61ce53e64"
+     }
+    },
+    {
+     "d": 6,
+     "n": 56,
+     "q": 9,
+     "r": 2,
+     "say": {
+      "t": "How many 6s fit into 56?",
+      "a": "rs0804cb326"
+     },
+     "hint": {
+      "t": "Count up by 6s, and stop before you pass 56.",
+      "a": "rsfde8e4807"
+     },
+     "done": {
+      "t": "nine times 6 is 54, with 2 left over.",
+      "a": "rs97fc8234a"
+     }
+    }
+   ],
+   "outro": [
+    {
+     "t": "Day two, done! Your sixes are strong now. The egg has a big crack!",
+     "a": "rs62ccce17f"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "title": "Ten Take One",
+   "egg": "The egg is glowing!",
+   "intro": [
+    {
+     "t": "Day three! Today we beat the nines, and the sevens.",
+     "a": "rs327383adb"
+    },
+    {
+     "t": "The trick: times nine is times ten, take away one group. Ten is easy, so nine is easy!",
+     "a": "rsa0681813d"
+    }
+   ],
+   "trickCard": "\u00d79 = \u00d710 \u2212 one group\nCheck: the digits add to 9",
+   "facts": [
+    {
+     "a": 9,
+     "b": 7,
+     "key": "7x9",
+     "ans": 63,
+     "trick": "\u00d710 \u2212 one group",
+     "steps": [
+      {
+       "q": "10 \u00d7 7 = ?",
+       "ans": 70,
+       "say": {
+        "t": "Nine sevens. Ten sevens first?",
+        "a": "rs58792246a"
+       },
+       "hl": "all"
+      },
+      {
+       "q": "70 \u2212 7 = ?",
+       "ans": 63,
+       "say": {
+        "t": "Take away one seven!",
+        "a": "rsfe4330948"
+       },
+       "hl": "minus"
+      }
+     ],
+     "done": {
+      "t": "Nine times seven is sixty-three. And six plus three is nine, the nines check!",
+      "a": "rs0dde70013"
+     }
+    },
+    {
+     "a": 9,
+     "b": 8,
+     "key": "8x9",
+     "ans": 72,
+     "trick": "\u00d710 \u2212 one group",
+     "steps": [
+      {
+       "q": "10 \u00d7 8 = ?",
+       "ans": 80,
+       "say": {
+        "t": "Nine eights. Ten eights first?",
+        "a": "rs03b33dc52"
+       },
+       "hl": "all"
+      },
+      {
+       "q": "80 \u2212 8 = ?",
+       "ans": 72,
+       "say": {
+        "t": "Take away one eight!",
+        "a": "rsc2f5f5022"
+       },
+       "hl": "minus"
+      }
+     ],
+     "done": {
+      "t": "Nine times eight is seventy-two. Seven plus two is nine!",
+      "a": "rs33e3b1a00"
+     }
+    },
+    {
+     "a": 9,
+     "b": 9,
+     "key": "9x9",
+     "ans": 81,
+     "trick": "\u00d710 \u2212 one group",
+     "steps": [
+      {
+       "q": "10 \u00d7 9 = ?",
+       "ans": 90,
+       "say": {
+        "t": "Nine nines. Ten nines first?",
+        "a": "rsb02fc8ba5"
+       },
+       "hl": "all"
+      },
+      {
+       "q": "90 \u2212 9 = ?",
+       "ans": 81,
+       "say": {
+        "t": "Take away one nine!",
+        "a": "rs92cdf8788"
+       },
+       "hl": "minus"
+      }
+     ],
+     "done": {
+      "t": "Nine times nine is eighty-one!",
+      "a": "rs99602caa0"
+     }
+    },
+    {
+     "a": 3,
+     "b": 7,
+     "key": "3x7",
+     "ans": 21,
+     "trick": "two sevens + one more",
+     "steps": [
+      {
+       "q": "7 + 7 = ?",
+       "ans": 14,
+       "say": {
+        "t": "Three sevens. Double seven first?",
+        "a": "rs268cf8717"
+       },
+       "hl": "two"
+      },
+      {
+       "q": "14 + 7 = ?",
+       "ans": 21,
+       "say": {
+        "t": "Plus one more seven!",
+        "a": "rs9a8d4615e"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Three times seven is twenty-one!",
+      "a": "rsa5f8b5bbe"
+     }
+    },
+    {
+     "a": 7,
+     "b": 7,
+     "key": "7x7",
+     "ans": 49,
+     "trick": "5 sevens + 2 sevens",
+     "steps": [
+      {
+       "q": "5 \u00d7 7 = ?",
+       "ans": 35,
+       "say": {
+        "t": "Seven sevens. Five sevens first?",
+        "a": "rsef9c87c4c"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "7 + 7 = ?",
+       "ans": 14,
+       "say": {
+        "t": "Two more sevens is double seven?",
+        "a": "rs8b70af4fe"
+       },
+       "hl": "two"
+      },
+      {
+       "q": "35 + 14 = ?",
+       "ans": 49,
+       "say": {
+        "t": "Put them together!",
+        "a": "rs2a7ca713d"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Seven times seven is forty-nine!",
+      "a": "rs284447d36"
+     }
+    }
+   ],
+   "fits": [
+    {
+     "d": 9,
+     "n": 50,
+     "q": 5,
+     "r": 5,
+     "say": {
+      "t": "How many 9s fit into 50?",
+      "a": "rs433122e9a"
+     },
+     "hint": {
+      "t": "Count up by 9s, and stop before you pass 50.",
+      "a": "rs90a3e601a"
+     },
+     "done": {
+      "t": "five times 9 is 45, with 5 left over.",
+      "a": "rsb6d8368ea"
+     }
+    },
+    {
+     "d": 7,
+     "n": 30,
+     "q": 4,
+     "r": 2,
+     "say": {
+      "t": "How many 7s fit into 30?",
+      "a": "rsc766cae6d"
+     },
+     "hint": {
+      "t": "Count up by 7s, and stop before you pass 30.",
+      "a": "rs2ff974dcd"
+     },
+     "done": {
+      "t": "four times 7 is 28, with 2 left over.",
+      "a": "rs0daa8ba6b"
+     }
+    },
+    {
+     "d": 9,
+     "n": 75,
+     "q": 8,
+     "r": 3,
+     "say": {
+      "t": "How many 9s fit into 75?",
+      "a": "rs877e9d3f9"
+     },
+     "hint": {
+      "t": "Count up by 9s, and stop before you pass 75.",
+      "a": "rs2374977b1"
+     },
+     "done": {
+      "t": "eight times 9 is 72, with 3 left over.",
+      "a": "rs9b25e62b3"
+     }
+    },
+    {
+     "d": 7,
+     "n": 50,
+     "q": 7,
+     "r": 1,
+     "say": {
+      "t": "How many 7s fit into 50?",
+      "a": "rsed38fe935"
+     },
+     "hint": {
+      "t": "Count up by 7s, and stop before you pass 50.",
+      "a": "rs0d965f1e4"
+     },
+     "done": {
+      "t": "seven times 7 is 49, with 1 left over.",
+      "a": "rs1d2d180fa"
+     }
+    },
+    {
+     "d": 9,
+     "n": 83,
+     "q": 9,
+     "r": 2,
+     "say": {
+      "t": "How many 9s fit into 83?",
+      "a": "rsa39cc1a20"
+     },
+     "hint": {
+      "t": "Count up by 9s, and stop before you pass 83.",
+      "a": "rs70a02a53e"
+     },
+     "done": {
+      "t": "nine times 9 is 81, with 2 left over.",
+      "a": "rs2284b08dd"
+     }
+    }
+   ],
+   "outro": [
+    {
+     "t": "Day three, done! Nines and sevens, rescued. The egg is about to hatch!",
+     "a": "rs9d1dde761"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "title": "The Tough Three",
+   "egg": "It's hatching!",
+   "intro": [
+    {
+     "t": "Final day of Times Rescue! First the toughest fact. Then the boss: Glitch's Times Golem!",
+     "a": "rsbd4293a3b"
+    },
+    {
+     "t": "Here's a rhyme. Five, six, seven, eight: fifty-six is seven times eight!",
+     "a": "rs537017b44"
+    }
+   ],
+   "trickCard": "5, 6, 7, 8:\n56 = 7 \u00d7 8",
+   "facts": [
+    {
+     "a": 8,
+     "b": 7,
+     "key": "7x8",
+     "ans": 56,
+     "trick": "5, 6, 7, 8",
+     "steps": [
+      {
+       "q": "7 + 7 = ?",
+       "ans": 14,
+       "say": {
+        "t": "Eight sevens. Use Double Power! Double seven?",
+        "a": "rsd35413b5b"
+       },
+       "hl": "q1"
+      },
+      {
+       "q": "14 + 14 = ?",
+       "ans": 28,
+       "say": {
+        "t": "Double again. That is four sevens!",
+        "a": "rsea8bb8bfb"
+       },
+       "hl": "half"
+      },
+      {
+       "q": "28 + 28 = ?",
+       "ans": 56,
+       "say": {
+        "t": "Double once more. That is eight sevens!",
+        "a": "rs982244f52"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Five, six, seven, eight: fifty-six is seven times eight!",
+      "a": "rs9fb13a8f5"
+     }
+    },
+    {
+     "a": 6,
+     "b": 8,
+     "key": "6x8",
+     "ans": 48,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 8 = ?",
+       "ans": 40,
+       "say": {
+        "t": "Six eights. Five eights?",
+        "a": "rseeaf86f2b"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "40 + 8 = ?",
+       "ans": 48,
+       "say": {
+        "t": "Plus one more eight!",
+        "a": "rs94007f706"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times eight is forty-eight!",
+      "a": "rs9e428bd3f"
+     }
+    },
+    {
+     "a": 6,
+     "b": 7,
+     "key": "6x7",
+     "ans": 42,
+     "trick": "\u00d75 + one more",
+     "steps": [
+      {
+       "q": "5 \u00d7 7 = ?",
+       "ans": 35,
+       "say": {
+        "t": "Six sevens. Five sevens?",
+        "a": "rs83fafdd5b"
+       },
+       "hl": "five"
+      },
+      {
+       "q": "35 + 7 = ?",
+       "ans": 42,
+       "say": {
+        "t": "Plus one more seven!",
+        "a": "rs9a8d4615e"
+       },
+       "hl": "all"
+      }
+     ],
+     "done": {
+      "t": "Six times seven is forty-two!",
+      "a": "rsc0ea145db"
+     }
+    }
+   ],
+   "fits": [
+    {
+     "d": 7,
+     "n": 60,
+     "q": 8,
+     "r": 4,
+     "say": {
+      "t": "How many 7s fit into 60?",
+      "a": "rsfee07ed9e"
+     },
+     "hint": {
+      "t": "Count up by 7s, and stop before you pass 60.",
+      "a": "rsb88943856"
+     },
+     "done": {
+      "t": "eight times 7 is 56, with 4 left over.",
+      "a": "rs178a8a583"
+     }
+    },
+    {
+     "d": 8,
+     "n": 60,
+     "q": 7,
+     "r": 4,
+     "say": {
+      "t": "How many 8s fit into 60?",
+      "a": "rs3bae6ac3b"
+     },
+     "hint": {
+      "t": "Count up by 8s, and stop before you pass 60.",
+      "a": "rsd0ba06d24"
+     },
+     "done": {
+      "t": "seven times 8 is 56, with 4 left over.",
+      "a": "rs17efb3fff"
+     }
+    },
+    {
+     "d": 6,
+     "n": 50,
+     "q": 8,
+     "r": 2,
+     "say": {
+      "t": "How many 6s fit into 50?",
+      "a": "rsbf1bbb690"
+     },
+     "hint": {
+      "t": "Count up by 6s, and stop before you pass 50.",
+      "a": "rs40034f3e7"
+     },
+     "done": {
+      "t": "eight times 6 is 48, with 2 left over.",
+      "a": "rsebc95c184"
+     }
+    },
+    {
+     "d": 9,
+     "n": 70,
+     "q": 7,
+     "r": 7,
+     "say": {
+      "t": "How many 9s fit into 70?",
+      "a": "rse83b645be"
+     },
+     "hint": {
+      "t": "Count up by 9s, and stop before you pass 70.",
+      "a": "rse14ebc5b9"
+     },
+     "done": {
+      "t": "seven times 9 is 63, with 7 left over.",
+      "a": "rs52e1ddf27"
+     }
+    },
+    {
+     "d": 8,
+     "n": 50,
+     "q": 6,
+     "r": 2,
+     "say": {
+      "t": "How many 8s fit into 50?",
+      "a": "rs376a31fe9"
+     },
+     "hint": {
+      "t": "Count up by 8s, and stop before you pass 50.",
+      "a": "rsf3e6399da"
+     },
+     "done": {
+      "t": "six times 8 is 48, with 2 left over.",
+      "a": "rsa51b04aa2"
+     }
+    }
+   ],
+   "outro": [
+    {
+     "t": "You did it! All four days! You rescued the times tables, and look who hatched!",
+     "a": "rsb3cab3ba3"
+    }
+   ]
+  }
+ ],
+ "shared": {
+  "build": {
+   "t": "Let's build each fact with the trick.",
+   "a": "rsc5342d372"
+  },
+  "forge": {
+   "t": "Speed Forge! Every right answer hammers your sword. Go as fast as you can!",
+   "a": "rsd8a18b782"
+  },
+  "boss": {
+   "t": "Boss time! Every right answer hits Glitch's Times Golem!",
+   "a": "rs25a0f543c"
+  },
+  "fits": {
+   "t": "Now the division power-up. These are the questions long division asks!",
+   "a": "rs7104e3f00"
+  },
+  "yes": [
+   {
+    "t": "Yes!",
+    "a": "rsc92e264d1"
+   },
+   {
+    "t": "Nice!",
+    "a": "rs70e936c5e"
+   },
+   {
+    "t": "That's it!",
+    "a": "rsfbf1d5a7b"
+   },
+   {
+    "t": "Boom!",
+    "a": "rs4593a1627"
+   },
+   {
+    "t": "You got it!",
+    "a": "rsee375d01e"
+   }
+  ],
+  "combo": [
+   {
+    "t": "Combo! You're on fire!",
+    "a": "rsd87397ae7"
+   },
+   {
+    "t": "Five in a row! Super combo!",
+    "a": "rsc0f9d9e59"
+   },
+   {
+    "t": "Lightning fingers!",
+    "a": "rsb9df92862"
+   },
+   {
+    "t": "Unstoppable!",
+    "a": "rs828672a4f"
+   }
+  ],
+  "miss": {
+   "t": "Almost! Use the trick.",
+   "a": "rs7452ce064"
+  },
+  "show": {
+   "t": "Here's how. Write this one, and it'll come back.",
+   "a": "rs924eb54a2"
+  },
+  "forgeDone": {
+   "t": "Your sword is forged! Look at it shine!",
+   "a": "rsbfb1b5df1"
+  },
+  "golemDown": {
+   "t": "The Times Golem is down! You beat it!",
+   "a": "rsc96bdc76c"
+  },
+  "hatch": {
+   "t": "Meet Ember, the Times Dragon! Ember is yours!",
+   "a": "rs4fe745bd6"
+  },
+  "welcome": {
+   "t": "Welcome back! Let's pick up where we left off.",
+   "a": "rsc7bc07aeb"
+  }
+ }
+}
