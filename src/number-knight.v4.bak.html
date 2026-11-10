@@ -622,26 +622,41 @@ const Snd={ctx:null,sfxG:null,musG:null,nbuf:null,
     if(r==='epic'||r==='legendary'){this.noise(0.8,0.1,0.1,'highpass',5000);this.tone(2093,0.6,'triangle',0.04,s.length*0.07);}},
   ko(){this.boom();[392,523,659,784,1047].forEach((f,i)=>this.tone(f,0.2,'square',0.05,0.55+i*0.1));}
 };
-/* chiptune sequencer: 32-step loops that speed up with the combo */
-const Music={song:null,step:0,next:0,timer:null,intensity:0,
+/* chiptune sequencer: step loops that speed up with the combo. Each kind of music (map, battle, boss) has a few tunes;
+   every start plays the next one, so he doesn't hear the same loop every time. Notes are scheduled a third of a second
+   ahead, so a busy screen (drawing, handwriting) can't make the music stutter; each start gets its own volume bus so a
+   stop cuts the notes that are already scheduled. */
+const Music={song:null,cur:null,bus:null,step:0,next:0,timer:null,intensity:0,
+  VAR:{map:['map','map2'],battle:['battle','battle2','battle3'],boss:['boss','boss2']},
   SONGS:{
     map:{bpm:100,bass:[48,0,0,0,55,0,0,0,53,0,0,0,55,0,0,0,48,0,0,0,57,0,0,0,53,0,0,0,55,0,50,0],
       lead:[72,0,76,0,79,0,76,0,77,0,76,0,74,0,0,0,72,0,76,0,79,0,81,0,79,0,77,0,76,0,74,0],arp:[60,64,67,64],drums:'k...h...s...h...k...h...s...h.h.'},
     battle:{bpm:132,bass:[45,0,45,0,57,0,45,0,43,0,43,0,55,0,43,0,41,0,41,0,53,0,41,0,43,0,43,0,55,0,47,0],
       lead:[69,0,72,0,76,0,74,72,71,0,67,0,71,74,72,0,69,0,72,0,77,0,76,74,72,0,71,0,67,0,71,0],arp:[57,60,64,60],drums:'k.h.s.h.k.h.s.hhk.h.s.h.k.h.s.hs'},
     boss:{bpm:148,bass:[40,40,52,40,40,52,40,52,38,38,50,38,38,50,38,50,36,36,48,36,36,48,36,48,35,35,47,35,47,0,47,0],
-      lead:[64,0,67,0,71,0,69,67,66,0,62,0,66,69,67,0,64,0,67,0,72,0,71,69,67,0,66,0,63,0,66,0],arp:[52,55,59,55],drums:'k.hsk.hsk.hsk.hsk.hsk.hsk.hskshs'}},
-  play(name){if(this.song===name)return;this.song=name;this.step=0;this.kick();},
-  stop(){this.song=null;},
-  kick(){if(!Snd.ctx||!this.song)return;this.next=Snd.ctx.currentTime+0.06;if(!this.timer)this.timer=setInterval(()=>this.tick(),30);},
-  tick(){const c=Snd.ctx;if(!c||!this.song||document.hidden)return;const S=this.SONGS[this.song];const spb=60/(S.bpm*(1+this.intensity*0.15))/4;
+      lead:[64,0,67,0,71,0,69,67,66,0,62,0,66,69,67,0,64,0,67,0,72,0,71,69,67,0,66,0,63,0,66,0],arp:[52,55,59,55],drums:'k.hsk.hsk.hsk.hsk.hsk.hsk.hskshs'},
+    map2:{bpm:104,bass:[43,0,0,0,50,0,0,0,43,0,0,0,50,0,47,0,40,0,0,0,47,0,0,0,40,0,0,0,47,0,43,0,36,0,0,0,43,0,0,0,36,0,0,0,43,0,40,0,38,0,0,0,45,0,0,0,38,0,0,0,45,0,42,0],
+      lead:[79,0,0,0,83,0,81,0,79,0,74,0,71,0,74,0,76,0,0,0,79,0,76,0,71,0,76,0,79,0,83,0,84,0,0,0,83,0,79,0,76,0,79,0,72,0,76,0,78,0,81,0,86,0,81,0,78,0,74,0,78,0,81,0],arp:[67,71,74,71],drums:'k...h...s...h.h.k...h.k.s...h.h.'},
+    battle2:{bpm:138,bass:[40,0,52,0,40,0,52,40,40,0,52,0,40,0,52,40,36,0,48,0,36,0,48,36,36,0,48,0,36,0,48,36,38,0,50,0,38,0,50,38,38,0,50,0,38,0,50,38,35,0,47,0,35,0,47,35,35,0,47,0,47,0,47,0],
+      lead:[76,0,0,79,0,0,76,0,83,0,81,0,79,0,76,0,72,0,0,76,0,0,79,0,84,0,83,0,79,0,76,0,74,0,0,78,0,0,81,0,86,0,84,0,81,0,78,0,83,0,81,0,79,0,78,0,75,0,78,0,83,0,0,0],arp:[64,67,71,67],drums:'k.h.s.h.k.k.s.h.k.h.s.h.k.k.s.hs'},
+    battle3:{bpm:126,bass:[45,0,0,45,0,0,57,0,45,0,0,45,0,57,0,0,41,0,0,41,0,0,53,0,41,0,0,41,0,53,0,0,43,0,0,43,0,0,55,0,43,0,0,43,0,55,0,0,40,0,0,40,0,0,52,0,40,0,52,0,44,0,47,0],
+      lead:[69,0,72,0,76,0,0,72,0,0,76,0,81,0,0,0,77,0,76,0,72,0,0,69,0,0,72,0,77,0,0,0,79,0,77,0,74,0,0,71,0,0,74,0,79,0,0,0,76,0,80,0,83,0,80,0,76,0,71,0,76,0,0,0],arp:[57,60,64,60],drums:'k..hs..kk.h.s.hhk..hs..kk.h.s.ss'},
+    boss2:{bpm:150,bass:[38,38,50,38,38,50,38,50,38,38,50,38,38,50,38,50,34,34,46,34,34,46,34,46,34,34,46,34,34,46,34,46,36,36,48,36,36,48,36,48,36,36,48,36,36,48,36,48,33,33,45,33,33,45,33,45,33,33,45,33,45,0,49,0],
+      lead:[74,0,77,0,81,0,77,74,73,0,74,0,77,0,74,0,70,0,74,0,77,0,74,70,69,0,70,0,74,0,77,0,72,0,76,0,79,0,76,72,71,0,72,0,76,0,79,0,81,0,80,0,81,0,76,0,73,0,76,0,81,0,85,0],arp:[50,53,57,53],drums:'k.hsk.hsk.hsk.hsk.hsk.hsk.hsksss'}},
+  play(name){if(this.song===name)return;this.song=name;this.cur=this.pick(name);this.step=0;this.kick();},
+  // the next tune of this kind (remembered, so tomorrow starts with a different one)
+  pick(name){const V=this.VAR[name];if(!V)return name;let ix={};try{ix=state.musIx=state.musIx||{};}catch(e){}ix[name]=((ix[name]==null?0:ix[name])+1)%V.length;return V[ix[name]];},
+  stop(){this.song=null;this.cut();},
+  cut(){const c=Snd.ctx,b=this.bus;this.bus=null;if(!c||!b)return;try{b.gain.setTargetAtTime(0,c.currentTime,0.03);setTimeout(()=>{try{b.disconnect();}catch(e){}},500);}catch(e){}},
+  kick(){if(!Snd.ctx||!this.song)return;this.cut();this.bus=Snd.ctx.createGain();this.bus.connect(Snd.musG);this.next=Snd.ctx.currentTime+0.06;if(!this.timer)this.timer=setInterval(()=>this.tick(),30);},
+  tick(){const c=Snd.ctx;if(!c||!this.song||document.hidden)return;const S=this.SONGS[this.cur]||this.SONGS[this.song];const spb=60/(S.bpm*(1+this.intensity*0.15))/4;
     if(this.next<c.currentTime-0.2)this.next=c.currentTime+0.02;
-    while(this.next<c.currentTime+0.12){this.note(S,this.step,this.next,spb);this.next+=spb;this.step=(this.step+1)%32;}},
-  note(S,i,t,spb){const m=n=>440*Math.pow(2,(n-69)/12),G=Snd.musG;
+    while(this.next<c.currentTime+0.3){this.note(S,this.step,this.next,spb);this.next+=spb;this.step=(this.step+1)%S.lead.length;}},
+  note(S,i,t,spb){const m=n=>440*Math.pow(2,(n-69)/12),G=this.bus||Snd.musG;
     if(S.bass[i])Snd.at(m(S.bass[i]),spb*1.7,'triangle',0.2,t,0,G);
     if(S.lead[i])Snd.at(m(S.lead[i]),spb*0.95,'square',0.05,t,0,G);
     if(this.intensity>0.35)Snd.at(m(S.arp[i%4]+12),spb*0.45,'square',0.028,t,0,G);
-    const d=S.drums[i];if(d==='k')Snd.at(150,0.12,'sine',0.25,t,45,G);else if(d==='s')Snd.noiseAt(0.11,0.09,t,'bandpass',1800,G);else if(d==='h')Snd.noiseAt(0.03,0.04,t,'highpass',6000,G);}
+    const d=S.drums[i%S.drums.length];if(d==='k')Snd.at(150,0.12,'sine',0.25,t,45,G);else if(d==='s')Snd.noiseAt(0.11,0.09,t,'bandpass',1800,G);else if(d==='h')Snd.noiseAt(0.03,0.04,t,'highpass',6000,G);}
 };
 
 /* =========================================================

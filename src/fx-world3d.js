@@ -61,8 +61,13 @@ const Isle={
     catch(e){console.error(e);this.failed=true;m.classList.remove('w3d-on');this.toggleBtn();}
     if(this.w&&!this.flown&&!window.__w3dNoIntro){this.flown=true;this.w.intro();}
     if(!this.watch)this.watch=setInterval(()=>{if(!this.w)return;const hid=m.hidden||!m.classList.contains('w3d-on')||!$('#overlay').hidden||!$('#cine').hidden||!!document.querySelector('.vp,#cine3d');this.w.setPaused(hid);this.music(!hid);},300);},
-  // the island has its own orchestral theme; the chiptune map loop is used everywhere else
-  music(on){const a=this.aud||(this.aud=Object.assign(new Audio('audio/island.mp3'),{loop:true,preload:'none',volume:0.55}));
+  // the island has its own orchestral themes; the chiptune map loop is used everywhere else.
+  // Three tunes take turns: each visit starts with the next one (remembered), and a tune that ends hands over to the next.
+  TUNES:['island-sails','island-trail','island'],
+  tune(step){const T=this.TUNES;const i=(((state.isleTune==null?-1:state.isleTune)+step)%T.length+T.length)%T.length;state.isleTune=i;this.aud.src='audio/'+T[i]+'.mp3';},
+  music(on){let a=this.aud;if(!a){a=this.aud=Object.assign(new Audio(),{preload:'none',volume:0.55});this.tune(1);
+      a.addEventListener('ended',()=>{this.audErr=0;this.tune(1);a.play().catch(()=>{});});
+      a.addEventListener('error',()=>{this.audErr=(this.audErr||0)+1;if(this.audErr<=this.TUNES.length)this.tune(1);});}
     const want=on&&!state.mute&&!state.musicOff&&!document.hidden;if(want){if(typeof Music!=='undefined'&&Music.song==='map')Music.stop();if(a.paused)a.play().catch(()=>{});}else if(!a.paused)a.pause();},
   toggleBtn(){const m=this.map();if(!m)return;let b=m.querySelector('.w3d-toggle');if(!b){b=el('button',{class:'w3d-toggle',type:'button'});b.addEventListener('click',()=>{state.view3d=!this.on();if(this.failed&&state.view3d){this.failed=false;}saveState();this.show();});m.append(b);}
     b.textContent=this.on()?'🗺️ 2D map':'🏝️ 3D island';b.hidden=!!this.failed;}
