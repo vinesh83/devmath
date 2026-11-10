@@ -319,9 +319,9 @@ gl_FragColor=vec4(c,0.94);
     const up=e=>{if(e.pointerId!==jid)return;jid=null;this.joy.x=this.joy.y=0;knob.style.transform='';};joy.addEventListener('pointerup',up);joy.addEventListener('pointercancel',up);
     const btn=(cls,txt,fn)=>{const b=document.createElement('button');b.type='button';b.className='w3d-btn '+cls;b.textContent=txt;b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();fn();});h.appendChild(b);return b;};
     this.jumpBtn=btn('w3d-jump','⤒',()=>this.jump());this.actBtn=btn('w3d-act','Go!',()=>this.act());this.actBtn.hidden=true;
-    // drag on the scene to turn the camera
-    let did=null,lx=0;const cv=this.r.domElement;cv.addEventListener('pointerdown',e=>{did=e.pointerId;lx=e.clientX;cv.setPointerCapture(did);});
-    cv.addEventListener('pointermove',e=>{if(e.pointerId!==did)return;this.yaw-=(e.clientX-lx)*0.008;lx=e.clientX;});const cu=e=>{if(e.pointerId===did)did=null;};cv.addEventListener('pointerup',cu);cv.addEventListener('pointercancel',cu);
+    // drag on the scene to turn the camera: sideways turns it, up and down tilts it (drag up to look up at the sky and the peaks)
+    let did=null,lx=0;const cv=this.r.domElement;cv.addEventListener('pointerdown',e=>{did=e.pointerId;lx=e.clientX;this.dragY=e.clientY;this.dragging=true;cv.setPointerCapture(did);});
+    cv.addEventListener('pointermove',e=>{if(e.pointerId!==did)return;this.yaw-=(e.clientX-lx)*0.008;lx=e.clientX;this.pitch=Math.max(-0.8,Math.min(0.85,(this.pitch||0)+(this.dragY-e.clientY)*0.0045));this.dragY=e.clientY;});const cu=e=>{if(e.pointerId===did){did=null;this.dragging=false;}};cv.addEventListener('pointerup',cu);cv.addEventListener('pointercancel',cu);
     this.kd=e=>{if(this.paused||!this.visible())return;const k=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' ','e','enter'].includes(k)){if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;e.preventDefault();}
       this.keys[k]=true;if(k===' ')this.jump();if((k==='e'||k==='enter')&&(!document.getElementById('talk')||document.getElementById('talk').hidden))this.act();};this.ku=e=>{this.keys[e.key.toLowerCase()]=false;};
     window.addEventListener('keydown',this.kd);window.addEventListener('keyup',this.ku);
@@ -360,13 +360,16 @@ gl_FragColor=vec4(c,0.94);
     const D=this.dog,tx=H.position.x-Math.sin(H.rotation.y)*1.8+Math.cos(H.rotation.y)*1.2,tz=H.position.z-Math.cos(H.rotation.y)*1.8-Math.sin(H.rotation.y)*1.2;
     const ddx=tx-D.position.x,ddz=tz-D.position.z,dd=Math.hypot(ddx,ddz);if(dd>0.4){const s=Math.min(dd,dt*9.5*Math.min(1,dd/1.5+0.4));D.position.x+=ddx/dd*s;D.position.z+=ddz/dd*s;D.rotation.y=Math.atan2(ddx,ddz);}
     D.position.y=isl.h(D.position.x,D.position.z)+(dd>0.6?Math.abs(Math.sin(this.t*14))*0.12:0);D.userData.tail.rotation.z=Math.sin(this.t*12)*0.6;D.userData.legs.forEach((l,i)=>l.rotation.x=dd>0.6?Math.sin(this.t*14+i*1.6)*0.6:0);
-    // camera behind the hero
-    const cd=this.camDist,cx=H.position.x-Math.sin(this.yaw)*cd,cz=H.position.z-Math.cos(this.yaw)*cd;let cy=H.position.y+5.5;cy=Math.max(cy,isl.h(cx,cz)+1.5);
+    // camera behind the hero. pitch tilts it: 0 is the usual view, up to 0.85 looks up (the camera drops low, then the aim rises), down to -0.8 looks down from above.
+    // The tilt eases back to the usual view while he walks with the stick.
+    if(!this.dragging&&this.pitch&&Math.abs(this.joy.x)+Math.abs(this.joy.y)>0.25){this.pitch*=Math.max(0,1-dt*1.2);if(Math.abs(this.pitch)<0.01)this.pitch=0;}
+    const cd=this.camDist,E0=0.3245,lookE=E0-(this.pitch||0),lookC=Math.max(0.06,lookE),lookK=Math.cos(lookC)/Math.cos(E0),lookU=Math.max(0,0.06-lookE)*cd*1.25;
+    const cx=H.position.x-Math.sin(this.yaw)*cd*lookK,cz=H.position.z-Math.cos(this.yaw)*cd*lookK;let cy=H.position.y+1.8+Math.sin(lookC)*cd/Math.cos(E0);cy=Math.max(cy,isl.h(cx,cz)+1.5);
     for(const o of this.siteObjs){const d=Math.hypot(cx-o.s.x,cz-o.s.z);if(d<o.r+2.5)cy=Math.max(cy,o.b.position.y+(o.s.labelY||8)*0.9);}
     if(this.fly){const f=this.fly;f.t+=dt;const k=Math.min(1,f.t/f.D),e=k*k*(3-2*k);const end=new THREE.Vector3(cx,cy,cz);
       const p=k<0.5?f.from.clone().lerp(f.mid,e*2):f.mid.clone().lerp(end,(e-0.5)*2);this.cam.position.copy(p);this.cam.lookAt(new THREE.Vector3(0,4,-6).lerp(new THREE.Vector3(H.position.x,H.position.y+1.8,H.position.z),e));
       if(this.titleEl)this.titleEl.style.opacity=String(k<0.15?k/0.15:k>0.75?Math.max(0,(1-k)/0.25):1);if(k>=1){this.fly=null;if(this.titleEl){this.titleEl.remove();this.titleEl=null;}}}
-    else if(!(this.adv&&this.adv.duel)){this.cam.position.lerp(new THREE.Vector3(cx,cy,cz),Math.min(1,dt*6));this.cam.lookAt(H.position.x,H.position.y+1.8,H.position.z);}
+    else if(!(this.adv&&this.adv.duel)){this.cam.position.lerp(new THREE.Vector3(cx,cy,cz),Math.min(1,dt*6));this.cam.lookAt(H.position.x,H.position.y+1.8+lookU,H.position.z);}
     // speed check: after the fly-in, step down quality if frames are slow (remembered for next time)
     if(!this.fly&&this.tier<2&&!this.o.noAuto){this._fs=(this._fs||0)+1;this._ft=(this._ft||0)+dt;if(this._ft>4){const fps=this._fs/this._ft;this._fs=this._ft=0;if(fps<24)this.setTier(2);else if(fps<42&&this.tier===0)this.setTier(1);}}
     this.sun.position.set(H.position.x+20,H.position.y+35,H.position.z+12);this.sun.target.position.copy(H.position);
